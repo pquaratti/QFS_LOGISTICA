@@ -1,0 +1,50 @@
+﻿@model Entidades.Vistas.FotoVista
+
+<div id="imagenAsociada" class="col-md-12 p-0">
+    <figure class="card card-body"
+            onmouseover="document.getElementById('figcaption').style.display = 'block';"
+            onmouseout="document.getElementById('figcaption').style.display = 'none';">
+
+        @if (Model.nombre.Length > 0)
+        {
+            <img src="@Url.Content("~/UploadFiles/" + Model.nombre)" class="img-fit-cover">
+        }
+        else
+        {
+            <img src="@Url.Content("~/UploadFiles/empty_image.png")" class="img-fit-cover">
+        }
+        <figcaption id="figcaption" class="pos-absolute b-10 l-200 wd-100p pd-20" style="display:none;">
+            <div class="btn-group">
+                <a href="@Url.Content("~/UploadFiles/" + Model.nombre)" target="_blank" class="btn btn-dark btn-icon"><i class="fa fa-download"></i></a>
+                <div style='height: 0px;width: 0px; overflow:hidden;'><input id="fileUpload" type="file" value="upload" onchange="sub(this)" style="display:none" /></div>
+                <button type="button"
+                        id="botonUpload"
+                        onclick="getFile()"
+                        class="btn btn-dark btn-icon" title="Cambiar Imagen">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button"
+                        data-id-rel="@Model.idEncriptado"
+                        url-delete="@Url.Action("DesvincularImagenProyecto",Model.controller)"
+                        delete-funcionExtra="true"
+                        class="btn btn-dark btn-icon btn-borrar-detalle" title="Borrar Imagen">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </figcaption>
+    </figure>
+</div>
+
+<script>
+    function getFile() {
+        $("#fileUpload").click();
+    }
+
+    function sub(obj) {
+        var file = obj.value;
+        var fileName = file.split("\\");
+        $("#botonUpload").innerHTML = fileName[fileName.length - 1];
+        $("#submit").click();
+        event.preventDefault();
+    }
+</script>

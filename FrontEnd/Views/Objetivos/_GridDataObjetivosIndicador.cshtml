@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Entidades.Proyecto_Objetivo_Indicador>
+
+@{
+    string _ControllerName = "Objetivos";
+}
+
+<div class="d-flex flex-row-reverse mt-1 mb-1">
+    <span class="badge badge-danger">Desvincular</span>
+</div>
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Base</th>
+            <th>Meta</th>
+            <th width="5%" style="align-content:center"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Proyecto_Objetivo_Indicador renglon in Model)
+        {
+            <tr>
+                <td>@renglon.Objetivo.pryobj_codigo</td>
+                <td>@renglon.Objetivo.pryobj_nombre</td>
+                <td>@renglon.Objetivo.pryobj_descripcion</td>
+                <td><span class="text-info" style="font-weight:600">@renglon.Objetivo.ValorIncial</span></td>
+                <td><span class="text-info" style="font-weight:600">@renglon.Objetivo.ValorMeta</span></td>
+                <td style="align-content:center">
+
+                    <button type="button"
+                            data-id-rel="@renglon.IdEncriptado"
+                            url-delete="@Url.Action("DesvincularIndicador","Indicadores")"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Desvincular del Indicador">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+        refreshData();
+    }
+
+   
+
+</script>

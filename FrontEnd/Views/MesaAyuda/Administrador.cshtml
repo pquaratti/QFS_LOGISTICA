@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = "Mesa de Ayuda";
+    ViewBag.Subtitle = "Administrador de Consultas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "MesaAyuda";
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">Mesa de Ayuda</h4>
+        <p>Listado de Consultas realizadas</p>
+    </div>
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12 pl-0 pr-0">
+    <div class="card card-hover card-deal">
+        <div class="card-header alert-secondary bd-b-0">
+            <h6 class="card-title mg-b-0">Filtros de búsqueda</h6>
+            <nav class="nav nav-card-icon">
+
+            </nav>
+        </div>
+        <div class="card-body pt-3 pb-0">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label" for="ddlDistrito">Estado</label>
+                        @Html.DropDownList("ddlEstado", new SelectList(ViewBag.EstadoSolicitudes, "Value", "Text",1), new { @class = "form-control camporequerido input-sm select2 changeGrilla", style = "top:0px;height:30px", required = "required" })
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label class="control-label" for="ddlDistrito"></label>
+                        <button id="btnBuscar" type="button" class="btn btn-primary btn-block btn-xs" style="margin-top: 8px;"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body mt-3">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="d-flex flex-row-reverse">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="viewGridData" style="zoom:90%"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            refreshData();
+        });
+
+        function refreshData()
+        {
+            dataObject = {
+                estadoID: $('#ddlEstado').val()
+            };
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataAdministrador", controller = _ControllerName })";
+            APP_LoadPartialView('#viewGridData', dataObject, _urlPartial);
+        }
+
+        $('#btnBuscar').click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+
+    </script>
+}
+
+

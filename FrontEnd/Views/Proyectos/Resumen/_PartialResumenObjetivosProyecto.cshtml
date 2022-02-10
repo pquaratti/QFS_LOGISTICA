@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Entidades.Proyecto_Objetivo>
+
+<div class="card card-hover mt-4">
+    <div class="card-header bg-primary-light pd-15">
+        <div class="row">
+            <div class="col-md-9">
+                <h6 class="card-title mg-b-0">Objetivos del Proyecto</h6>
+            </div>
+        </div>
+    </div><!-- card-header -->
+    <div class="card-body">
+        <table id="tablanested_resumen" class="table table-sm table-header-app " style="vertical-align: middle; zoom:90%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Indicadores</th>
+                    <th>Valor Inicial</th>
+                    <th>Valor Meta</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Entidades.Proyecto_Objetivo renglon in Model)
+                {
+                <tr class="original2" data-bind="@renglon.IdEncriptado">
+                    <td class="viewDetailsResumen" style="cursor:pointer"><i class="fa fa-plus-circle"></i></td>
+                    <td style="text-align:center">
+                        @if (renglon.pryobj_foto.Length > 0)
+                        {
+                            <div class="project-img"><img src="@Url.Content("~/UploadFiles/" + renglon.pryobj_foto)" width="48" height="48" viewBox="0 0 48 48" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><rect x="3" y="3" width="48" height="48" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></div>
+                        }
+                        else
+                        {
+                            <div class="project-img"><img src="@Url.Content("~/UploadFiles/empty_image.png")" width="48" height="48" viewBox="0 0 48 48" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><rect x="3" y="3" width="48" height="48" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></div>
+                        }
+                    </td>
+                    <td style="font-weight:600">@renglon.pryobj_nombre</td>
+                    @if (renglon.CantidadIndicadores.Equals(0))
+                    {
+                        <td style="text-align: center">
+                            <span class="badge badge-danger-light" style="font-weight: 600; font-size: inherit">No hay Indicadores asignados</span>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>@renglon.CantidadIndicadores</td>
+                        <td>@renglon.ValorIncial</td>
+                        <td>@renglon.ValorMeta</td>
+                       
+                    }
+
+
+                </tr>
+
+
+                }
+            </tbody>
+        </table>
+    </div>
+</div><!-- card -->
+
+<script>
+    table = $('#tablanested_resumen').DataTable({ paging: false, searching : false});
+
+    $('#tablanested_resumen tbody').on('click', '.viewDetailsResumen', function () {
+        var tr = $(this).closest('tr');
+        if (tr.hasClass("original2")) {
+            var row = table.row(tr);
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                var div = format(row.data());
+                row.child(div).show();
+                tr.addClass('shown');
+                LoadChildRow(tr.attr("data-bind"), div.attr('id'))
+            }
+        }
+
+    });
+
+    function LoadChildRow(id,eleid) {
+
+        dataObject = {
+            ID: id
+        };
+
+        _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialInformeIndicadoresObjetivo", controller = "Objetivos" })";
+        APP_LoadPartialView("#"+eleid, dataObject, _urlPartial);
+
+    }
+    function functionExtra() {
+
+    }
+
+    function format(rowData) {
+        var _id = "div_" + new Date().getTime().toString()
+        var div = $('<div/>', { id: _id });
+        return div;
+    }
+</script>

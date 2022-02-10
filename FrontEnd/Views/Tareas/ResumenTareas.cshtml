@@ -1,0 +1,53 @@
+﻿@model Entidades.Tarea
+
+@{
+    ViewBag.Title = "Tarea #" + Model.tar_numero;
+    ViewBag.Subtitle = "[subtitulo]";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Tareas";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Index", controller = _ControllerName });
+
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            @ViewBag.Title
+        </h4>
+        <p>Resumen</p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+    <div class="card card-body mt-3 ml-0 mr-0">
+        <div id="viewContentDatosTarea"></div>
+    </div>
+    <div class="card card-body mt-3 ml-0 mr-0">
+        <div id="viewContentIndicadoresTarea"></div>
+    </div>
+
+    @section scripts{
+        <script>
+
+        function LoadIndicadores()
+        {
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataIndicadoresTarea", controller = _ControllerName })";
+            APP_LoadPartialView('#viewContentIndicadoresTarea', { tareaID: '@Model.IdEncriptado' }, _urlPartial);
+        }
+        function LoadDatos()
+        {
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialContentDatosTarea", controller = _ControllerName })";
+            APP_LoadPartialView('#viewContentDatosTarea', { tareaID: '@Model.IdEncriptado' }, _urlPartial);
+        }
+
+        LoadIndicadores();
+        LoadDatos();
+      
+        </script>
+    }

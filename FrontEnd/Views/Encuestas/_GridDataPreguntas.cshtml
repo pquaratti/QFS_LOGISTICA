@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Entidades.Encuesta_Pregunta>
+@{
+    string _ControllerName = "Encuestas";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar-nosearch">
+    <thead>
+        <tr>
+            <th>Contenido</th>
+            <th width="100px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Encuesta_Pregunta renglon in Model)
+        {
+        <tr>
+            <td>@renglon.encpreg_contenido</td>
+            <td>
+                <button type="button"
+                        modal-value-primary="@renglon.Encuesta.IdEncriptado"
+                        modal-value-secondary="@renglon.IdEncriptado"
+                        modal-value-aux=""
+                        modal-url="@Url.Action("PartialModalABMEncuestaPregunta",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button"
+                        data-id-rel="@renglon.encpreg_id"
+                        url-delete="@Url.Action("DeletePregunta",_ControllerName)"
+                        class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+
+        }
+
+    </tbody>
+</table>
+

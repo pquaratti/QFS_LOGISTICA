@@ -1,0 +1,103 @@
+﻿@model Entidades.Mesa_Ayuda
+
+@{
+    string _controllerName = "MesaAyuda";
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    <span>Interacción - Nro de Ticket #@Model.mesa_id</span>
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fa fa-window-close"></i></span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                @Html.HiddenFor(x => x.mesa_id)
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="viewContentInteraccion" style="height:250px; overflow-y:scroll; overflow-x:hidden; zoom:90%">
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group mb-md">
+                            <input id="txtMensajeInteraccion" type="text" class="form-control form-control-sm mr-2" autocomplete="off" required>
+                            <span class="input-group-btn">
+                                <button id="btnEnviar" class="btn btn-success btn-sm" type="button" data-id-rel="@Model.mesa_id" onclick="enviarMensaje(this);"><i class="fa fa-paper-plane"></i> Enviar</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    buscarMensajesInteraccion();
+
+    function setScrollbarBottomInteraccion() {
+        var objDiv = document.getElementById("viewContentInteraccion");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+     function enviarMensaje(control) {
+        $('#btnEnviar').attr('disabled');
+
+         var _mesaID = $(control).attr('data-id-rel');
+
+        dataObject = {
+            mesaID: _mesaID,
+            mensaje: $('#txtMensajeInteraccion').val()
+         };
+
+         
+         APP_executeAjaxPostNoClosePopup('@Url.Action("EnviarInteraccion",_controllerName)', dataObject, function (res) {
+            $('#btnEnviar').removeAttr('disabled');
+
+            if (res.Result.Success === true) {
+                buscarMensajesInteraccion();
+                $('#txtMensajeInteraccion').val("");
+                APP_ShowNotify('Envio de mensaje', "Enviado exitosamente!", notifyTypes.Success);
+            }
+            else {
+                APP_ShowNotify('Envio de mensaje', res.Result.Message, notifyTypes.Error);
+            }
+        });
+
+     }
+
+
+      function buscarMensajesInteraccion() {
+          var _mesaID = @Model.mesa_id;
+
+        dataObject = {
+            mesaID: _mesaID
+        };
+
+        _urlPartial = "@Url.RouteUrl("Default", new { action = "MostrarInteraccion", controller = _controllerName })";
+        APP_LoadPartialViewCallback('#viewContentInteraccion', dataObject, _urlPartial, function () {
+            setScrollbarBottomInteraccion();
+        });
+
+      }
+
+
+
+</script>

@@ -1,0 +1,56 @@
+﻿@model Entidades.Encuesta
+
+@{
+    string _ControllerName = "Encuestas";
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    <span class="modal-title text-success font-weight-bold"> @Model.enc_titulo.</span>
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <p>
+                            Descripción: @Model.enc_descripcion
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div class="alert alert-primary mg-b-0" role="alert">
+                            Estás por comenzar la encuesta.
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                <button class="btn btn-success pull-left btn-app op-btn-new" type="button"
+                        data-url-redirect="@Url.RouteUrl("Default", new { action = "Responder", controller = _ControllerName, id=@Model.IdEncriptado })" onclick="TbEdit(this);">
+                    <i class="fa fa-save"> Iniciar </i>
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>

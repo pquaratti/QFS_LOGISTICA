@@ -1,0 +1,45 @@
+﻿@model Entidades.Tarea
+@{
+    string _ControllerName = "Tareas";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Actualizar evolución
+                </h6>
+                <hr />
+                <span class="tx-sm text-success font-weight-bold"> Título: @Model.tar_nombre.</span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalCambiarPorcentaje", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.IdEncriptado)
+                    <div class="row mt-2">
+
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(m => m.tar_porcentaje, new { @class = "control-label" })
+                            @Html.DropDownListFor(m => m.tar_porcentaje, new SelectList(Negocio.DDL.ListarPorcentajes(), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

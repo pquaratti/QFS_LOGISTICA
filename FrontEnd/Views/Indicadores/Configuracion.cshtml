@@ -1,0 +1,132 @@
+﻿@model Entidades.Proyecto_Indicador
+
+@{
+
+    ViewBag.Title = "Configuración de Indicador";
+    ViewBag.Subtitle = "Vinculación de Tareas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Configuracion", controller = "Proyectos", id = Model.Proyecto.IdEncriptado, selectTab= "tabIndicadores" });
+}
+
+
+<div class="content-header header-title-page ml-0 mr-0">
+
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            Configuración del Indicador
+        </h4>
+        <p>
+            Indicador: <span class="text-info"> @Model.pryind_nombre </span> <br />
+            Base: <span class="text-success"> @Model.pryind_valor_base </span> 
+            Meta: <span class="text-success"> @Model.pryind_valor_meta </span>
+        </p>
+
+    </div>
+
+    <div class="col-md-3 pr-2 pb-2 pt-2">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-body ml-0 mr-0 mt-2 mb-1">
+
+            <div class="row">
+                <div class="col-md-8">
+                    <h5> Tareas del Indicador</h5>
+                    <p>
+                        <span class="text-success"> Vinculación de Tareas con Indicadores </span>
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex flex-row-reverse">
+                        <button type="button"
+                                modal-value-primary="@Model.IdEncriptado"
+                                modal-value-secondary="0"
+                                modal-value-extra="0"
+                                modal-url="@Url.Action("PartialModalABMIndicadorTarea","Indicadores")"
+                                class="btnOpenModal btn btn-xs btn-success m-1">
+                            <i class="fa fa-plus"></i> Vincular Tarea
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="viewGridData" style="zoom:90%"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card card-body ml-0 mr-0 mt-2 mb-1">
+
+            <div class="row">
+                <div class="col-md-7">
+                    <h5> Objetivos vinculados </h5>
+                    <p>
+                        <span class="text-success"> Asignar Indicador a Objetivos </span>
+                    </p>
+                </div>
+                <div class="col-md-5">
+                    <div class="d-flex flex-row-reverse">
+                        <button type="button"
+                                modal-value-primary="@Model.IdEncriptado"
+                                modal-value-secondary="0"
+                                modal-value-extra="0"
+                                modal-url="@Url.Action("PartialModalABMIndicadorObjetivo","Indicadores")"
+                                class="btnOpenModal btn btn-xs btn-success m-1">
+                            <i class="fa fa-plus"></i> Vincular Objetivo
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="viewGridData2" style="zoom:90%"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            LoadIndicadorTareas();
+            LoadIndicadorObjetivos();
+        });
+
+        function LoadIndicadorTareas() {
+            dataObject = {
+                indicadorID: '@Model.IdEncriptado'
+            };
+
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataIndicadorTareas", controller = "Indicadores" })";
+            APP_LoadPartialView('#viewGridData', dataObject, _urlPartial);
+        }
+
+        function LoadIndicadorObjetivos() {
+            dataObject2 = {
+                indicadorID: '@Model.IdEncriptado'
+            };
+            _urlPartial2 = "@Url.RouteUrl("Default", new { action = "PartialGridDataObjetivosIndicador", controller = "Indicadores" })";
+            APP_LoadPartialView('#viewGridData2', dataObject2, _urlPartial2);
+        }
+
+    </script>
+
+}

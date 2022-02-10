@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Entidades.Proyecto_Tarea>
+
+@{
+    var _ControllerName = "Proyectos";
+}
+
+<div class="d-flex flex-row-reverse mt-2 mb-2">
+    <span class="badge badge-danger">Borrar</span>
+    <span class="badge badge-info">Editar</span>
+</div>
+<div style="zoom:90%">
+    <table class="table table-sm table-header-app datatablePartial-scrollbar">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Prioridad</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th width="10%"">
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Entidades.Proyecto_Tarea renglon in Model)
+            {
+                <tr>
+                    <td>@renglon.prytar_nombre</td>
+                    <td>@renglon.Prioridad.tprioridad_nombre</td>
+                    <td>@renglon.prytar_fec_ini.ToString("dd/MM/yyyy")</td>
+                    <td>@renglon.prytar_fec_fin.ToString("dd/MM/yyyy")</td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        <button type="button"
+                                modal-value-primary="@renglon.ProyectoVinculado.IdEncriptado"
+                                modal-value-secondary="@renglon.IdEncriptado"
+                                modal-value-extra="0"
+                                modal-url="@Url.Action("PartialModalTarea",_ControllerName)"
+                                class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar Tarea">
+                            <i class="fa fa-edit"></i>
+                        </button>
+
+                        <button type="button"
+                                data-id-rel="@renglon.IdEncriptado"
+                                url-delete="@Url.Action("DeleteTarea",_ControllerName)"
+                                class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Tarea">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

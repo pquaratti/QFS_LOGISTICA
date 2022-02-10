@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Entidades.Encuesta_Usuario_Respuesta>
+
+<div class="card card-body">
+    <table class="table table-sm table-header-app table-card table-bordered">
+        <thead>
+            <tr>
+                <th> Preguntas </th>
+                <th width="300px"> Respuesta </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Entidades.Encuesta_Usuario_Respuesta renglon in Model)
+            {
+            <tr>
+                <td>@renglon.Pregunta.encpreg_contenido</td>
+                <td>@renglon.Respuesta.encres_contenido</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+ 
+</script>

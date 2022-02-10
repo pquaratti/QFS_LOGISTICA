@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    ViewBag.Subtitle = "Aquí podras ver indicadores importantes del módulo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+
+}
+
+@if (Filters.VerificarToken.ConsultarToken().ModuloID == Convert.ToInt32(Negocio.App.SIS_Modulos.ModulosDisponibles.Sistemas).ToString())
+{
+    @Html.Partial("~/Views/Home/PartialDashboard/_DashboardSistemas.cshtml")
+}
+
+@if (Filters.VerificarToken.ConsultarToken().ModuloID == Convert.ToInt32(Negocio.App.SIS_Modulos.ModulosDisponibles.Gestion).ToString())
+{
+    @Html.Partial("~/Views/Home/PartialDashboard/_DashboardGestion.cshtml")
+}
+
+@section scripts{
+
+    <script>
+        LoadDashboard();
+    </script>
+
+}

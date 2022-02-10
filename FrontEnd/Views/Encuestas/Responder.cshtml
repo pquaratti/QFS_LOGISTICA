@@ -1,0 +1,87 @@
+﻿@model Entidades.Vistas.EncuestaVista
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Encuestas";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Consulta", controller = _ControllerName });
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            Responda las siguientes preguntas para completar la encuesta.
+        </h4>
+        <p>
+            <br>
+            <span class="text-success font-weight-bold"> @Model.Intento.Encuesta.enc_titulo </span>
+        </p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    @using (Html.BeginForm("SaveRespuestasIntento", _ControllerName, FormMethod.Post, new { id = "formularioABM", name = "formularioABM", @class = "formularioABM formNotify formRedirect formValidar" }))
+    {
+        @Html.Hidden("totalPreguntas", Model.Preguntas.Count)
+        @Html.Hidden("Intento", Model.Intento.IdEncriptado)
+
+        <table class="table table-sm table-header-app table-card table-bordered">
+            <thead>
+                <tr>
+                    <th class="border-right"> Preguntas </th>
+                    @foreach (Entidades.Encuesta_Respuesta respuesta in Model.Respuestas)
+                    {
+                        <th style="text-align:center">@respuesta.encres_contenido</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @{ var _ixPregunta = 0; }
+                @foreach (Entidades.Encuesta_Pregunta pregunta in Model.Preguntas)
+                {
+                    <tr id="preg_@pregunta.IdEncriptado" class="rowPregunta">
+                        <td class="border-right">@pregunta.encpreg_contenido</td>
+                        @foreach (Entidades.Encuesta_Respuesta respuesta in Model.Respuestas)
+                        {
+                            <td style="text-align:center">
+                                <input id="respuestas[@_ixPregunta]"
+                                       class="checkRespuesta"
+                                       type="radio"
+                                       name="respuestas[@_ixPregunta]"
+                                       value="@(pregunta.IdEncriptado)_@(respuesta.IdEncriptado)">
+                            </td>
+                        }
+                    </tr>
+
+                    _ixPregunta++;
+                }
+            </tbody>
+        </table>
+        <div class="row mt-3">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="d-flex flex-row-reverse">
+                    <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar Respuesta</button>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+
+@section scripts{
+
+    <script>
+
+
+
+    </script>
+
+}

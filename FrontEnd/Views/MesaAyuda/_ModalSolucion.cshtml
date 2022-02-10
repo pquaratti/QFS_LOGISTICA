@@ -1,0 +1,40 @@
+﻿@model Entidades.Mesa_Ayuda
+
+@{
+    string _controllerName = "MesaAyuda";
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Ingresar Solución - Ticket #@Model.mesa_id
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalSolucion", _controllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.mesa_id)
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.mesa_solucion, htmlAttributes: new { @class = "control-label" })
+                            <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.mesa_solucion)" id="@Html.NameFor(model=>model.mesa_solucion)">@Model.mesa_solucion</textarea>
+                            @Html.ValidationMessageFor(model => model.mesa_solucion, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

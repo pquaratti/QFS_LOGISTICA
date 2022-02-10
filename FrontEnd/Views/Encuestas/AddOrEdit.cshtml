@@ -1,0 +1,213 @@
+﻿@model Entidades.Encuesta
+
+@{
+    if (Model.enc_id.Equals(0))
+    {
+        ViewBag.Title = "Crear una Encuesta";
+    }
+    else
+    {
+        ViewBag.Title = "Modificación de una Encuesta";
+    }
+
+    ViewBag.Subtitle = "Ingrese los datos de la encuesta";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Encuestas";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Gestion", controller = _ControllerName });
+}
+
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            @if (Model.enc_id > 0)
+            {
+                @: Modificar la Encuesta
+            }
+            else
+            {
+                @: Crear una Encuesta
+            }
+        </h4>
+        <p>
+            @if (!(Model.enc_id > 0))
+            {
+                @: <span class="text-success"> Complete los siguiente datos y haga click en Guardar para comenzar a cargar las preguntas de la encuesta </span>
+            }
+        </p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    @using (Html.BeginForm("Save", _ControllerName, FormMethod.Post, new { id = "formularioABM", name = "formularioABM", @class = "formularioABM formNotify formRedirect formValidar" }))
+    {
+        @Html.HiddenFor(x => x.enc_id)
+        @Html.HiddenFor(x => x.IdEncriptado)
+
+        <div class="row mt-2">
+            <div class="form-group col-md-12">
+                @Html.LabelFor(model => model.enc_titulo, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.enc_titulo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.enc_titulo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Area, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => Model.Area.area_id, new SelectList(Negocio.DDL.ListarAreas(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => Model.Tipo.tenc_id, new SelectList(Negocio.DDL.ListarTipoEncuesta(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.enc_fec_desde, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.enc_fec_desde, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.enc_fec_desde, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.enc_fec_hasta, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.enc_fec_hasta, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.enc_fec_hasta, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.enc_descripcion, htmlAttributes: new { @class = "control-label" })
+                <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.enc_descripcion)" id="@Html.NameFor(model=>model.enc_descripcion)">@Model.enc_descripcion</textarea>
+                @Html.ValidationMessageFor(model => model.enc_descripcion, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="d-flex flex-row-reverse">
+                    <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar</button>
+
+                    @if (Model.enc_id > 0)
+                    {
+                        if (Model.Cerrado == false)
+                        {
+                            <button type="button"
+                                    data-id-rel="@Model.IdEncriptado"
+                                    accion-url="@Url.Action("CerrarEncuesta","Encuestas")"
+                                    accion-nombre-clave="cerrarEncuesta"
+                                    accion-titulo-modal="Finalizar Configuración"
+                                    accion-mensaje-modal="Desea publicar la Encuesta ?"
+                                    accion-mensaje-exitoso="Encuesta configurada con Éxito!"
+                                    class="btn btn-xs btn-primary m-1 btn-question-action" title="Publicar">
+                                <i class="fa fa-lock"></i> Publicar Encuesta
+                            </button>
+                        }
+                        <button type="button"
+                                modal-value-primary="@Model.IdEncriptado"
+                                modal-value-secondary=""
+                                modal-value-extra=""
+                                modal-url="@Url.Action("PartialModalABMEncuestaRespuesta", "Encuestas")"
+                                class="btnOpenModal btn btn-xs btn-info m-1">
+                            <i class="fa fa-plus"></i> Respuesta
+                        </button>
+                        <button type="button"
+                                modal-value-primary="@Model.IdEncriptado"
+                                modal-value-secondary=""
+                                modal-value-extra=""
+                                modal-url="@Url.Action("PartialModalABMEncuestaPregunta", "Encuestas")"
+                                class="btnOpenModal btn btn-xs btn-primary m-1">
+                            <i class="fa fa-plus"></i> Pregunta
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.enc_id > 0)
+    {
+        
+        <div class="row mt-4 mb-2">
+            <div class="col-md-12">
+                <div class="d-flex">
+                    <div class="flex-1">
+                        <div class="row mt-2 mr-1 ml-1 mb-1">
+                            <h4> Preguntas de la Encuesta</h4>
+                        </div>
+                        <div class="row mt-2 mr-1 ml-1 mb-1">
+                            <div class="table-responsive">
+                                <div id="viewGridData" style="zoom:90%"></div>
+                            </div>
+                        </div>        
+                    </div>
+                    <div class="divider-vertical divider-text"> </div>
+                    <div class="flex-1">
+                        <div class="row mt-2 mr-1 ml-1 mb-1">
+                            <h4> Respuestas de la Encuesta</h4>
+                        </div>
+                        <div class="row mt-2 mr-1 ml-1 mb-1">
+                            <div class="table-responsive">
+                                <div id="viewGridData2" style="zoom:90%"></div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+
+    }
+
+</div>
+
+@section scripts{
+
+    <script>
+        $('.datepicker').datepicker(
+            {
+                autoclose: true,
+                todayHighlight: true,
+                dateFormat: 'dd/mm/yy'
+
+            });
+    </script>
+
+    <script>
+        function cerrarEncuesta() {
+            APP_RedirectTo(@_urlBack);
+        }
+    </script>
+
+    @if (Model.enc_id > 0)
+    {
+    <script>
+
+        $(document).ready(function () {
+            refreshData();
+        });
+
+        function refreshData()
+        {
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataPreguntas", controller = "Encuestas" })";
+            APP_LoadPartialView('#viewGridData', { encuestaID: "@Model.IdEncriptado" }, _urlPartial);
+            _urlPartial2 = "@Url.RouteUrl("Default", new { action = "PartialGridDataRespuestas", controller = "Encuestas" })";
+            APP_LoadPartialView('#viewGridData2', { encuestaID: "@Model.IdEncriptado" }, _urlPartial2);
+        }
+
+        function functionAccionCustom(pClave) {
+
+        }
+
+    </script>
+    }
+
+
+}

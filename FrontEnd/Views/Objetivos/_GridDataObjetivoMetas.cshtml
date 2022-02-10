@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Entidades.Proyecto_Objetivo>
+
+
+<table class="table table-header-app table">
+    <thead>
+        <tr>
+            <th width="100px">Código</th>
+            <th width="500px">Descripción</th>
+            <th width="100px">Valor Inicial</th>
+            <th width="100px">Valor Meta</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Proyecto_Objetivo renglon in Model)
+        {
+
+        <tr>
+            <td>@renglon.pryobj_codigo</td>
+            <td>@renglon.pryobj_descripcion</td>
+            <td>@renglon.ValorIncial</td>
+            <td>@renglon.ValorMeta</td>
+        </tr>
+
+
+        }
+    </tbody>
+</table>
+
+
+
+          
+<script>
+
+
+</script>

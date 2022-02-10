@@ -1,0 +1,94 @@
+﻿@{
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Realizar importación del tutorial
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-primary mg-b-0" role="alert">
+                            Estas por utilizar el proceso de importación de tutoriales. Tené en cuenta que el sistema solo va a aceptar ciertos formatos de documentos. 
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <input id="fileUpload" type="file" class="upload" title="Haz click aquí para buscar el tutorial" />
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div id="loadingUploadFile"></div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                <button id="btnSubirArchivo" type="button" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Subir archivo</button>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#btnSubirArchivo').click(function (e) {
+        if (fileUpload.files.length > 0) {
+
+            ShowMessageLoadingProcessPending('#loadingUploadFile', 'Enviando y Procesando ');
+
+            var files = fileUpload.files;
+            var dataUploadTutoriales = new FormData();
+            for (var x = 0; x < files.length; x++) {
+                dataUploadTutoriales.append("file" + x, files[x]);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.RouteUrl("Default", new { action = "ImportarTutoriales", controller = "Tutoriales" })',
+                contentType: false,
+                processData: false,
+                data: dataUploadTutoriales,
+                success: function (result) {
+                   // $('#resultadoImportacion').html(result);
+                    if (result.Result.Success == false) {
+                        APP_SweetAlert_ShowMessageError("Subida de archivo", result.Message);
+                    }
+                    else
+                    {
+                        var blob = new Blob([result.Result.ObjectRelation], { type: "application/octetstream" });
+                        var url = window.URL || window.webkitURL;
+                        link = url.createObjectURL(blob);
+                        var a = $("<a />");
+                        a.attr("download", "ResultadoImportacion.html");
+                        a.attr("href", link);
+                        $("body").append(a);
+                        a[0].click();
+                        $("body").remove(a);
+
+                       // $('#errorList').html(result.Result.ObjectRelation);
+                        ShowMessageLoadingProcessSuccess('#loadingUploadFile');
+                    }
+                }
+            });
+        }
+    });
+
+
+</script>

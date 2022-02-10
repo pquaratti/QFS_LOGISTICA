@@ -1,0 +1,111 @@
+﻿@model Entidades.App.SIS_Perfil
+
+@{
+    string _ControllerName = "Accion";
+    var _CountRow = 0;
+}
+
+<div class="modal fade" id="formGridAcciones" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">Acciones del Perfil: @Model.prf_nombre</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <table id="dtAcciones" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="50px"></th>
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                            <th width="10"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Entidades.App.SIS_Accion obj in Model.Acciones)
+                        {
+                            _CountRow += 1;
+
+                            <tr>
+                                <td width="40px">
+                                    <div class="custom-control custom-switch" style="text-align:right;">
+                                        <input id="checkActivos@_CountRow" type="checkbox" class="change-status custom-control-input" @(obj.VinculadaAPerfil == true ? "checked" : "") data-id-rel="@obj.IdEncriptado" />
+                                        <label class="custom-control-label" for="checkActivos@_CountRow"></label>
+                                    </div>
+                                </td>
+                                <td>@obj.acc_nombre</td>
+                                <td>@obj.acc_descripcion</td>
+                                <td>
+                                    @if (obj.acc_menu == true)
+                                    {
+                                        <span class="badge badge-success">Menú</span>
+
+                                        if (obj.acc_id_padre == 0)
+                                        {
+                                            <span class="badge badge-primary">Nivel 1</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-light">Nivel 2</span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-info">Acción simple</span>
+                                    }
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-cerrar" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    
+    $(document).ready(function () {
+       $('#dtAcciones').DataTable({
+            "paging": false,
+            "scrollY": "250px",
+            "ordering": false,
+        });
+    });
+
+
+    $('.change-status').change(function (e) {
+        var _accionID = $(this).attr("data-id-rel");
+        var _statusCheck = $(this).prop("checked");
+
+        var dataSend = {
+            perfilID : '@Model.IdEncriptado',
+            accionID : _accionID,
+            changeStatus : _statusCheck
+        }
+
+        APP_executeAjaxPostNoClosePopup('@Url.Action("AgregarAccion", "Perfil")', dataSend, function (resp) {
+            if (resp.Result.Success === true) {
+                APP_ShowNotify('Asignación de perfil', resp.Result.Message, notifyTypes.Success);
+            }
+            else
+            {
+                APP_ShowNotify('Asignación de perfil', 'Error: ' + resp.Result.Message, notifyTypes.Error);
+            }
+        });
+
+        
+    });
+    
+</script>
+

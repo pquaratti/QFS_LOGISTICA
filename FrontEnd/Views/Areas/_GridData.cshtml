@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Entidades.App.SIS_Area>
+
+@{
+    string _ControllerName = "Areas";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Abreviatura</th>
+            <th width="50px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.App.SIS_Area renglon in Model)
+        {
+        <tr>
+
+            <td>@renglon.area_nombre</td>
+            <td>@renglon.area_abreviatura</td>
+            <td>
+                <button type="button"
+                        modal-value-primary="@renglon.area_id"
+                        modal-value-secondary="0"
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalABM",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
+                    <i class="fa fa-edit"></i>
+                </button>
+
+                <button type="button"
+                        data-id-rel="@renglon.area_id"
+                        url-delete="@Url.Action("Delete",_ControllerName)"
+                        class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Skill">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+</script>

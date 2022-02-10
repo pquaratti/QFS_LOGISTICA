@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    ViewBag.Subtitle = "Aquí podras ver indicadores importantes del módulo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">Actualizaciones Masivas</h4>
+        <p>Sección de actualizaciones masivas del sistema</p>
+    </div>
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-sm-6 col-md-4 col-lg col-xl-3 mg-t-15 mg-sm-t-20">
+        <div class="card card-profile-two card-dark bg-primary bd-primary ht-xl-100p">
+            <div class="card-body">
+                <h6 class="card-title">Actualización CBUs</h6>
+                <p class="card-desc">Utilice esta opción para actualizar masivamente el CBU de Legajos del sistema</p>
+            </div><!-- card-body -->
+            <div class="card-footer bg-transparent pd-t-0 bd-t-0">
+                <button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalActualizarCBUS","Actualizaciones")" class="btnOpenModal btn btn-xs btn-info m-1"><i class="fa fa-upload"></i> Actualizar</button>
+            </div><!-- card-footer -->
+        </div><!-- card -->
+    </div>
+
+
+</div>
+
+
+
+@section scripts{
+
+    <script>
+        LoadDashboard();
+    </script>
+
+}

@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Entidades.Pregunta_Frecuente>
+
+@{
+    ViewBag.Title = "Preguntas Frecuentes";
+    ViewBag.Subtitle = "Lista de preguntas frecuentes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "PreguntasFrecuentes";
+}
+
+<div class="content-header header-title-page ml-0 mr-0 col-sm-9">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">Preguntas Frecuentes</h4>
+        <p>En esta sección encontrará respuestas a preguntas comunes sobre el manejo del Sistema Comando Electoral</p>
+    </div>
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+
+        </div>
+    </div>
+</div>
+
+<div class="card card-body content-right content-right-components">
+    <label>Categorías</label>
+    <nav id="navSection" class="nav flex-column">
+
+        @{
+            string dummy = "";
+            string section = "#section";
+            int x = 1;
+        }
+        @foreach (Entidades.Pregunta_Frecuente_Categoria renglon in ViewBag.Categorias)
+        {
+            dummy = section + Convert.ToString(x);
+            <a href=@dummy class="nav-link">@renglon.pgfc_nombre</a>
+            x += 1;
+        }
+    </nav>
+</div><!-- content-right -->
+
+<div class="col-md-9">
+    @{
+        section = "section";
+        x = 1;
+    }
+
+    @foreach (Entidades.Pregunta_Frecuente_Categoria categoria in ViewBag.Categorias)
+    {
+        dummy = section + Convert.ToString(x);
+
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12 pl-0 pr-0">
+                <div class="card card-body">
+                    <h5 id=@dummy class="tx-semibold">@categoria.pgfc_nombre</h5>
+
+                    <div class="accordion col-sm-12">
+                        @foreach (Entidades.Pregunta_Frecuente pregunta in Model.Where(s => s.Categoria.pgfc_id == categoria.pgfc_id))
+                        {
+
+                            <h6 class="accordion-title">@pregunta.pgf_titulo</h6>
+                            <div class="accordion-body">@pregunta.pgf_contenido</div>
+                        }
+                    </div><!-- accordion -->
+                </div>
+            </div>
+        </div>
+
+        x += 1;
+    }
+
+</div>
+
+@section scripts{
+
+    <script src="../lib/jqueryui/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $('.accordion').accordion({
+                heightStyle: 'content'
+            });
+
+        })
+    </script>
+}

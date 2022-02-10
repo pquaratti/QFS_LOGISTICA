@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Entidades.Tarea_Indicador>
+
+
+<div class="shadow-lg p-3 pl-2 ml-1 mr-1 mt-1 bg-gray-100">
+        <div class="row pl-1 pr-2">
+            <div id="tablediv_@(ViewBag.ID)" data-bind="@ViewBag.Configuracion" class="card card-body" style="zoom:90%">
+                <table class="table no-footer dtr-inline table-bordered table-header-app">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                            <th width="10%">Ponderancia</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Entidades.Tarea_Indicador renglon in Model)
+                        {
+                            var porcentaje = @renglon.tarind_porcentaje / 100;
+                            <tr>
+                                <td>@renglon.Tarea.tar_nombre</td>
+                                <td>@renglon.Tarea.tar_descripcion</td>
+                                <td style="text-align:center"><span class="text-info" style="font-weight:600">@porcentaje.ToString("P")</span></td>
+                           
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            @if (ViewBag.Configuracion)
+            {
+                <div class="col-md-3">
+                    <div class="card card-body" style="zoom:75%">
+                        <div id="PieChart_@(ViewBag.ID)" data-print="@ViewBag.PieData"></div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        </div>
+
+
+
+<script>
+
+    var element = $('#tablediv_' + '@(ViewBag.ID)');
+    var prueba1 = 'tablediv_@(ViewBag.ID)';
+
+    if (element.data('bind') == 'False') {
+        element.addClass("col-md-12")
+    }
+    else {
+        element.addClass("col-md-9");
+        CreateDonutMorrisChart('PieChart_@(ViewBag.ID)');
+    }
+
+
+
+</script>

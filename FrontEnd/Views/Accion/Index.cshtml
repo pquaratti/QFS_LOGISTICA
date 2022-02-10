@@ -1,0 +1,151 @@
+﻿@{
+    ViewBag.Title = "Acciones del sistema";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Accion";
+    string _urlAddOrEdit = Url.RouteUrl("Default", new { action = "AddOrEdit", controller = _ControllerName });
+    string _urlNuevo = Url.RouteUrl("Default", new { action = "AddOrEdit", controller = _ControllerName });
+    string _urlDelete = Url.RouteUrl("Default", new { action = "Delete", controller = _ControllerName });
+    string _urlActivar = Url.RouteUrl("Default", new { action = "Active", controller = _ControllerName });
+}
+
+<div class="card card-body">
+    <div class="row button-box">
+        <div class="col-lg-2 col-sm-4 col-xs-12">
+            <div class="row">
+                <div class="col-md-12">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /row -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <div class="row mb-3">
+                    <div class="col-md-9">
+                        <div class="btn-group" role="group">
+                            <button id="btnCrear" class="btn btn-sm btn-block btn-success btnModalABM btn-app" data-modal-value="0"><i class="fa fa-plus"></i> Nuevo</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="custom-control custom-switch" style="text-align:right;">
+                            <input id="checkActivos" type="checkbox" class="custom-control-input checktodos" />
+                            <label class="custom-control-label" for="checkActivos">Mostrar todos</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="dtAcciones" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th width="50px">Ico</th>
+                                <th>Nombre</th>
+                                <th>Descripcion</th>
+                                <th>Padre</th>
+                                <th width="150px">Detalle</th>
+                                <th width="100px">Acciones</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="viewModalABM"></div>
+
+</div>
+
+@section scripts{
+
+    <script>
+           var objConfigABM = {
+            urlEdit: '@Url.RouteUrl("Default", new { action = "AddOrEdit", controller = "Accion" })',
+            urlDelete: '@Url.RouteUrl("Default", new { action = "Delete", controller = "Accion" })',
+            urlActivar: '@Url.RouteUrl("Default", new { action = "Active", controller = "Accion" })',
+            urlPrint: '',
+            modal_abm: true,
+            modal_content: '#viewModalForm',
+            modal_form: '#modalFormDefault',
+            modal_geturl: '@Url.Action("PartialViewModalABM", "Accion")',
+            modal_default_value: 0
+        };
+
+
+        var ref
+        $(document).ready(function () {
+              ref = APP_Datatable_Async(
+                    '#dtAcciones',
+                    'LoadTableAjax',
+                    'POST',
+                    function (d) {
+                        d.mostrar_todos = $('.checktodos').prop("checked");
+                    },
+                    [
+                        { "data": null, "bSortable": false, "autoWidth": true, "mRender": function (o) { return "<span><i class='" + o.acc_icono + "'></i></span>" } },
+                        { "data": "acc_nombre", "name": "acc_nombre", "autoWidth": true, "bSortable": false },
+                        { "data": "acc_descripcion", "name": "acc_descripcion", "autoWidth": true, "bSortable": false },
+                        { "data": "AccionPadre.acc_nombre", "name": "acc_nombre", "autoWidth": true, "bSortable": false },
+                        { "data": null, "bSortable": false, "autoWidth": true, "mRender": function (o) { return APP_GRID_Status(o); } },
+                        { "data": null, "bSortable": false, "autoWidth": true, "mRender": function (o) { return APP_GRID_Options_Buttons(o.acc_id, o.estado, objConfigABM); } }
+                    ]
+            );
+        });
+
+        function APP_GRID_Status(objeto) {
+            var htmlStatus = '';
+
+            if (objeto.acc_menu == true) {
+                htmlStatus += "<span class='badge badge-success m-1' title='Es opción de menú'>Menú</span>";
+
+                if (objeto.acc_id_padre == 0) {
+                    htmlStatus += "<span class='badge badge-primary m-1' title='Menú'>Nivel 1</span>";
+                }
+                else
+                {
+                    htmlStatus += "<span class='badge badge-light m-1' title='Submenú'> Nivel 2</span>";
+                }
+
+            }
+            else {
+                htmlStatus += " <span class='badge badge-info m-1' title='Acción simple - Funcionalidad sin menú'>Acción simple</span>";
+            }
+
+            return htmlStatus;
+        }
+
+        function refreshData() {
+            ref.api().ajax.reload()
+        }
+
+        $('.checktodos').change(function (e) {
+            e.preventDefault();
+            ref.api().ajax.reload()
+        });
+
+        $('#btnNuevo').click(function (e) {
+            e.preventDefault();
+
+            var dataToPost = {
+                accionID: ''
+            }
+
+            APP_OpenModalForm('#viewModalABM', '#formABMAccion', dataToPost, '@Url.Action("PartialViewModalABM", "Accion")')
+
+        });
+
+        function EditModal(control) {
+            var dataToPost = {
+                accionID: $(control).attr("data-id-rel")
+            }
+
+            APP_OpenModalForm('#viewModalABM', '#formABMAccion', dataToPost, '@Url.Action("PartialViewModalABM", "Accion")')
+        }
+
+    </script>
+
+}
+

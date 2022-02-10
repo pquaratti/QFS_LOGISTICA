@@ -1,0 +1,199 @@
+﻿@model Entidades.Proyecto
+
+@{
+    ViewBag.Title = "Configuración de Proyecto";
+    ViewBag.Subtitle = "[subtitulo]";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Proyectos";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Index", controller = _ControllerName });
+    //if (Model.Cerrada) { Response.Redirect(_urlBack); }
+}
+
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            @ViewBag.Title
+        </h4>
+        <p>
+            [Parrafo adicional]
+        </p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-12">
+        <div class="">
+            <ul class="nav nav-tabs nav-justified" id="myTab3" role="tablist">
+                @if (Model.Cerrado == false)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab-datos" data-toggle="tab" href="#tabDatos" role="tab" aria-controls="datos" aria-selected="true">Datos del Proyecto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-objetivos" data-toggle="tab" href="#tabObjetivos" role="tab" aria-controls="objetivos" aria-selected="false" onclick="LoadObjetivos();">Objetivos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-indicadores" data-toggle="tab" href="#tabIndicadores" role="tab" aria-controls="indicadores" aria-selected="false" onclick="LoadIndicadores();">Indicadores</a>
+                    </li>
+                }
+
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-resumen" data-toggle="tab" href="#tabResumen" role="tab" aria-controls="resumen" aria-selected="false" onclick="LoadResumen();">Resumen</a>
+                </li>
+            </ul>
+            <div class="tab-content bd bg-white bd-t-0 pd-20" id="myTabContent3">
+                @if (Model.Cerrado == false)
+                {
+                    <div class="tab-pane fade show active" id="tabDatos" role="tabpanel" aria-labelledby="tab-datos">
+                        @using (Html.BeginForm("SaveProyecto", _ControllerName, FormMethod.Post, new { id = "formularioABMFiles", name = "formularioABMFiles", @class = "formularioABMFiles formNotify formRedirect formValidar", funcionExtra = "saveProyecto" }))
+                        {
+                            @Html.HiddenFor(x => x.proy_id)
+                            @Html.HiddenFor(x => x.IdEncriptado)
+
+                            <div class="row mt-1">
+                                <div class="form-group col-md-12">
+                                    @Html.LabelFor(model => model.proy_titulo, htmlAttributes: new { @class = "control-label" })
+                                    @Html.EditorFor(model => model.proy_titulo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                                    @Html.ValidationMessageFor(model => model.proy_titulo, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="row mt-1">
+                                <div class="form-group col-md-6">
+                                    @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label" })
+                                    @Html.DropDownListFor(model => model.Tipo.tproy_id, new SelectList(Negocio.DDL.ListarTipoProyecto(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+                                </div>
+                                <div class="form-group col-md-6">
+                                    @Html.LabelFor(model => model.Area, htmlAttributes: new { @class = "control-label" })
+                                    @Html.DropDownListFor(model => model.Area.IdEncriptado, new SelectList(ViewBag.Areas, "IdEncriptado", "descripcion_combo", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+                                </div>
+                            </div>
+
+                            <div class="row mt-1">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.proy_fec_ini, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.proy_fec_ini, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                                        @Html.ValidationMessageFor(model => model.proy_fec_ini, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.proy_fec_fin, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.proy_fec_fin, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                                        @Html.ValidationMessageFor(model => model.proy_fec_fin, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(model => model.proy_descripcion, htmlAttributes: new { @class = "control-label" })
+                                    <textarea class="form-control" placeholder="" rows="15" required autocomplete="off" name="@Html.NameFor(model=>model.proy_descripcion)" id="@Html.NameFor(model=>model.proy_descripcion)">@Model.proy_descripcion</textarea>
+                                    @Html.ValidationMessageFor(model => model.proy_descripcion, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="control-label" for="proy_descripcion">Imagen</label>
+                                    <div id="viewFoto" style="zoom:90%"></div>
+                                </div>
+
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="d-flex flex-row-reverse">
+                                        <button id="submit" type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="tab-pane fade" id="tabObjetivos" role="tabpanel" aria-labelledby="tab-objetivos">
+                        <button id="btnAddObjetivo" type="button" modal-value-primary="@Model.IdEncriptado" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalObjetivo","Proyectos")" class="btnOpenModal btn btn-xs btn-info m-1"><i class="fa fa-plus"></i> Agregar</button>
+                        <div id="viewContentObjetivos"></div>
+                    </div>
+                    <div class="tab-pane fade" id="tabIndicadores" role="tabpanel" aria-labelledby="tab-indicadores">
+                        <button id="btnAddIndicadores" type="button" modal-value-primary="@Model.IdEncriptado" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABMIndicador","Indicadores")" class="btnOpenModal btn btn-xs btn-info m-1"><i class="fa fa-plus"></i> Agregar</button>
+                        <div id="viewContentIndicadores"></div>
+                    </div>
+                }
+                <div class="tab-pane fade" id="tabResumen" role="tabpanel" aria-labelledby="tab-resumen">
+                    <div id="viewContentResumen"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            @if (Model.Cerrado)
+            {
+                @: $('#tab-resumen').click();
+            }
+            refreshData();
+            functionExtraParametro('saveProyecto');
+        });
+
+        function refreshData() {
+
+        }
+
+        function functionExtraParametro(pClave)
+        {
+            if (pClave === "saveProyecto") {
+                _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialProyectoFoto", controller = "Proyectos" })";
+                APP_LoadPartialViewCallback('#viewFoto', { proyecto: '@Model.IdEncriptado' }, _urlPartial, function () {
+                });
+            }
+        }
+
+        function LoadResumen()
+        {
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialContentResumen", controller = "Proyectos" })";
+            APP_LoadPartialView('#viewContentResumen', { proyecto : '@Model.IdEncriptado' }, _urlPartial);
+        }
+
+    </script>
+
+    @if (Model.Cerrado == false)
+    {
+        <script>
+            $('.datepicker').datepicker(
+                {
+                    autoclose: true,
+                    todayHighlight: true,
+                    dateFormat: 'dd/mm/yy'
+
+                });
+
+            function functionExtraDelete() {
+                $("#imagenAsociada").load(location.href + " #imagenAsociada");
+            }
+
+
+            function LoadObjetivos() {
+                _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialContentObjetivos", controller = "Proyectos" })";
+                APP_LoadPartialView('#viewContentObjetivos', { proyecto : '@Model.IdEncriptado' }, _urlPartial);
+            }
+
+            function LoadIndicadores() {
+                _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialContentIndicadores", controller = "Proyectos" })";
+                APP_LoadPartialView('#viewContentIndicadores', { proyecto : '@Model.IdEncriptado' }, _urlPartial);
+            }
+
+        </script>
+    }
+
+}

@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Entidades.App.SIS_Usuario>
+
+@{
+    string _ControllerName = "Colaboradores";
+}
+
+<div class="d-flex flex-row-reverse mt-1 mb-2">
+    <span class="badge badge-info">Actualizar datos</span>
+
+    @*
+        <span class="badge badge-secondary">Skills Evolución</span>
+        <span class="badge badge-warning">Cat. Modificar</span>
+        <span class="badge badge-info">Cat. Evolución</span>*@
+</div>
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <td>DNI</td>
+            <td>Categoría</td>
+            <td>Area</td>
+            <th width="50px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.App.SIS_Usuario renglon in Model)
+        {
+            <tr>
+
+                <td>@renglon.usu_nombre</td>
+                <td>@renglon.usu_apellido</td>
+                <td>@renglon.usu_documento</td>
+                <td>@renglon.Categoria.cat_nombre</td>
+                <td>@renglon.Area.area_nombre</td>
+                <td>
+                    <button type="button"
+                            modal-value-primary="@renglon.IdEncriptado"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalActualizarDatos",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="Actualizar datos">
+                        <i class="fa fa-user"></i>
+                    </button>
+                   
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+</script>

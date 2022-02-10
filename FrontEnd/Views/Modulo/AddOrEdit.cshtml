@@ -1,0 +1,112 @@
+﻿@model Entidades.App.SIS_Modulo
+
+@{
+    if (Model.mod_id.Equals(0))
+    {
+        ViewBag.Title = "Alta de Módulo";
+    }
+    else
+    {
+        ViewBag.Title = "Modificación de Módulo";
+    }
+
+    ViewBag.Subtitle = "Ingrese datos generales y cree los perfiles que desee";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Modulo";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Index", controller = _ControllerName });
+}
+
+<div class="card card-body">
+    @using (Html.BeginForm("Save", _ControllerName, FormMethod.Post, new { id = "formularioABM", name = "formularioABM", @class = "formularioABM formNotify formRedirect formValidar" }))
+    {
+        @Html.HiddenFor(x => x.IdEncriptado)
+
+        <div class="row row-sm">
+            <div class="form-group col-sm-4">
+                @Html.LabelFor(model => model.mod_nombre, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.mod_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.mod_nombre, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-sm-6">
+                @Html.LabelFor(model => model.mod_descripcion, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.mod_descripcion, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.mod_descripcion, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <div class="custom-control custom-switch" style="margin-top: 34px;">
+                        @Html.EditorFor(model => model.mod_activo, new { htmlAttributes = new { @class = "custom-control-input", autocomplete = "off" } })
+                        @Html.LabelFor(model => model.mod_activo, htmlAttributes: new { @class = "custom-control-label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="d-flex flex-row-reverse">
+                    <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar</button>
+                    <button type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.mod_id > 0)
+    {
+        <hr />
+
+        <div class="row">
+            <div class="col-md-8">
+                <h4 class="pb-2"> Perfiles del módulo</h4>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex flex-row-reverse">
+                    <button id="btnCrearPerfil" type="button" class="btn btn-success btn-xs"> <i class="fa fa-plus-circle"></i> Crear perfil</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="viewPerfiles"></div>
+
+        <div id="viewModalABMPerfil"></div>
+
+    }
+
+</div>
+
+@section scripts{
+
+    @if (Model.mod_id > 0)
+    {
+        <script>
+            $('#btnCrearPerfil').click(function (e) {
+                e.preventDefault();
+
+                var dataToPost = {
+                    moduloID: '@Model.IdEncriptado',
+                    perfilID: '0'
+                }
+
+                APP_OpenModalForm('#viewModalABMPerfil','#formABMPerfil', dataToPost,'@Url.Action("PartialViewModalABM", "Perfil")')
+
+            });
+
+            function LoadPerfiles()
+            {
+                var dataToPost = {
+                   moduloID: '@Model.IdEncriptado'
+                }
+
+                APP_LoadPartialView('#viewPerfiles', dataToPost, '@Url.Action("PartialViewGridPerfiles","Perfil")');
+            }
+
+            LoadPerfiles();
+        </script>
+    }
+
+
+}

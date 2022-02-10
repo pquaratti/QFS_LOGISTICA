@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Usuarios del sistema";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Usuario";
+    string _urlAddOrEdit = Url.RouteUrl("Default", new { action = "AddOrEdit", controller = _ControllerName });
+    string _urlNuevo = Url.RouteUrl("Default", new { action = "AddOrEdit", controller = _ControllerName });
+    string _urlDelete = Url.RouteUrl("Default", new { action = "Delete", controller = _ControllerName });
+    string _urlActivar = Url.RouteUrl("Default", new { action = "Active", controller = _ControllerName });
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">Administrador de Usuarios </h4>
+        <p>Listado de Usuarios del sistema</p>
+    </div>
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button class="btn btn-sm btn-block btn-success op-btn-new" data-url-redirect="@_urlNuevo"><i class="fa fa-plus"></i> Nuevo</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    <div class="row button-box">
+        <div class="col-lg-2 col-sm-4 col-xs-12">
+            <div class="row">
+                <div class="col-md-12">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /row -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <div class="row mb-3">
+                    <div class="col-md-9">
+                        <div class="btn-group" role="group">
+
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="custom-control custom-switch" style="text-align:right;">
+                            <input id="checkActivos" type="checkbox" class="custom-control-input checktodos" />
+                            <label class="custom-control-label" for="checkActivos">Mostrar todos</label>
+                        </div>
+                    </div>
+                </div>
+                <div style="zoom:90%">
+                    <table id="dtUsuarios" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nickname</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Mail</th>
+                                <th>Estado</th>
+                                <th width="200px"></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    @section scripts{
+
+        <script>
+        var ref
+        $(document).ready(function () {
+              ref = APP_Datatable_Async(
+                    '#dtUsuarios',
+                    'LoadTableAjax',
+                    'POST',
+                    function (d) {
+                        d.mostrar_todos = $('.checktodos').prop("checked");
+                    },
+                    [
+                        { "data": "usu_nickname", "name": "usu_nickname", "autoWidth": true },
+                        { "data": "usu_nombre", "name": "usu_nombre", "autoWidth": true },
+                        { "data": "usu_apellido", "name": "usu_apellido", "autoWidth": true },
+                        { "data": "usu_mail", "name": "usu_mail", "autoWidth": true },
+                        { "data": null, "bSortable": false, "autoWidth": true, "mRender": function (o) { return APP_GRID_estados(o); } },
+                        { "data": null, "bSortable": false, "autoWidth": true, "mRender": function (o) { return APP_GRID_Options(o.IdEncriptado,true); } }
+                    ]
+                );
+            });
+
+
+        function APP_GRID_Options(id, estado) {
+            var htmlControls = '';
+            htmlControls += '<button class="btn btn-info btn-xs op-grid-edit btn-grid" data-url-redirect="@_urlAddOrEdit?id=' + id + '" onclick="TbEdit(this);"><i class="fa fa-edit"></i></button>';
+
+            if (estado === true) {
+                htmlControls += '<button class="btn btn-danger btn-xs op-grid-delete ml-2 no-borrar refresh-data btn-grid" data-url-redirect="@_urlDelete?id=' + id + '" onclick="TbDelete(this);"><i class="fa fa-trash"></i></button>'
+            }
+            else {
+                htmlControls += '<button class="btn btn-success btn-xs op-grid-recuperar ml-2 refresh-data btn-grid" data-url-redirect="@_urlActivar?id=' + id + '" onclick="TbRecuperar(this);">Activar</button>'
+            }
+            return htmlControls;
+            }
+
+            function APP_GRID_estados(o) {
+                var htmlControls = '';
+
+                if (o.Bloqueado == true) {
+                    htmlControls += '<span class="badge bg-danger tx-white">Bloqueado</span>';
+                }
+                else {
+                    htmlControls += '<span class="badge bg-success tx-white">Activo</span>';
+                }
+
+                return htmlControls;
+            }
+
+
+    function refreshData() {
+            ref.api().ajax.reload()
+    }
+        $('.checktodos').change(function (e) {
+            e.preventDefault();
+            ref.api().ajax.reload()
+        });
+
+        </script>
+
+    }
+

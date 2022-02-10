@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Entidades.App.SIS_Usuario_Login>
+
+<div class="col-md-12">
+    <div class="table-responsive">
+        <table class="table table-sm table-header-app datatablePartial-scrollbar">
+            <thead>
+                <tr>
+                    <th>Nombre del Usuario</th>
+                    <th>IPv4</th>
+                    <th>Tiempo Online (minutos)</th>
+                    <th>Fecha de Inicio</th>
+                    <th width="50px"></th> 
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    double tiempo = (DateTime.Now - item.usl_fec_ini).TotalMinutes;
+                    <tr>
+                        <td>@item.Usuario.usu_apellido @item.Usuario.usu_nombre</td>
+                        <td>@item.usl_ipv4</td>
+                        <td>@tiempo.ToString("F1")</td>
+                        <td>@item.usl_fec_ini</td>
+                        <td>
+                            <button type="button"
+                                    data-id-rel="@item.IdEncriptado"
+                                    url-delete="@Url.Action("DeleteSession","Usuario")"
+                                    class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar item">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+ </div>
+

@@ -1,0 +1,62 @@
+﻿@model Entidades.App.Token
+
+@{
+
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Configuración de parametros de sesión
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalConfiguracionParametros", "Configuracion", FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "false", resetForm = "false", closeForm = "true", funcionExtra = "true" }))
+            {
+                <div class="modal-body">
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <label class="control-label" for="ddlDistrito">Distritos</label>
+                            @Html.DropDownList("DistritoID", new SelectList(ViewBag.DistritosDDL, "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", style = "top:0px;height:30px", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <label class="control-label" for="ddlDistrito">Subdistrito</label>
+                            @Html.DropDownList("SubdistritoID", new SelectList(ViewBag.SubdistritosDDL, "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", style = "top:0px;height:30px", required = "required" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $('#DistritoID').change();
+
+    $('#DistritoID').change(function (e) {
+        _filterID = $('#DistritoID').val();
+        _urlJson = "@Url.RouteUrl("Default", new { action = "ListarSelect", controller = "Subdistritos" })";
+        APP_LoadSelectModal('#SubdistritoID', _urlJson, _filterID);
+    });
+
+    function functionExtra()
+    {
+        location.reload();
+    }
+
+</script>

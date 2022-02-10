@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Entidades.Tarea_Indicador>
+@{
+    string _ControllerName = "Tareas";
+    int estadoTarea = (int)Negocio.TareasEstados.Estados.Edicion;
+    bool result = Model.First().Tarea.EstadoTarea.tarestado_id.Equals(estadoTarea);
+}
+
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar-nosearch">
+    <thead>
+        <tr>
+            <th>Proyecto</th>
+            <th>Indicador</th>
+            <th>Valor Base</th>
+            <th>Valor Meta</th>
+            <th>Incidencia / Total</th>
+            <th>Descripción</th>
+            @if(result)
+            {
+                <th width="50px"></th>
+            }
+            </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Tarea_Indicador renglon in Model)
+        {
+        <tr>
+            <td>@renglon.Indicador.Proyecto.proy_titulo</td>
+            <td>@renglon.Indicador.pryind_nombre </td>
+            <td>@renglon.Indicador.pryind_valor_base </td>
+            <td>@renglon.Indicador.pryind_valor_meta </td>
+            <td>@renglon.tarind_incidencia% /  <span class="tx-sm text-success font-weight-bold">@renglon.Cobertura.ToString("0.00")%</span>  </td>
+            <td>@renglon.Indicador.pryind_descripcion</td>
+            @if (result)
+            {
+                <td>
+                    <button type="button"
+                            data-id-rel="@renglon.tarind_id"
+                            url-delete="@Url.Action("DesvincularIndicador",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Desvincular">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            }
+           
+        </tr>
+        }
+
+    </tbody>
+</table>
+

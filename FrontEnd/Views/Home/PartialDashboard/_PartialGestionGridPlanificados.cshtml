@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Entidades.Planificacion_Cabecera>
+
+<div class="row mt-3 mb-3">
+    <div class="col-md-12">
+        <div class="card card-hover card-projects">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5 class="card-title mg-b-0">Planificaciones</h5>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="card-title mg-b-0 mt-2">Totales por distrito (Confirmadas)</p>
+                    </div>
+                </div>
+                
+                <nav class="nav">
+                    @*<a href="" class="link-gray-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-help-circle svg-16"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12" y2="17"></line></svg></a>
+                    <a href="" class="link-gray-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical svg-16"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></a>*@
+                </nav>
+            </div>
+            <div>
+                <div class="table-responsive">
+                    <table class="table table-primary table-hover table-striped mg-b-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Distrito</th>
+                                <th scope="col">Importe</th>
+                                <th scope="col">%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th scope="row">@item.Distrito.dis_nombre</th>
+                                    <td>@item.total_planificacion.ToString("C")</td>
+                                    <td>@item.PorcentajePlanificacion.ToString("P")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+      
+    </div>
+
+
+    @*@foreach (var itemTotal in Model)
+        {
+            <div class="col-md-3">
+                <div class="card card-hover card-social-one">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mg-b-10">
+                            <h1 class="card-value">@itemTotal.TotalSuma.ToString("C")</h1>
+                        </div>
+                        <h5 class="card-title tx-primary">@itemTotal.Titulo</h5>
+                        <p class="card-desc">@itemTotal.Subtitulo</p>
+                    </div>
+                </div>
+            </div>
+        }*@
+</div>
+

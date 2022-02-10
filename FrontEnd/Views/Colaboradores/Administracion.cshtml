@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "Colaboradores";
+    ViewBag.Subtitle = "Administración ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Colaboradores";
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-12">
+        <h4 class="content-title content-title-xs">Colaboradores</h4>
+        <p>Administración de Colaboradores</p>
+    </div>
+</div>
+
+<div class="card card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <div class="row mt-2">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label" for="ddlArea">Areas / Sectores</label>
+                            @Html.DropDownList("ddlArea", new SelectList(ViewBag.Areas, "IdEncriptado", "descripcion_combo", 0), new { @class = "form-control input-sm select2", style = "top:0px;height:30px", required = "required" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label" for="txtBusqueda">Buscar por texto <span class="tx-sm-thin small"> (Puede ser por nombre, apellido o DNI)</span></label>
+                            <input autocomplete="off" class="form-control form-control-sm text-box single-line" data-val="true" id="txtBusqueda" name="txtBusqueda" type="text" value="">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <button id="btnBuscar" type="button" class="btn btn-primary btn-block btn-sm mt-4"><i class="fa fa-search"></i> Buscar</button>
+                        </div>
+                    </div>
+                </div>
+             
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <div id="viewGridData" style="zoom:90%"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+           refreshData();
+        });
+
+        function refreshData()
+        {
+            dataObject = {
+                areaID: $('#ddlArea').val(),
+                textoBusqueda: $('#txtBusqueda').val()
+            };
+
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataColaboradoresAdministracion", controller = _ControllerName })";
+            APP_LoadPartialView('#viewGridData', dataObject, _urlPartial);
+
+        }
+
+        $('#btnBuscar').click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+
+    </script>
+}
+
+

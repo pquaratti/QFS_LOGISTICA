@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "Preguntas Frecuentes";
+    ViewBag.Subtitle = "Administración de Preguntas Frecuentes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "PreguntasFrecuentes";
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">Preguntas Frecuentes</h4>
+        <p>Listado de preguntas</p>
+    </div>
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABMPreguntasFrecuentes",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Crear</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="d-flex flex-row-reverse">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <div id="viewGridData"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            refreshData();
+        });
+
+        function refreshData()
+        {
+            dataObject = {};
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataPreguntas", controller = _ControllerName })";
+            APP_LoadPartialView('#viewGridData', dataObject, _urlPartial);
+        }
+
+    </script>
+}
+
+

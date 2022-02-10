@@ -1,0 +1,82 @@
+﻿@model IEnumerable<Entidades.Tutorial>
+@{
+    string _ControllerName = "Tutoriales";
+    int x = 0;
+
+}
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th width="50px"></th>
+            <th>Título</th>
+            <th>Acción</th>
+            <th>Descripción</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Tutorial renglon in Model)
+        {
+            x += 1;
+            <tr>
+                <td width="40px">
+                    <div class="custom-control custom-switch" style="text-align:right;">
+                        <input id="checkActivos_@x" type="checkbox" class="change-status custom-control-input" @(renglon.tut_activo == true ? "checked" : "") data-id-rel="@renglon.tut_id" />
+                        <label class="custom-control-label" for="checkActivos_@x"></label>
+                    </div>
+                </td>
+                <td>@renglon.tut_titulo</td>
+                <td> @(renglon.Accion.acc_id > 0 ? @renglon.Accion.acc_nombre : "No vinculada")</td>
+                <td>@renglon.tut_descrip</td>
+                <td>
+                    <button type="button"
+                            modal-value-primary="@renglon.tut_id"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalABM",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            data-id-rel="@renglon.tut_id"
+                            url-delete="@Url.Action("Delete",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar item">
+                        <i class="fa fa-trash"></i>
+                    </button>
+
+                    @if (renglon.tut_archivo.Length > 0)
+                    {
+                        <a href="@Url.Content("~/UploadTutoriales/" + renglon.tut_archivo)" target="_blank" class="btn btn-sm btn-grid btn-success"><i class="fa fa-file-download"></i></a>
+                    }
+
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $('.change-status').change(function (e) {
+        var _tutorialID = $(this).attr("data-id-rel");
+        var _statusCheck = $(this).prop("checked");
+
+        var dataSend = {
+            tutorialID: _tutorialID,
+            changeStatus : _statusCheck
+        }
+
+        APP_executeAjaxPostNoClosePopup('@Url.Action("ActivarDesactivarTutorial", "Tutoriales")', dataSend, function (resp)
+        {
+            if (resp.Result.Success !== true) {
+                APP_ShowNotify('Falló el activado/desactivado del tutorial', 'Error: ' + resp.Result.Message, notifyTypes.Error);
+            }
+
+            else {
+                APP_ShowNotify('Cambio de estado realizado con éxito.', resp.Result.Message, notifyTypes.Success);
+            }
+        });
+    });
+</script>
+
+

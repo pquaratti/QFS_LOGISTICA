@@ -1,0 +1,103 @@
+﻿@model Entidades.Proyecto_Objetivo
+
+@{
+    string _ControllerName = "Proyectos";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.pryobj_id.Equals(0) ? "Alta de Objetivo " : "Modificar Objetivo")
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalObjetivo", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModalFiles", funcionExtra = "true", refreshDatatable = "true", resetForm = "true", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.ProyectoVinculado.proy_id)
+                    @Html.HiddenFor(x => x.ProyectoVinculado.IdEncriptado)
+                    @Html.HiddenFor(x => x.pryobj_id)
+                    @Html.HiddenFor(x => x.IdEncriptado)
+                    @Html.HiddenFor(x => x.pryobj_foto)
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.pryobj_nombre, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.pryobj_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.pryobj_nombre, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.pryobj_descripcion, htmlAttributes: new { @class = "control-label" })
+                            <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.pryobj_descripcion)" id="@Html.NameFor(model=>model.pryobj_descripcion)">@Model.pryobj_descripcion</textarea>
+                            @Html.ValidationMessageFor(model => model.pryobj_descripcion, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="form-group col-md-8">
+                            @Html.LabelFor(model => model.Prioridad, new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.Prioridad.tprioridad_id, new SelectList(ViewBag.Prioridades, "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(model => model.pryobj_codigo, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.pryobj_codigo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.pryobj_codigo, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.Label("Seleccione una imagen", new { @class = "control-label" })
+                            <input id="fileUpload" type="file" class="form-control upload" title="Haz click aquí para buscar tu foto" accept="image/png, image/jpeg" />
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.pryobj_fec_ini, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.pryobj_fec_ini, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.pryobj_fec_ini, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.pryobj_fec_ven, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.pryobj_fec_ven, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.pryobj_fec_ven, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function functionExtra() {
+        LoadObjetivos();
+    }
+
+    $('.datepicker').datepicker(
+        {
+            autoclose: true,
+            todayHighlight: true,
+            dateFormat: 'dd/mm/yy'
+        });
+</script>

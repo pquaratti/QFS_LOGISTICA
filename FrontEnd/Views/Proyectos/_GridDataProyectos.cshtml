@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Entidades.Proyecto>
+
+@{
+    string _ControllerName = "Proyectos";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Título</th>
+            <th>Organización</th>
+            <th>Tipo de Proyecto</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha de Finalización</th>
+            <th>Descripción</th>
+            <th width="80px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Proyecto renglon in Model)
+        {
+            <tr>
+                <td style="text-align:center">
+                    @if (renglon.proy_foto.Length > 0)
+                    {
+                        <div class="project-img"><img src="@Url.Content("~/UploadFiles/" + renglon.proy_foto)" width="48" height="48" viewBox="0 0 48 48" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><rect x="3" y="3" width="48" height="48" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></div>
+                    }
+                    else
+                    {
+                        <div class="project-img"><img src="@Url.Content("~/UploadFiles/empty_image.png")" width="48" height="48" viewBox="0 0 48 48" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><rect x="3" y="3" width="48" height="48" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></div>
+                    }
+                </td>
+                <td>@renglon.proy_titulo</td>
+                <td>@renglon.Organizacion.org_abreviatura</td>
+                <td>@renglon.Tipo.tproy_nombre</td>
+                <td>@renglon.proy_fec_ini.ToString("dd/MM/yyyy")</td>
+                <td>@renglon.proy_fec_fin.ToString("dd/MM/yyyy")</td>
+                <td>@renglon.proy_descripcion</td>
+                <td style="text-align: center; vertical-align: middle;">
+                    <button class="btn btn-info btn-sm btn-grid op-btn-new" title=""
+                            data-url-redirect="@Url.RouteUrl("Default", new { action = "Configuracion", controller = _ControllerName, id=renglon.IdEncriptado })" onclick="TbEdit(this);">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    @if (!renglon.Cerrado)
+                    {
+                        <button type="button"
+                                data-id-rel="@renglon.proy_id"
+                                url-delete="@Url.Action("Delete",_ControllerName)"
+                                class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Proyecto">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    }
+
+                    @if (renglon.Cerrado)
+                    {
+                        <button url="@Url.RouteUrl("Default", new { action = "Seguimiento", controller = _ControllerName, id=renglon.IdEncriptado })"
+                                onclick="ClickRedirect(this);"
+                                class="btn btn-light btn-sm btn-grid" 
+                                title="Seguimiento">
+                            <i class="fa fa-rocket"></i>
+                        </button>
+                    }
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+        refreshData();
+    }
+
+</script>

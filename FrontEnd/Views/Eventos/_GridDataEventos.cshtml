@@ -1,0 +1,133 @@
+﻿@model IEnumerable<Entidades.Evento>
+
+@{
+    string _ControllerName = "Eventos";
+    int _cont = 0;
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th width="200px">Tiempo faltante</th>
+            <th>Título</th>
+            <th>Objetivo</th>
+            <th>link</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Evento renglon in Model)
+        {
+        <tr>
+            <td class="timer"
+                data-timer="@renglon.eve_fecha.ToString("MM-dd-yyyy HH:mm:ss")"
+                data-end="@renglon.eve_fecha_fin.ToString("MM-dd-yyyy HH:mm:ss")"
+                style="text-align: center; vertical-align: middle; font-weight: 600">
+                Cargando ..
+            </td>
+            <td>@renglon.eve_titulo</td>
+            <td>@renglon.eve_objetivo</td>
+            <td>@renglon.eve_link</td>
+            <td>
+                @if (renglon.Cerrado == false & renglon.Finalizado == false)
+                {
+                    var _mensajeModal = "Desea cerrar el Evento: " + renglon.eve_titulo + "? ";
+                    <button type="button"
+                            data-id-rel="@renglon.eve_id"
+                            accion-url="@Url.Action("CerrarEvento", "Eventos")"
+                            accion-nombre-clave="cierraEvento"
+                            accion-titulo-modal="Evento: @renglon.eve_titulo"
+                            accion-mensaje-modal="@_mensajeModal"
+                            accion-mensaje-exitoso="Evento cerrado exitosamente!"
+                            class="btn btn-primary btn-sm btn-grid btn-question-action" title="Cerrar Evento">
+                        <i class="fa fa-lock-open"></i>
+                    </button>
+                    <button class="btn btn-info btn-sm btn-grid op-btn-new" title=""
+                            data-url-redirect="@Url.RouteUrl("Default", new { action = "AddOrEditEVE", controller = "Eventos", id=renglon.eve_id })" onclick="TbEdit(this);">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            data-id-rel="@renglon.eve_id"
+                            url-delete="@Url.Action("Delete","Eventos")"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar item">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                }
+                else
+                {
+                    if (renglon.Finalizado == false)
+                    {
+                        <button type="button"
+                                modal-value-primary="@renglon.eve_id"
+                                modal-value-secondary="0"
+                                modal-value-aux="0"
+                                modal-url="@Url.Action("PartialModalRenglonesAsistencia","Eventos")"
+                                class="btn btn-info btn-sm btn-grid btnOpenModal" title="Ver detalle">
+                            <i class="fa fa-list"></i>
+                        </button>
+                    }
+                    else { 
+                        <button type="button"
+                                modal-value-primary="@renglon.eve_id"
+                                modal-value-secondary="0"
+                                modal-value-aux="0"
+                                modal-url="@Url.Action("PartialModalRenglonesVista","Eventos")"
+                                class="btn btn-info btn-sm btn-grid btnOpenModal" title="Ver detalle">
+                            <i class="fa fa-list"></i>
+                        </button>
+                    }
+                }
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+
+<script>
+
+    function pad(d) {
+        return (d < 10) ? '0' + d.toString() : d.toString();
+    }
+
+    function tiempo(element, stop) {
+
+        var days, hours, minutes, seconds;
+        var now = new Date().getTime();
+        var count = new Date(element.getAttribute("data-timer")).getTime();
+        var offset = new Date(element.getAttribute("data-end")).getTime();
+        var dist = offset - now;
+        days = Math.floor(dist / (1000 * 60 * 60 * 24));
+        hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+        seconds = Math.floor((dist % (1000 * 60)) / 1000);
+        if (dist < 0) {
+            element.setAttribute("class", "bg-danger-light");
+            clearInterval(stop);
+            element.innerHTML = "Finalizado | " + element.getAttribute("data-timer").split(" ")[0];
+        } else {
+            if (count - now < 0) {
+                element.setAttribute("class", "bg-warning-light");
+                clearInterval(stop);
+                element.innerHTML = " EN CURSO "
+            } else {
+                element.setAttribute("class", "bg-success-light");
+                element.innerHTML = days + " D : " + pad(hours) + " : " + pad(minutes) + " : " + pad(seconds)
+            }
+        }
+    }
+        
+
+    var timers = document.getElementsByClassName("timer");
+    var x = [];
+    for (var i = 0; i < timers.length; i++) {
+        x[i] = setInterval(tiempo, 1000, timers[i], x[i] );
+    }
+   
+    function functionAccionCustom(pClave) {
+       refreshData();
+    }
+  
+
+</script>

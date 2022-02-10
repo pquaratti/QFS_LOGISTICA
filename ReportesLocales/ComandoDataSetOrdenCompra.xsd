@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ComandoDataSetOrdenCompra" targetNamespace="http://tempuri.org/ComandoDataSetOrdenCompra.xsd" xmlns:mstns="http://tempuri.org/ComandoDataSetOrdenCompra.xsd" xmlns="http://tempuri.org/ComandoDataSetOrdenCompra.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="ComandoDataSetOrdenCompra" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="ComandoDataSetOrdenCompra" msprop:Generator_UserDSName="ComandoDataSetOrdenCompra">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Orden_Compra_Cabecera" msprop:Generator_TableClassName="Orden_Compra_CabeceraDataTable" msprop:Generator_TableVarName="tableOrden_Compra_Cabecera" msprop:Generator_TablePropName="Orden_Compra_Cabecera" msprop:Generator_RowDeletingName="Orden_Compra_CabeceraRowDeleting" msprop:Generator_RowChangingName="Orden_Compra_CabeceraRowChanging" msprop:Generator_RowEvHandlerName="Orden_Compra_CabeceraRowChangeEventHandler" msprop:Generator_RowDeletedName="Orden_Compra_CabeceraRowDeleted" msprop:Generator_UserTableName="Orden_Compra_Cabecera" msprop:Generator_RowChangedName="Orden_Compra_CabeceraRowChanged" msprop:Generator_RowEvArgName="Orden_Compra_CabeceraRowChangeEvent" msprop:Generator_RowClassName="Orden_Compra_CabeceraRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="occ_fecha" msprop:Generator_ColumnVarNameInTable="columnocc_fecha" msprop:Generator_ColumnPropNameInRow="occ_fecha" msprop:Generator_ColumnPropNameInTable="occ_fechaColumn" msprop:Generator_UserColumnName="occ_fecha" type="xs:string" minOccurs="0" />
+              <xs:element name="occ_nro_uoc" msprop:Generator_ColumnVarNameInTable="columnocc_nro_uoc" msprop:Generator_ColumnPropNameInRow="occ_nro_uoc" msprop:Generator_ColumnPropNameInTable="occ_nro_uocColumn" msprop:Generator_UserColumnName="occ_nro_uoc" type="xs:string" minOccurs="0" />
+              <xs:element name="occ_nro_comprar" msprop:Generator_ColumnVarNameInTable="columnocc_nro_comprar" msprop:Generator_ColumnPropNameInRow="occ_nro_comprar" msprop:Generator_ColumnPropNameInTable="occ_nro_comprarColumn" msprop:Generator_UserColumnName="occ_nro_comprar" type="xs:string" minOccurs="0" />
+              <xs:element name="occ_fec_vencimento" msprop:Generator_ColumnVarNameInTable="columnocc_fec_vencimento" msprop:Generator_ColumnPropNameInRow="occ_fec_vencimento" msprop:Generator_ColumnPropNameInTable="occ_fec_vencimentoColumn" msprop:Generator_UserColumnName="occ_fec_vencimento" type="xs:string" minOccurs="0" />
+              <xs:element name="occ_descrip" msprop:Generator_ColumnVarNameInTable="columnocc_descrip" msprop:Generator_ColumnPropNameInRow="occ_descrip" msprop:Generator_ColumnPropNameInTable="occ_descripColumn" msprop:Generator_UserColumnName="occ_descrip" type="xs:string" minOccurs="0" />
+              <xs:element name="prov_cuit" msprop:Generator_ColumnVarNameInTable="columnprov_cuit" msprop:Generator_ColumnPropNameInRow="prov_cuit" msprop:Generator_ColumnPropNameInTable="prov_cuitColumn" msprop:Generator_UserColumnName="prov_cuit" type="xs:string" minOccurs="0" />
+              <xs:element name="prov_razon_social" msprop:Generator_ColumnVarNameInTable="columnprov_razon_social" msprop:Generator_ColumnPropNameInRow="prov_razon_social" msprop:Generator_ColumnPropNameInTable="prov_razon_socialColumn" msprop:Generator_UserColumnName="prov_razon_social" type="xs:string" minOccurs="0" />
+              <xs:element name="prov_nombre_empresa" msprop:Generator_ColumnVarNameInTable="columnprov_nombre_empresa" msprop:Generator_ColumnPropNameInRow="prov_nombre_empresa" msprop:Generator_ColumnPropNameInTable="prov_nombre_empresaColumn" msprop:Generator_UserColumnName="prov_nombre_empresa" type="xs:string" minOccurs="0" />
+              <xs:element name="prov_mail" msprop:Generator_ColumnVarNameInTable="columnprov_mail" msprop:Generator_ColumnPropNameInRow="prov_mail" msprop:Generator_ColumnPropNameInTable="prov_mailColumn" msprop:Generator_UserColumnName="prov_mail" type="xs:string" minOccurs="0" />
+              <xs:element name="dis_nombre" msprop:Generator_ColumnVarNameInTable="columndis_nombre" msprop:Generator_ColumnPropNameInRow="dis_nombre" msprop:Generator_ColumnPropNameInTable="dis_nombreColumn" msprop:Generator_UserColumnName="dis_nombre" type="xs:string" minOccurs="0" />
+              <xs:element name="dis_abreviatura" msprop:Generator_ColumnVarNameInTable="columndis_abreviatura" msprop:Generator_ColumnPropNameInRow="dis_abreviatura" msprop:Generator_ColumnPropNameInTable="dis_abreviaturaColumn" msprop:Generator_UserColumnName="dis_abreviatura" type="xs:string" minOccurs="0" />
+              <xs:element name="sud_nombre" msprop:Generator_ColumnVarNameInTable="columnsud_nombre" msprop:Generator_ColumnPropNameInRow="sud_nombre" msprop:Generator_ColumnPropNameInTable="sud_nombreColumn" msprop:Generator_UserColumnName="sud_nombre" type="xs:string" minOccurs="0" />
+              <xs:element name="sud_abreviatura" msprop:Generator_ColumnVarNameInTable="columnsud_abreviatura" msprop:Generator_ColumnPropNameInRow="sud_abreviatura" msprop:Generator_ColumnPropNameInTable="sud_abreviaturaColumn" msprop:Generator_UserColumnName="sud_abreviatura" type="xs:string" minOccurs="0" />
+              <xs:element name="ele_nombre" msprop:Generator_ColumnVarNameInTable="columnele_nombre" msprop:Generator_ColumnPropNameInRow="ele_nombre" msprop:Generator_ColumnPropNameInTable="ele_nombreColumn" msprop:Generator_UserColumnName="ele_nombre" type="xs:string" minOccurs="0" />
+              <xs:element name="ele_abreviatura" msprop:Generator_ColumnVarNameInTable="columnele_abreviatura" msprop:Generator_ColumnPropNameInRow="ele_abreviatura" msprop:Generator_ColumnPropNameInTable="ele_abreviaturaColumn" msprop:Generator_UserColumnName="ele_abreviatura" type="xs:string" minOccurs="0" />
+              <xs:element name="tac_abreviatura" msprop:Generator_ColumnVarNameInTable="columntac_abreviatura" msprop:Generator_ColumnPropNameInRow="tac_abreviatura" msprop:Generator_ColumnPropNameInTable="tac_abreviaturaColumn" msprop:Generator_UserColumnName="tac_abreviatura" type="xs:string" minOccurs="0" />
+              <xs:element name="tac_nombre" msprop:Generator_ColumnVarNameInTable="columntac_nombre" msprop:Generator_ColumnPropNameInRow="tac_nombre" msprop:Generator_ColumnPropNameInTable="tac_nombreColumn" msprop:Generator_UserColumnName="tac_nombre" type="xs:string" minOccurs="0" />
+              <xs:element name="tie_nombre" msprop:Generator_ColumnVarNameInTable="columntie_nombre" msprop:Generator_ColumnPropNameInRow="tie_nombre" msprop:Generator_ColumnPropNameInTable="tie_nombreColumn" msprop:Generator_UserColumnName="tie_nombre" type="xs:string" minOccurs="0" />
+              <xs:element name="tie_abreviatura" msprop:Generator_ColumnVarNameInTable="columntie_abreviatura" msprop:Generator_ColumnPropNameInRow="tie_abreviatura" msprop:Generator_ColumnPropNameInTable="tie_abreviaturaColumn" msprop:Generator_UserColumnName="tie_abreviatura" type="xs:string" minOccurs="0" />
+              <xs:element name="occ_total" msprop:Generator_ColumnVarNameInTable="columnocc_total" msprop:Generator_ColumnPropNameInRow="occ_total" msprop:Generator_ColumnPropNameInTable="occ_totalColumn" msprop:Generator_UserColumnName="occ_total" type="xs:string" minOccurs="0" />
+              <xs:element name="estado" msprop:Generator_ColumnVarNameInTable="columnestado" msprop:Generator_ColumnPropNameInRow="estado" msprop:Generator_ColumnPropNameInTable="estadoColumn" msprop:Generator_UserColumnName="estado" type="xs:string" minOccurs="0" />
+              <xs:element name="codigo_barras" msprop:Generator_ColumnVarNameInTable="columncodigo_barras" msprop:Generator_ColumnPropNameInRow="codigo_barras" msprop:Generator_ColumnPropNameInTable="codigo_barrasColumn" msprop:Generator_UserColumnName="codigo_barras" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Orden_Compra_Renglones" msprop:Generator_TableClassName="Orden_Compra_RenglonesDataTable" msprop:Generator_TableVarName="tableOrden_Compra_Renglones" msprop:Generator_TablePropName="Orden_Compra_Renglones" msprop:Generator_RowDeletingName="Orden_Compra_RenglonesRowDeleting" msprop:Generator_RowChangingName="Orden_Compra_RenglonesRowChanging" msprop:Generator_RowEvHandlerName="Orden_Compra_RenglonesRowChangeEventHandler" msprop:Generator_RowDeletedName="Orden_Compra_RenglonesRowDeleted" msprop:Generator_UserTableName="Orden_Compra_Renglones" msprop:Generator_RowChangedName="Orden_Compra_RenglonesRowChanged" msprop:Generator_RowEvArgName="Orden_Compra_RenglonesRowChangeEvent" msprop:Generator_RowClassName="Orden_Compra_RenglonesRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ocr_nro_renglon" msprop:Generator_ColumnVarNameInTable="columnocr_nro_renglon" msprop:Generator_ColumnPropNameInRow="ocr_nro_renglon" msprop:Generator_ColumnPropNameInTable="ocr_nro_renglonColumn" msprop:Generator_UserColumnName="ocr_nro_renglon" type="xs:string" minOccurs="0" />
+              <xs:element name="ocr_detalle" msprop:Generator_ColumnVarNameInTable="columnocr_detalle" msprop:Generator_ColumnPropNameInRow="ocr_detalle" msprop:Generator_ColumnPropNameInTable="ocr_detalleColumn" msprop:Generator_UserColumnName="ocr_detalle" type="xs:string" minOccurs="0" />
+              <xs:element name="ocr_cantidad" msprop:Generator_ColumnVarNameInTable="columnocr_cantidad" msprop:Generator_ColumnPropNameInRow="ocr_cantidad" msprop:Generator_ColumnPropNameInTable="ocr_cantidadColumn" msprop:Generator_UserColumnName="ocr_cantidad" type="xs:string" minOccurs="0" />
+              <xs:element name="ocr_precio_unitario" msprop:Generator_ColumnVarNameInTable="columnocr_precio_unitario" msprop:Generator_ColumnPropNameInRow="ocr_precio_unitario" msprop:Generator_ColumnPropNameInTable="ocr_precio_unitarioColumn" msprop:Generator_UserColumnName="ocr_precio_unitario" type="xs:string" minOccurs="0" />
+              <xs:element name="cgg_nombre" msprop:Generator_ColumnVarNameInTable="columncgg_nombre" msprop:Generator_ColumnPropNameInRow="cgg_nombre" msprop:Generator_ColumnPropNameInTable="cgg_nombreColumn" msprop:Generator_UserColumnName="cgg_nombre" type="xs:string" minOccurs="0" />
+              <xs:element name="cgg_ipp" msprop:Generator_ColumnVarNameInTable="columncgg_ipp" msprop:Generator_ColumnPropNameInRow="cgg_ipp" msprop:Generator_ColumnPropNameInTable="cgg_ippColumn" msprop:Generator_UserColumnName="cgg_ipp" type="xs:string" minOccurs="0" />
+              <xs:element name="ruc_nombre" msprop:Generator_ColumnVarNameInTable="columnruc_nombre" msprop:Generator_ColumnPropNameInRow="ruc_nombre" msprop:Generator_ColumnPropNameInTable="ruc_nombreColumn" msprop:Generator_UserColumnName="ruc_nombre" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,49 @@
+﻿@model Entidades.Mesa_Ayuda
+
+@{
+    string _nombre = "Mesa de Ayuda";
+    string _controllerName = "MesaAyuda";
+
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.mesa_id.Equals(0) ? "Crear Consulta / Inconveniente" : "Modificar" + _nombre)
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModal", _controllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.mesa_id)
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.TipoConsulta, new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.TipoConsulta.tipoconsulta_id, new SelectList(Negocio.DDL.ListarTiposConsultaMesaAyuda(Filters.VerificarToken.ConsultarToken()), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.mesa_problema, htmlAttributes: new { @class = "control-label" })
+                            <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.mesa_problema)" id="@Html.NameFor(model=>model.mesa_problema)">@Model.mesa_problema</textarea>
+                            @Html.ValidationMessageFor(model => model.mesa_problema, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

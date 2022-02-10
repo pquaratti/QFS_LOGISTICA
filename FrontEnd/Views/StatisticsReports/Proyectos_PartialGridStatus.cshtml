@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Entidades.Proyecto>
+
+@{
+    string _ControllerName = "StatisticsReports";
+}
+
+<div class="row mt-2">
+    <div class="col-md-12">
+        <div class="card card-hover card-active-projects">
+            <div class="card-header bg-transparent pd-15">
+                <h6 class="card-title mg-b-0">Proyectos en Ejecución</h6>
+                <nav class="nav align-items-center">
+                    @*<span class="mg-r-5">Ordenar por:</span>
+                        <a href=""><strong>Date Added</strong> <i class="icon ion-ios-arrow-down"></i></a>*@
+                </nav>
+            </div><!-- card-header -->
+            <ul class="list-group list-group-flush" style="height:300px; overflow-y:scroll">
+                @foreach (var item in Model)
+                {
+                    <li class="list-group-item">
+                        <div class="media">
+                            <div class="project-img bg-warning">
+                                @if (item.proy_foto.Length > 0)
+                                {
+                                    <div class="project-img">
+                                        <img src="@Url.Content("~/UploadFiles/" + item.proy_foto)" width="48" height="48" viewBox="0 0 48 48" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="project-img">
+                                        <img src="@Url.Content("~/UploadFiles/empty_image.png")" width="48" height="48" viewBox="0 0 48 48" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+                                    </div>
+                                }
+                            </div>
+                            <div class="media-body mg-t-10 mg-md-t-0 mg-md-l-10">
+                                <h6 class="project-title"><a href="@Url.Action("Seguimiento","Proyectos",new { id = item.IdEncriptado })">@item.proy_titulo</a> <br /> [AREA] </h6>
+                            </div>
+                        </div><!-- media -->
+                        <div class="progress-wrapper">
+                            <div class="progress-label"><span>Progreso</span><span>@(Convert.ToInt32(item.PorcentajeEvolucion))%</span></div>
+                            <div class="progress">
+                                <div class="progress-bar bg-green" style="width:@(Convert.ToInt32(item.PorcentajeEvolucion))% !important" role="progressbar" aria-valuenow="@(Convert.ToInt32(item.PorcentajeEvolucion))" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

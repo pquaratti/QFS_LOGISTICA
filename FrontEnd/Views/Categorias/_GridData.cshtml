@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Entidades.Categoria>
+
+@{
+    string _ControllerName = "Categorias";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Categoria renglon in Model)
+        {
+        <tr>
+
+            <td>@renglon.cat_nombre</td>
+            <td>@renglon.cat_descripcion</td>
+            <td>
+                <button type="button"
+                        modal-value-primary="@renglon.IdEncriptado"
+                        modal-value-secondary="0"
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalABM",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
+                    <i class="fa fa-edit"></i>
+                </button>
+
+                <button type="button"
+                        data-id-rel="@renglon.cat_id"
+                        url-delete="@Url.Action("Delete",_ControllerName)"
+                        class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Categoria">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+</script>

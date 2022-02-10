@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Entidades.Archivo_Adjunto>
+@{
+    string _ControllerName = "ArchivosAdjuntos";
+    int x = 0;
+
+}
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Nombre</th>
+            <th>Detalle</th>
+            <th>Creado por</th>
+            <th width="100px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Archivo_Adjunto renglon in Model)
+        {
+            <tr class="@(renglon.adjunto_activo == false ? "text-danger" : "")">
+                <td>@renglon.adjunto_fecha.ToString("dd/MM/yyyy")</td>
+                <td>@renglon.adjunto_nombre_original</td>
+                <td>
+                    <div><span><b>Link WEB:</b></span> <a href="@renglon.LinkWEB" target="_blank">@renglon.LinkWEB</a></div>
+                    <div class="mt-1"><span><b>Descripción:</b></span> @renglon.adjunto_descripcion</div>
+                </td>
+                <td>@renglon.UsuarioCreador.usu_nickname</td>
+                <td>
+                    <button type="button"
+                            modal-value-primary="@renglon.adjunto_id"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalABM",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            data-id-rel="@renglon.adjunto_id"
+                            url-delete="@Url.Action("Delete",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar item">
+                        <i class="fa fa-trash"></i>
+                    </button>
+
+                    @if (renglon.adjunto_path.Length > 0)
+                    {
+                        <a href="@Url.Content("~/PublicAttachments/" + renglon.adjunto_nombre)" target="_blank" class="btn btn-sm btn-grid btn-success"><i class="fa fa-file-download"></i></a>
+                    }
+
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+

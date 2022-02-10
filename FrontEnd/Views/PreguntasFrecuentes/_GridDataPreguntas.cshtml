@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Entidades.Pregunta_Frecuente>
+@{
+    string _ControllerName = "PreguntasFrecuentes";
+    int x = 0;
+}
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th width="50px"></th>
+            <th>Categoría</th>
+            <th>Pregunta</th>
+            <th>Respuesta</th>
+            <th width="100px"></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (Entidades.Pregunta_Frecuente renglon in Model)
+        {
+            x += 1;
+            <tr>
+                <td width="40px">
+                    <div class="custom-control custom-switch" style="text-align:right;">
+                        <input id="checkActivos_@x" type="checkbox" class="change-status custom-control-input" @(renglon.pgf_activo == true ? "checked" : "") data-id-rel="@renglon.pgf_id" />
+                        <label class="custom-control-label" for="checkActivos_@x"></label>
+                    </div>
+                </td>
+                <td>@renglon.Categoria.pgfc_nombre</td>
+                <td>@renglon.pgf_titulo</td>
+                <td>@renglon.pgf_contenido</td>
+                <td>
+                    <button type="button"
+                            modal-value-primary="@renglon.pgf_id"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalABMPreguntasFrecuentes",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            data-id-rel="@renglon.pgf_id"
+                            url-delete="@Url.Action("Delete",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar item">
+                        <i class="fa fa-trash"></i>
+                    </button>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $('.change-status').change(function (e) {
+        var _preguntaID = $(this).attr("data-id-rel");
+        var _statusCheck = $(this).prop("checked");
+
+        var dataSend = {
+            preguntaID: _preguntaID,
+            changeStatus : _statusCheck
+        }
+
+        APP_executeAjaxPostNoClosePopup('@Url.Action("ActivarDesactivarPregunta", "PreguntasFrecuentes")', dataSend, function (resp)
+        {
+            if (resp.Result.Success !== true) {
+                APP_ShowNotify('Falló el activado/desactivado de la pregunta', 'Error: ' + resp.Result.Message, notifyTypes.Error);
+            }
+
+            else {
+                APP_ShowNotify('Cambio de estado realizado con éxito.', resp.Result.Message, notifyTypes.Success);
+            }            
+        });
+    });
+</script>

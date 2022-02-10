@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Entidades.Encuesta_Usuario>
+
+@{
+    string _ControllerName = "Encuestas";
+    string attr;
+    string text;
+    int count = 0;
+    
+}
+
+
+<div class="row">
+     
+    @foreach (var itemEncuesta in Model)
+    {
+ 
+        if (itemEncuesta.EstadoActual.Equals((int)Negocio.EncuestasUsuarios.Estados.Disponibles))
+        {
+            attr = "bg-primary";
+            text = "Disponible";
+        }
+        else
+        {
+            attr = "bg-success";
+            text = "Finalizada";
+        }
+
+        <div class="col-sm-6 col-md-4 col-lg col-xl-3 mg-t-15 mg-sm-t-20">
+            <div class="card card-profile-two card-dark @attr bd-primary ht-xl-100p">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="fa fa-file"></i> @itemEncuesta.Encuesta.enc_titulo</h6>
+                    <p class="card-desc">@itemEncuesta.Encuesta.enc_descripcion</p>
+                </div><!-- card-body -->
+                <div class="card-footer bg-transparent pd-t-0 bd-t-0">
+                    @if (text == "Finalizada")
+                    {
+                        <button class="btn btn-xs btn-success" type="button"
+                                data-url-redirect="@Url.RouteUrl("Default", new { action = "VerFinalizado", controller = _ControllerName, id=itemEncuesta.Encuesta.IdEncriptado })" onclick="TbEdit(this);">
+                            <i class="fa fa-eye"> Ver Encuesta </i>
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                modal-value-primary="@itemEncuesta.Encuesta.IdEncriptado"
+                                modal-value-secondary="0"
+                                modal-value-aux="0"
+                                modal-url="@Url.Action("PartialModalIniciarEncuesta",_ControllerName)"
+                                class="btn btn-xs btn-info btnOpenModal" title="Iniciar Encuesta">
+                            <i class="fa fa-edit"></i> Iniciar Encuesta
+                        </button>
+
+
+                    }
+                </div><!-- card-footer -->
+            </div><!-- card -->
+        </div>
+    }
+
+</div>

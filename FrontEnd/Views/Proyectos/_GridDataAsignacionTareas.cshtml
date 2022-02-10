@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Entidades.Proyecto_Tarea_Colaborador>
+
+@{
+    string _ControllerName = "Proyectos";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Proyecto_Tarea_Colaborador renglon in Model)
+        {
+        <tr>
+
+            <td>@renglon.Legajo.usu_nombre @renglon.Legajo.usu_apellido</td>
+            <td>@renglon.Legajo.usu_mail </td>
+            <td>
+                <button type="button"
+                        data-id-rel="@renglon.prytarcol_id"
+                        url-delete="@Url.Action("DeleteAsignacionTareas",_ControllerName)"
+                        class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Desvincular de la Tarea">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+  
+</script>

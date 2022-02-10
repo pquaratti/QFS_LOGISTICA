@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Entidades.Notificacion>
+@{
+    string _ControllerName = "Notificaciones";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Distrito</th>
+            <th>Texto</th>
+            <th>Visto</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Notificacion renglon in Model)
+        {
+            <tr>
+                <td>@renglon.Distrito.dis_nombre</td>
+                <td>@renglon.not_texto</td>
+                <td>
+                    @if (renglon.not_visto)
+                    {
+                        <span class="text-success">SI</span>
+                    }
+                    else
+                    {
+                       <span class="text-danger">-</span>
+                    }
+                </td>
+
+                <td>
+                    <button type="button"
+                            modal-value-primary="@renglon.not_id"
+                            modal-value-secondary="@renglon.Distrito.dis_id"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalABM",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            data-id-rel="@renglon.not_id"
+                            url-delete="@Url.Action("Delete",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar item">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,90 @@
+﻿@model Entidades.Encuesta_Usuario
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Encuestas";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Consulta", controller = _ControllerName });
+
+    TimeSpan tiempo = (Model.encusu_fec_fin - Model.encusu_fec_ini);
+    var output = $"{(int)tiempo.TotalMinutes}:{tiempo.Seconds:00}";
+
+
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            Encuesta finalizada con éxito
+        </h4>
+        <p>
+            <br>
+            <span class="text-success font-weight-bold"> @Model.Encuesta.enc_titulo </span>
+        </p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-hover card-project-three">
+            <div class="card-body mr-2">
+                <h6 class="project-title"><a href="">@Model.Encuesta.enc_titulo</a></h6>
+                <p class="tx-13 tx-gray-600">@Model.Encuesta.enc_descripcion</p>
+
+                <div class="divider-text">Detalle de Ejecución</div>
+                <div class="project-data-group mg-b-25">
+                    <div>
+                        <h3 class="text-success font-weight-bold tx-center">Finalizada <i class="fa fa-edit"></i> </h3>
+                        <label>Estado</label>
+                    </div>
+                    <div>
+                        <h3>@Model.encusu_fec_ini.ToString("G")</h3>
+                        <label>Fecha.Inicio</label>
+                    </div>
+                    <div>
+                        <h3>@Model.encusu_fec_ini.ToString("G")</h3>
+                        <label>Fecha.Fin</label>
+                    </div>
+                    <div>
+                        <h3 class="text-success tx-center font-weight-bold">@output</h3>
+                        <label>Duración en Minutos y Segundos</label>
+                    </div>
+                </div>
+
+                <div class="divider-text">Encuesta</div>
+                <div id="viewEncuestaRespuestas"></div>
+
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            refreshData();
+        });
+
+        function refreshData()
+        {
+            dataObject = {
+                intentoID: '@Model.IdEncriptado'
+            };
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialVerEncuesta", controller = _ControllerName })";
+            APP_LoadPartialView('#viewEncuestaRespuestas', dataObject, _urlPartial);
+
+        }
+
+    </script>
+
+}

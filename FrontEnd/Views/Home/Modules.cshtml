@@ -1,0 +1,168 @@
+﻿@model Entidades.App.SIS_Sistema
+
+@{
+    Layout = null;
+
+    Entidades.App.Token oToken = ViewBag.Token;
+
+    var _includePaths = Resources.Repositorio.IncludeFilePaths();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon/favicon.ico">
+
+    <title>SGM - Sistema de Gestión de Metas</title>
+
+    <!-- vendor css -->
+    <link href="@_includePaths/assets/externalplugs/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/jqvmap/jqvmap.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/toast-master/css/jquery.toast.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/sweetalert/sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="@_includePaths/assets/externalplugs/select2/css/select2.min.css" rel="stylesheet">
+
+    <!-- template css -->
+    <link rel="stylesheet" href="@_includePaths/assets/css/template_blue.css?v=@DateTime.Now.ToString()">
+</head>
+
+<body>
+    <div class="m-2">
+        <div class="header">
+            <div class="header-left">
+                <a href="@Url.Action("Modules","Home")" class="sidebar-logo">
+                    @*<img src="~/assets/img/logo_sistema.png" alt="" style="width:35px; margin-right:8px;font-size: 21px;">*@
+                    <span style="padding-top: 7px;">SGM <br /> <span style="margin-top: 4px; font-size: 12px;">Sistema de Gestión de Metas</span></span>
+                    @*<span>
+                            Hospitales <br />
+                            <small class="sidebar-logo-headline mt-2 mb-1" style="font-size:12px;">Módulos del sistema</small>
+                        </span>*@
+                </a>
+
+            </div><!-- header-left -->
+
+            <div class="header-right">
+                <h6 style="text-align:right">@oToken.UserName</h6>
+                <div class="dropdown dropdown-loggeduser">
+                    <a href="" class="dropdown-link" data-toggle="dropdown">
+                        <div class="avatar avatar-sm d-inline-flex">
+                            <img src="~/assets/img/avatar_default.png" class="rounded-circle" alt="">
+                        </div><!-- avatar -->
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <div class="dropdown-menu-header">
+                            <div class="media align-items-center">
+                                <div class="avatar">
+                                    <img src="~/assets/img/avatar_default.png" class="rounded-circle" alt="">
+                                </div><!-- avatar -->
+                                <div class="media-body mg-l-10">
+                                    <h6>@Model.UsuarioActual.usu_nickname</h6>
+                                    <span></span>
+                                </div>
+                            </div><!-- media -->
+                        </div>
+                        <div class="dropdown-menu-body">
+                            <a href="@Url.Action("Perfil","Home")" class="dropdown-item"><i class="fa fa-user mr-1"></i> Perfil</a>
+                            <a href="@Url.Action("CloseSession","Account")" class="dropdown-item"><i class="fa fa-lock mr-1"></i> Cerrar Sesión</a>
+                        </div>
+                    </div><!-- dropdown-menu -->
+                </div>
+            </div><!-- header-right -->
+        </div><!-- header -->
+
+        <div class="content-body mt-4">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="alert alert-success mg-b-0" role="alert">
+                        <h6 class="alert-heading">Bienvenido @oToken.UserName !</h6>
+                        <p>A continuación se detallan los módulos habilitados. En caso de que no te figure algún módulo solicitalo al administrador del sistema.</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                @foreach (Entidades.App.SIS_Modulo modulo in Model.Modulos)
+                {
+                    <div class="col-md-3">
+                        <div class="card mb-1 mt-1" style="border-radius: 5px;">
+                            <div class="card-body">
+                                <div class="project-logo bg-primary tx-white mg-b-15">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-package"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                </div>
+                                <h5 class="card-title"><a href="">@modulo.mod_nombre</a></h5>
+                                <p class="tx-12 tx-color-03">@modulo.mod_descripcion</p>
+                                <button class="btn btn-sm btn-block btn-primary btnRedirectToModule" data-id-modulo="@modulo.IdEncriptado">
+                                    <div class="btnOriginal" style="display:block;">
+                                        Ingresar <i class="icon ion-android-arrow-forward mg-l-5"></i>
+                                    </div>
+                                    <div class="btnLoading" style="display:none;">
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (oToken.AceptaTerminosYCondiciones == false)
+    {
+        @: @Html.Partial("~/Views/Shared/_PartialModalTerminosYCondiciones.cshtml")
+    }
+
+    <script src="@_includePaths/assets/externalplugs/jquery/jquery.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/feather-icons/feather.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/sweetalert/sweetalert.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/toast-master/js/jquery.toast.js"></script>
+    <script src="@_includePaths/assets/externalplugs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/select2/js/select2.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.unobtrusive.min.js"></script>
+    <script src="@_includePaths/assets/js/AppResources.js?v=@DateTime.Now.ToString()"></script>
+
+    <script>
+
+        $('.btnRedirectToModule').click(function (e) {
+            e.preventDefault();
+
+            $(this).find('.btnOriginal').hide('fade');
+            $(this).find('.btnLoading').show('fade');
+
+            var _moduloID = $(this).attr('data-id-modulo');
+
+            var dataRedirect = {
+                moduloID : _moduloID
+            }
+
+            APP_executeAjaxPostNoClosePopup('@Url.Action("RedirectToModule", "Home")', dataRedirect, function (resp) {
+                if (resp.Result.Success == true) {
+                    setTimeout(function () { window.location = resp.Result.urlRedirect; }, 600);
+                }
+            });
+        });
+
+    </script>
+
+    @if (oToken.AceptaTerminosYCondiciones == false)
+    {
+        <script>
+            $('#modalFormTerminosYCondiciones').modal();
+        </script>
+    }
+
+
+</body>
+
+</html>

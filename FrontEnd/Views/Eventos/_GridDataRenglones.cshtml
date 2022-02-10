@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Entidades.Evento_Renglon>
+@{
+    string _ControllerName = "Eventos";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th width="500px">Nombre</th>
+            <th width="500px">Mail</th>
+            <th width="100px">Asistencia</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Evento_Renglon renglon in Model)
+        {
+        <tr>
+            <td>@renglon.Usuario.usu_nombre @renglon.Usuario.usu_apellido</td>
+            <td>@renglon.Usuario.usu_mail</td>
+            <td>
+                @if (ViewBag.Finalizado == "False")
+                {
+                    <span class="badge badge-pill badge-info">Evento no realizado todavía.</span>
+                }
+                else
+                {
+                    if (renglon.ever_asist) { <span class="badge badge-pill badge-success-light">Asistió</span> } 
+                    else { <span class="badge badge-pill badge-danger-light">Ausente</span> }
+                }
+            </td>
+            <td>
+                <button type="button"
+                        modal-value-primary="@renglon.Evento.eve_id"
+                        modal-value-secondary="@renglon.ever_id"
+                        modal-value-aux="@renglon.Evento.eve_fecha"
+                        modal-url="@Url.Action("PartialModalABMEventoRenglon",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button"
+                        data-id-rel="@renglon.ever_id"
+                        url-delete="@Url.Action("DeleteDetalle",_ControllerName)"
+                        class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar item">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+

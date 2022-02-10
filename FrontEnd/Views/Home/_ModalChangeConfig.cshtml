@@ -1,0 +1,42 @@
+﻿<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Cambiar Configuración
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("ChangeConfig", "Home", FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "false", resetForm = "false", closeForm = "true", funcionExtra = "true" }))
+            {
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.DropDownList("ddlEleccionChange", new SelectList(Negocio.DDL.ListarElecciones(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.DropDownList("ddlEleccionChange", new SelectList(Negocio.DDL.ListarTiposElecciones(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.DropDownList("ddlDistritoChange", new SelectList(Negocio.DDL.ListarDistritos(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-xs" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-xs"> <i class="fa fa-reload"></i> Cambiar Configuración</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

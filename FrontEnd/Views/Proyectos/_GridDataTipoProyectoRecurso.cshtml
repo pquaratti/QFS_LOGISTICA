@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Entidades.Tipo_Proyecto_Recurso>
+
+@{
+    string _ControllerName = "Proyectos";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Tipo_Proyecto_Recurso renglon in Model)
+        {
+        <tr>
+
+            <td>@renglon.tproyrecurso_nombre</td>
+           
+            <td>
+                <button type="button"
+                        modal-value-primary="@renglon.tproyrecurso_id"
+                        modal-value-secondary=""
+                        modal-value-aux=""
+                        modal-url="@Url.Action("PartialModalABMTipoProyectoRecurso",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button"
+                        data-id-rel="@renglon.tproyrecurso_id"
+                        url-delete="@Url.Action("DeleteTipoProyectoRecurso",_ControllerName)"
+                        class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Tipo de Recurso">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+       refreshData();
+    }
+  
+</script>

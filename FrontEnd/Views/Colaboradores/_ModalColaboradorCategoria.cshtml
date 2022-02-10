@@ -1,0 +1,53 @@
+﻿@model Entidades.App.SIS_Usuario
+
+@{
+    string _ControllerName = "Colaboradores";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.usu_id.Equals(0) ? "Agregar Categoría " : "Modificar Categoría")
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalColaboradorCategoria", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "true", closeForm = "true" }))
+            {
+        <div class="modal-body">
+            @Html.HiddenFor(x => x.IdEncriptado)
+
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(m => m.Categoria, new { @class = "control-label" })
+                    @Html.DropDownListFor(m => m.Categoria.cat_id, new SelectList(Negocio.DDL.ListarCategorias(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <label for="txtExtra"> Documento de Referencia </label>
+
+                    @Html.TextArea("txtExtra", new { @class = "form-control camporequerido input-sm", required = "required", @rows = "3", @id= "txtExtra" })
+                </div>
+            </div>
+
+        </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+</script>

@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Colaboradores";
+    ViewBag.Subtitle = "Colaboradores ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Colaboradores";
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-12">
+        <h4 class="content-title content-title-xs">Colaboradores</h4>
+        <p>Listado de Colaboradores</p>
+    </div>
+
+</div>
+
+<div class="card card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label" for="ddlCategorias">Categoría</label>
+                            @Html.DropDownList("ddlCategorias", new SelectList(Negocio.DDL.ListarCategorias(Filters.VerificarToken.ConsultarToken()), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2 changeGrilla", style = "top:0px;height:30px", required = "required" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label" for="ddlSkills">Habilidad</label>
+                            @Html.DropDownList("ddlSkills", new SelectList(Negocio.DDL.ListarSkills(Filters.VerificarToken.ConsultarToken()), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2 changeGrilla", style = "top:0px;height:30px", required = "required" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label class="control-label" for="txtBusqueda">Buscar por texto <span class="tx-sm-thin small"> (Puede ser por nombre, apellido o DNI)</span></label>
+                            <input autocomplete="off" class="form-control form-control-sm text-box single-line" data-val="true" id="txtBusqueda" name="txtBusqueda" type="text" value="">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <button id="btnBuscar" type="button" class="btn btn-primary btn-block btn-sm mt-4"><i class="fa fa-search"></i> Buscar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <div id="viewGridData" style="zoom:90%"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+          $(document).ready(function () {
+           refreshData();
+        });
+
+        function refreshData()
+        {
+            dataObject = {
+                categoriaID: $('#ddlCategorias').val(),
+                skillID: $('#ddlSkills').val(),
+                textoBusqueda: $('#txtBusqueda').val()
+            };
+
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataColaboradores", controller = _ControllerName })";
+            APP_LoadPartialView('#viewGridData', dataObject, _urlPartial);
+
+        }
+
+        $('#btnBuscar').click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+
+    </script>
+}
+
+

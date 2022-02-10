@@ -1,0 +1,109 @@
+﻿@model Entidades.Vistas.EncuestaResultado
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Encuestas";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Gestion", controller = _ControllerName });
+
+    //var output = $"{(int)tiempo.TotalMinutes}:{tiempo.Seconds:00}";
+
+
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            Estadística de la Encuesta
+        </h4>
+        <h5>
+            <br>
+            <span class="text-success font-weight-bold tx-lg-semibold"> @Model.Encuesta.enc_titulo </span>
+        </h5>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="viewCantidades"></div>
+@*<div id="viewPreguntasValores"></div>*@
+<div id="viewPreguntasCantidades"></div>
+<div class="row">
+    <div class="col-md-6">
+        <div id="viewMejores"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="viewPeores"></div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script>
+
+        function contentCantidades() {
+
+            dataObject = {
+                usuActual: '@Model.CantidadUsuariosActualmente',
+                usuProgre: '@Model.CantidadUsuariosEnProgreso',
+                usuFin: '@Model.CantidadUsuariosFinalizaron',
+                tiempoPromedio: '@Model.TiempoPromedio'
+            };
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialResultadoCantidades", controller = _ControllerName })";
+            APP_LoadPartialView('#viewCantidades', dataObject, _urlPartial);
+        }
+
+        function contentPregutasValores() {
+             dataObject = {
+                 encuestaID: '@Model.Encuesta.IdEncriptado'
+            };
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialResultadoPreguntasRespuestas", controller = _ControllerName })";
+            APP_LoadPartialView('#viewPreguntasValores', dataObject, _urlPartial);
+        }
+
+
+        function contentPregutasCantidades() {
+            dataObject = {
+                encuestaID: '@Model.Encuesta.IdEncriptado'
+            };
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialResultadoPreguntasCantidades", controller = _ControllerName })";
+            APP_LoadPartialView('#viewPreguntasCantidades', dataObject, _urlPartial);
+        }
+
+        function contentPeores() {
+            dataObject = {
+                encuestaID: '@Model.Encuesta.IdEncriptado',
+            };
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialResultadoPeores", controller = _ControllerName })";
+            APP_LoadPartialView('#viewPeores', dataObject, _urlPartial);
+        }
+
+        function contentMejores() {
+            dataObject = {
+                encuestaID: '@Model.Encuesta.IdEncriptado',
+            };
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialResultadoMejores", controller = _ControllerName })";
+            APP_LoadPartialView('#viewMejores', dataObject, _urlPartial);
+        }
+
+        $(document).ready(function () {
+            refreshData();
+        });
+
+        function refreshData()
+        {
+            contentCantidades();
+/*            contentPregutasValores();*/
+            contentPregutasCantidades();
+            contentPeores();
+            contentMejores();
+        }
+
+    </script>
+
+}

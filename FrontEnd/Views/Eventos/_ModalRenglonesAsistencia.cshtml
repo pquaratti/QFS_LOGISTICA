@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Entidades.Evento_Renglon>
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Usuarios invitados
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalAsistencia", "Eventos", FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Usuario</th>
+                                        <th>Mail</th>
+                                        <th width="100px">Asistencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int x = 0;
+                                    }
+                                    @foreach (Entidades.Evento_Renglon renglon in Model)
+                                    {
+                                        <tr>
+                                            <td>@renglon.Usuario.usu_nombre @renglon.Usuario.usu_apellido </td>
+                                            <td>@renglon.Usuario.usu_mail </td>
+                                            <td>
+                                                @Html.CheckBox("lstAsistencia[" + x + "].ever_asist",renglon.ever_asist)
+                                                <input type="hidden" name="lstAsistencia[@x].ever_id" value="@renglon.ever_id" />
+                                                <input type="hidden" name="lstAsistencia[@x].Evento.eve_id" value="@renglon.Evento.eve_id" />
+                                            </td>
+                                        </tr>
+                                        x += 1;
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                </div>
+                                        }
+
+            </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+    </script>
+}

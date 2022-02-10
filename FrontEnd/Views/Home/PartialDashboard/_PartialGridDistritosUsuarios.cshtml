@@ -1,0 +1,19 @@
+﻿@model Entidades.Vistas.DashboardSistemas
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Vistas.ClaveValor renglon in Model.DistritosTotalesUsuarios)
+        {
+            <tr>
+                <td>@renglon.Clave</td>
+                <td>@renglon.Valor</td>
+            </tr>
+        }
+    </tbody>
+</table>

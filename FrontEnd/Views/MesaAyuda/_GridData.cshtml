@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Entidades.Mesa_Ayuda>
+@{
+    string _ControllerName = "MesaAyuda";
+
+}
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Ticket</th>
+            <th>Fecha</th>
+            <th>Consulta/Inconveniente</th>
+            <th>Tipo</th>
+            <th>Solicita</th>
+            <th>Asignado a </th>
+            <th>Estado </th>
+            <th width="100px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Mesa_Ayuda renglon in Model)
+        {
+            <tr>
+                <td>#@renglon.mesa_id</td>
+                <td>@renglon.mesa_fecha.ToString("dd/MM/yyyyy")</td>
+                <td>
+                    <b class="text-success">Consulta / Inconveniente</b> <br />
+                    @renglon.mesa_problema
+                    <hr />
+                    <b class="text-info">Solución / Respuesta</b> <br />
+                    @if (renglon.mesa_solucion.Length.Equals(0))
+                    {
+                        @: <i style="color:#c1bbbb">Esperando respuesta ...</i>
+                    }
+                    else
+                    {
+                        @: @renglon.mesa_solucion
+                    }
+                </td>
+                <td>@renglon.TipoConsulta.tipoconsulta_nombre</td>
+                <td>@renglon.UsuarioSolicita.usu_nombre @renglon.UsuarioSolicita.usu_apellido</td>
+                <td>@renglon.UsuarioResponsable.usu_nombre @renglon.UsuarioResponsable.usu_nombre</td>
+                <td>
+                    @if (renglon.Cerrada)
+                    {
+                        <span class="badge badge-warning-light"> <i class="fa fa-lock"></i> Cerrada </span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-success"> <i class="fa fa-lock-open"></i> Abierta </span>
+                    }
+                </td>
+
+                <td>
+                    <button type="button"
+                            modal-value-primary="@renglon.mesa_id"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalInteraccion",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
+                        <i class="fa fa-comment"></i>
+                    </button>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

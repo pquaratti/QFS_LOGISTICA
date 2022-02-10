@@ -1,0 +1,78 @@
+﻿@{
+
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Reporte de Legajos
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        @Html.Label("Fuerza", new { @class = "control-label" })
+                        @Html.DropDownList("fuerzaID", new SelectList(Negocio.DDL.ListarFuerzas(Filters.VerificarToken.ConsultarToken(), true, true), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <label class="control-label" for="ddlDistrito">Distritos</label>
+                        @Html.DropDownList("distritoID", new SelectList(ViewBag.DistritosDDL, "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", style = "top:0px;height:30px", required = "required" })
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <label class="control-label" for="ddlDistrito">Subdistrito</label>
+                        @Html.DropDownList("subdistritoID", new SelectList(ViewBag.SubdistritosDDL, "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", style = "top:0px;height:30px", required = "required" })
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                <button id="btnImprimirReporte" type="button" class="btn btn-info pull-left btn-app"> <i class="fa fa-print"></i> Imprimir</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#btnImprimirReporte').click(function (e) {
+        e.preventDefault();
+
+        dataParams = {
+            fuerzaID: $('#fuerzaID').val(),
+            distritoID: $('#distritoID').val(),
+            subdistritoID: $('#subdistritoID').val()
+        }
+
+        APP_executeAjaxPostNoClosePopup('@Url.Action("ParameterConfig", "Reportes")', dataParams, function (res) {
+            var _urlReport = "@Url.Action("ListadoLegajos", "Reportes")" + "?parameters=" + res.ObjectRelation;
+            window.open(_urlReport);
+        });
+
+
+    });
+
+    $('#distritoID').change();
+
+    $('#distritoID').change(function (e) {
+        _filterID = $('#distritoID').val();
+        _urlJson = "@Url.RouteUrl("Default", new { action = "ListarSelect", controller = "Subdistritos" })";
+        APP_LoadSelectModal('#subdistritoID', _urlJson, _filterID);
+    });
+
+</script>

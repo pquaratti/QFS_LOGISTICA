@@ -1,0 +1,56 @@
+﻿@model Entidades.Archivo_Adjunto
+
+@{
+    string _controllerName = "ArchivosAdjuntos";
+
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.adjunto_id.Equals(0) ? "Crear Adjunto" : "Modificar Adjunto")
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModal", _controllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModalFiles", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(model => model.adjunto_id)
+
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.adjunto_descripcion, htmlAttributes: new { @class = "control-label" })
+                            <textarea class="form-control" rows="3" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.adjunto_descripcion)" id="@Html.NameFor(model=>model.adjunto_descripcion)">@Model.adjunto_descripcion</textarea>
+                            @Html.ValidationMessageFor(model => model.adjunto_descripcion, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <input id="fileUpload" type="file" class="upload" title="Haz click aquí para buscar tu el archivo adjunto" />
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            @Html.LabelFor(model => model.adjunto_activo, htmlAttributes: new { @class = "control-label" })
+                            <div class="custom-control custom-switch">
+                                @Html.EditorFor(m => m.adjunto_activo, new { htmlAttributes = new { @class = "custom-control-input", autocomplete = "off" } })
+                                @Html.LabelFor(m => m.adjunto_activo, "SI/NO", htmlAttributes: new { @class = "custom-control-label" })
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Entidades.Evento_Renglon>
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Usuarios invitados
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Mail</th>
+                                     <th width="100px">Asistencia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Entidades.Evento_Renglon renglon in Model)
+                                {
+                                <tr>
+                                    <td>@renglon.Usuario.usu_nombre @renglon.Usuario.usu_apellido </td>
+                                    <td>@renglon.Usuario.usu_mail </td>
+                                    <td>
+                                        @if (Convert.ToDateTime(ViewBag.Fecha) > DateTime.Now)
+                                        {
+                                            <span class="badge badge-pill badge-info">Evento no realizado todavía.</span>
+                                        }
+                                        else
+                                        {
+                                            if (renglon.ever_asist)
+                                            { <span class="badge badge-pill badge-success-light">Asistió</span> }
+                                            else
+                                            { <span class="badge badge-pill badge-danger-light">Ausente</span>}
+                                        }
+                                    </td>
+                                </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+    </script>
+}

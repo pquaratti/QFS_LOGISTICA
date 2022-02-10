@@ -1,0 +1,57 @@
+﻿@model Entidades.Pregunta_Frecuente
+
+@{
+    string _ControllerName = "PreguntasFrecuentes";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.pgf_id.Equals(0) ? "Alta de Pregunta Frecuente" : "Modificar Pregunta Frecuente")
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalPreguntasFrecuentes", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+            {
+            <div class="modal-body">
+                @Html.HiddenFor(x => x.pgf_id)
+                <div class="row mt-2">
+                    <div class="form-group col-md-12">
+                        @Html.LabelFor(model => model.Categoria, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => Model.Categoria.pgfc_id, new SelectList(Negocio.DDL.ListarCategoriaDePreguntas(Filters.VerificarToken.ConsultarToken(), false, false), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.pgf_titulo, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.pgf_titulo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.pgf_titulo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.pgf_contenido, htmlAttributes: new { @class = "control-label" })
+                        <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.pgf_contenido)" id="@Html.NameFor(model=>model.pgf_contenido)">@Model.pgf_contenido</textarea>
+                        @Html.ValidationMessageFor(model => model.pgf_contenido, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+             }
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+</script>

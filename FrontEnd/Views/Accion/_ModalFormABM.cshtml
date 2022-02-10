@@ -1,0 +1,95 @@
+﻿@model Entidades.App.SIS_Accion
+
+@{
+    string _ControllerName = "Accion";
+}
+
+<div class="modal fade" id="modalFormDefault" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">Acción</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("Save", _ControllerName, FormMethod.Post, new { id = "formularioABMModal", name = "formularioABMModal", @class = "formularioABMModal", refreshDatatable="true", closeForm="true" }))
+            {
+            <div class="modal-body">
+                @Html.HiddenFor(x => x.IdEncriptado)
+                @Html.HiddenFor(x => x.acc_id)
+
+                <div class="row row-md">
+                    <div class="form-group col-md-4">
+                        @Html.LabelFor(model => model.acc_nombre, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.acc_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.acc_nombre, "", new { @class = "text-danger label-validate" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        @Html.LabelFor(model => model.acc_controller, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.acc_controller, new { htmlAttributes = new { @class = "form-control form-control-sm", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.acc_controller, "", new { @class = "text-danger label-validate" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        @Html.LabelFor(model => model.acc_accion, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.acc_accion, new { htmlAttributes = new { @class = "form-control form-control-sm", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.acc_accion, "", new { @class = "text-danger label-validate" })
+                    </div>
+                </div>
+
+                <div class="row row-md">
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(m => m.acc_id_padre, new { @class = "control-label" })
+                        @Html.DropDownListFor(m => m.acc_id_padre, new SelectList(Negocio.DDL.ListarAccionesPadre(), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", style = "top:0px;height:30px", required = "required" })
+                    </div>
+                    <div class="form-group col-md-3">
+                        @Html.LabelFor(model => model.acc_icono, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.acc_icono, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.acc_icono, "", new { @class = "text-danger label-validate" })
+                    </div>
+                    <div class="form-group col-md-3">
+                        @Html.LabelFor(model => model.acc_orden, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.acc_orden, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.acc_orden, "", new { @class = "text-danger label-validate" })
+                    </div>
+                </div>
+
+                <div class="row row-md">
+                    <div class="form-group col-md-10">
+                        @Html.LabelFor(model => model.acc_descripcion, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.acc_descripcion, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.acc_descripcion, "", new { @class = "text-danger label-validate" })
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <div class="custom-control custom-switch" style="margin-top: 34px;">
+                            @Html.EditorFor(model => model.acc_menu, new { htmlAttributes = new { @class = "custom-control-input", autocomplete = "off" } })
+                            @Html.LabelFor(model => model.acc_menu, htmlAttributes: new { @class = "custom-control-label" })
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left"> <i class="fa fa-check"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@*<script>
+
+    $('#formularioABMModal').submit(function (e) {
+        e.preventDefault();
+        
+        APP_SaveModalForm(this, function () {
+            refreshData();
+        });
+        
+    });
+    
+</script>*@
+

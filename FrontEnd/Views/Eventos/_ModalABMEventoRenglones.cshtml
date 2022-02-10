@@ -1,0 +1,50 @@
+﻿@model Entidades.Evento_Renglon
+
+@{
+    string _ControllerName = "Eventos";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.ever_id.Equals(0) ? "Alta de Detalle" : "Modificar Detalle")
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalEventoRenglon", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.ever_id)
+                    @Html.HiddenFor(x => x.Evento.eve_id)
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(m => m.Usuario, new { @class = "control-label" })
+                            @Html.DropDownListFor(m => m.Usuario.usu_id, new SelectList(Negocio.DDL.Select2.OptionSeleccionada(Model.Usuario.usu_id.ToString(), Model.Usuario.usu_nombre +" "+ Model.Usuario.usu_apellido +" ("+ Model.Usuario.usu_documento+") " ), "Value", "Text"), new { @class = "form-control camporequerido select2-sm select2ModalAjax", required = "required", data_ajax__url = Url.Action("GetSelect2Items", "Usuario") })
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+
+        $(document).ready(function () {
+            refreshData();
+        });
+
+</script>

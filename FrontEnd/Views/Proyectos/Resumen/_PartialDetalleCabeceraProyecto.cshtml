@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Entidades.Vistas.TarjetaCabecera>
+
+
+<div class="card card-hover card-task-one">
+    <div class="card-body">
+        <div class="row">
+            @foreach (Entidades.Vistas.TarjetaCabecera tarjeta in Model)
+            {
+                <div class="col-sm-4 mg-t-20 mg-sm-t-0">
+                    <h6 class="card-title">@tarjeta.titulo</h6>
+                    <div class="d-flex align-items-center justify-content-between mg-b-10">
+                        <h1 class="card-value">@tarjeta.valor </h1>
+                    </div>
+                    <p class="card-desc">@tarjeta.descripcion </p>
+                </div><!-- col -->
+            }
+        </div><!-- row -->
+    </div><!-- card-body -->
+</div>
+
+
+

@@ -1,0 +1,64 @@
+﻿@model Entidades.App.SIS_Organizacion
+
+@{
+    string _controllerName = "Organizaciones";
+
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.org_id.Equals(0) ? "Crear" : "Modificar")
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModal", _controllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.org_id)
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.org_nombre, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.org_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.org_nombre, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-8">
+                            @Html.LabelFor(model => model.org_abreviatura, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.org_abreviatura, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.org_abreviatura, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(model => model.org_activo, htmlAttributes: new { @class = "control-label" })
+                            <div class="custom-control custom-switch">
+                                @Html.EditorFor(m => m.org_activo, new { htmlAttributes = new { @class = "custom-control-input", autocomplete = "off" } })
+                                @Html.LabelFor(m => m.org_activo, "SI/NO", htmlAttributes: new { @class = "custom-control-label" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.org_mail, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.org_mail, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.org_mail, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

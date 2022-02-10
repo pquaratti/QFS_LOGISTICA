@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Entidades.Mesa_Ayuda_Interaccion>
+
+@{
+    int primerUsuario = 0;
+}
+
+@foreach (var itemMensaje in Model.OrderBy(o=>o.mesainteraccion_fecha))
+{
+    if (primerUsuario == 0)
+    {
+        primerUsuario = itemMensaje.UsuarioInteraccion.usu_id;
+    }
+
+    <div class="row">
+        <div class="col-md-12">
+            <p class="mb-0 chat-nombre-usuario @(primerUsuario == itemMensaje.UsuarioInteraccion.usu_id ? "chat-nombre-usuario-origen" : "chat-nombre-usuario-destino")">@itemMensaje.UsuarioInteraccion.usu_nombre - @itemMensaje.mesainteraccion_fecha.ToString("dd/MM/yyyy HH:mm"):</p>
+            <p class="mt-0">@itemMensaje.mesainteraccion_mensaje</p>
+        </div>
+    </div>
+
+}

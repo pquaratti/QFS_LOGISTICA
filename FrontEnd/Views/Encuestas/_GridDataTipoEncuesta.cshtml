@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Entidades.Tipo_Encuesta>
+
+@{
+    string _ControllerName = "Encuestas";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Tipo_Encuesta renglon in Model)
+        {
+        <tr>
+
+            <td>@renglon.tenc_contenido</td>
+           
+            <td>
+                <button type="button"
+                        modal-value-primary="@renglon.tenc_id"
+                        modal-value-secondary=""
+                        modal-value-aux=""
+                        modal-url="@Url.Action("PartialModalABMTipoEncuesta",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button"
+                        data-id-rel="@renglon.tenc_id"
+                        url-delete="@Url.Action("DeleteTipoEncuesta",_ControllerName)"
+                        class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Tipo de Encuestas">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+       refreshData();
+    }
+  
+</script>

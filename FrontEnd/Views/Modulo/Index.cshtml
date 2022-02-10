@@ -1,0 +1,117 @@
+﻿@{
+    ViewBag.Title = "Modulos del sistema";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Modulo";
+    string _urlAddOrEdit = Url.RouteUrl("Default", new { action = "AddOrEdit", controller = _ControllerName });
+    string _urlNuevo = Url.RouteUrl("Default", new { action = "AddOrEdit", controller = _ControllerName });
+    string _urlDelete = Url.RouteUrl("Default", new { action = "Delete", controller = _ControllerName });
+    string _urlActivar = Url.RouteUrl("Default", new { action = "Active", controller = _ControllerName });
+}
+
+<div class="card card-body">
+    <div class="row button-box">
+        <div class="col-lg-2 col-sm-4 col-xs-12">
+            <div class="row">
+                <div class="col-md-12">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /row -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <div class="row mb-3">
+                    <div class="col-md-9">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-block btn-success op-btn-new" data-url-redirect="@_urlNuevo"><i class="fa fa-plus"></i> Nuevo</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="custom-control custom-switch" style="text-align:right;">
+                            <input id="checkActivos" type="checkbox" class="custom-control-input checktodos" />
+                            <label class="custom-control-label" for="checkActivos">Mostrar todos</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="dtModulos" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Descripcion</th>
+                                <th>Activo</th>
+                                <th width="200px"></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+
+    <script>
+          @*var objConfigABM = {
+            urlEdit: '@Url.RouteUrl("Default", new { action = "AddOrEdit", controller = "Modulo" })',
+            urlDelete: '@Url.RouteUrl("Default", new { action = "Delete", controller = "Modulo" })',
+            urlActivar: '@Url.RouteUrl("Default", new { action = "Active", controller = "Modulo" })',
+            urlPrint: '',
+            modal_abm: true,
+            modal_content: '#viewModalForm',
+            modal_form: '#modalFormDefault',
+            modal_geturl: '@Url.Action("PartialViewModalABM", "Modulo")',
+            modal_default_value: 0
+        };*@
+        var ref
+        $(document).ready(function () {
+              ref = APP_Datatable_Async(
+                    '#dtModulos',
+                    'LoadTableAjax',
+                    'POST',
+                    function (d) {
+                        d.mostrar_todos = $('.checktodos').prop("checked");
+                    },
+                    [
+                        { "data": "mod_nombre", "name": "mod_nombre", "autoWidth": true },
+                        { "data": "mod_descripcion", "name": "mod_descripcion", "autoWidth": true },
+                        { "data": "mod_activo", "name": "mod_activo", "autoWidth": true },
+                        { "data": null, "bSortable": false, "autoWidth": true, "mRender": function (o) { return APP_GRID_Options(o.IdEncriptado, o.mod_activo); } }
+                        // { "data": null, "bSortable": false, "autoWidth": true, "mRender": function (o) { return APP_GRID_Options_Buttons(o.mod_id, o.estado, objConfigABM); } }
+
+                    ]
+                );
+            });
+
+
+        function APP_GRID_Options(id, estado) {
+            var htmlControls = '';
+            htmlControls += '<button class="btn btn-info btn-xs op-grid-edit btn-grid" data-url-redirect="@_urlAddOrEdit?id=' + id + '" onclick="TbEdit(this);"><i class="fa fa-edit"></i></button>';
+
+            if (estado === true) {
+                htmlControls += '<button class="btn btn-danger btn-xs op-grid-delete ml-2 no-borrar refresh-data btn-grid" data-url-redirect="@_urlDelete?id=' + id + '" onclick="TbDelete(this);"><i class="fa fa-trash"></i></button>'
+            }
+            else {
+                htmlControls += '<button class="btn btn-success btn-xs op-grid-recuperar ml-2 refresh-data btn-grid" data-url-redirect="@_urlActivar?id=' + id + '" onclick="TbRecuperar(this);">Activar</button>'
+            }
+            return htmlControls;
+        }
+
+
+    function refreshData() {
+            ref.api().ajax.reload()
+    }
+        $('.checktodos').change(function (e) {
+            e.preventDefault();
+            ref.api().ajax.reload()
+        });
+
+    </script>
+
+}
+

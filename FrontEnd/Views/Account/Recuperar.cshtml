@@ -1,0 +1,152 @@
+﻿@model Entidades.App.SIS_Usuario
+
+@{
+    Layout = null;
+
+    var _includePaths = Resources.Repositorio.IncludeFilePaths();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="Comando General Electoral">
+    <meta name="author" content="Comando General Electoral">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon/favicon.ico">
+
+    <title>Comando General Electoral - Sistema de Gestión</title>
+
+    <!-- vendor css -->
+    <link href="@_includePaths/assets/externalplugs/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/sweetalert/sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <!-- template css -->
+    <link rel="stylesheet" href="@_includePaths/assets/css/template_green.css">
+
+    <style>
+        .backLogin {
+            background-image: url('@Url.Content("~/assets/img/bgMindef.jpg")');
+            background-size: cover;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="signin-panel backLogin">
+        <div style="width: 100%;height: 70px;position: absolute;background: #0000009c;bottom: 0;color:white">
+            <h3 style="padding-top:20px;padding-left:20px;color: #bbcada;font-size: 20px;">Servicio Administrativo Financiero</h3>
+        </div>
+
+        <div class="signin-sidebar">
+            <div class="signin-sidebar-body">
+                <a href="dashboard-one.html" class="sidebar-logo mg-b-40">
+                    <img src="~/assets/img/logo_sistema.png" alt="" style="width:50px; margin-right:8px">
+                    <span style="padding-top: 7px;">CGE <br /> <span style="margin-top: 4px; font-size: 15px;">Comando General Electoral</span></span>
+                </a>
+                <h4 class="signin-title">Recuperar cuenta</h4>
+            
+                <div id="contentLogin">
+                    <h5 class="signin-subtitle">Ingrese los datos solicitados.</h5>
+                    @using (Html.BeginForm("RequestRecoveryAccount", "Account", FormMethod.Post, new { id = "frmLogin", name = "frmLogin", @class = "signin-form" }))
+                    {
+                        <div class="form-group">
+                            <label for="usu_nickname">Nombre de Usuario</label>
+                            @Html.EditorFor(model => model.usu_nickname, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", placeholder = "Ingresa tu nombre de usuario", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.usu_nickname, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.usu_mail)
+                            @Html.EditorFor(model => model.usu_mail, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", placeholder = "Ingresa tu nombre de mail", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.usu_mail, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group d-flex mg-b-0">
+                            <button id="btnRecuperar" class="btn btn-brand-01 btn-uppercase flex-fill">Enviar Código</button>
+                        </div>
+                    }
+
+                </div>
+
+                <div id="contentLoading" style="display:none;width: 100%;height: 100%;text-align: center;padding-top: 100px;">
+                    <div class="spinner-border" role="status" style="text-align: center;width: 70px;height: 70px;">
+
+                    </div>
+                </div>
+
+                <p class="mg-t-auto mg-b-0 tx-sm tx-color-03">Comando General Electoral V.2021 </p>
+            </div><!-- signin-sidebar-body -->
+        </div><!-- signin-sidebar -->
+    </div><!-- signin-panel -->
+
+    <script src="@_includePaths/assets/externalplugs/jquery/jquery.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/bootstrap/js/bootstrap.bundle.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/feather-icons/feather.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/perfect-scrollbar/perfect-scrollbar.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/sweetalert/sweetalert.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.unobtrusive.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/js/PublicResources.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+
+    <script>
+        $(function () {
+
+            'use strict'
+
+            feather.replace();
+
+            new PerfectScrollbar('.signin-sidebar', {
+                suppressScrollX: true
+            });
+        });
+
+    </script>
+
+    <script>
+
+        $('#btnRecuperar').click(function (e) {
+            e.preventDefault();
+
+            if ($(frmLogin).valid() === false) {
+                return false;
+            }
+
+            StartSpinner();
+
+            APP_SendFormAjax(frmLogin, function (resp) {
+                if (resp.Result.Success === true) {
+                    APP_LoadPartialView('#contentLogin', { tokenID: resp.Result.ObjectRelation }, '@Url.Action("PartialRecoveryCode", "Account")');
+                    StopSpinner();
+                }
+                else {
+                    StopSpinner();
+                   APP_SweetAlert_ShowMessageError('Recuperación de cuenta', resp.Result.Message);
+                }
+            });
+
+        });
+
+        function StartSpinner() {
+            $('#contentLoading').show();
+            $('#contentLogin').hide();
+        }
+
+        function StopSpinner() {
+            $('#contentLoading').hide();
+            $('#contentLogin').show();
+        }
+
+    </script>
+
+</body>
+</html>
+
+

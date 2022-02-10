@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Entidades.Notificacion>
+
+@{
+    string _ControllerName = "Notificaciones";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Distrito</th>
+            <th>Texto</th>
+            <th>Visto</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Notificacion renglon in Model)
+        {
+            <tr>
+                <td>@renglon.Distrito.dis_nombre</td>
+                <td>@renglon.not_texto</td>
+                <td>
+                    <input type="checkbox" name="" value="" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Entidades.Proyecto_Indicador>
+
+@{
+    string _ControllerName = "Indicadores";
+}
+<div class="flex-row-reverse mt-2 mb-2">
+        <span class="badge badge-info">Configurar</span>
+        <span class="badge badge-danger">Delete</span>
+</div>
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Proyecto</th>
+            <th>Descripción</th>
+            <th>Base</th>
+            <th>Meta</th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Proyecto_Indicador renglon in Model)
+        {
+            <tr>
+                <td>@renglon.pryind_nombre</td>
+                <td>@renglon.Proyecto.proy_titulo</td>
+                <td>@renglon.pryind_descripcion</td>
+                <td>@renglon.pryind_valor_base</td>
+                <td>@renglon.pryind_valor_meta</td>
+                <td>
+                    <button class="btn btn-info btn-sm btn-grid op-btn-new" title=""
+                            data-url-redirect="@Url.RouteUrl("Default", new { action = "Configuracion", controller = _ControllerName, id=renglon.IdEncriptado })" onclick="TbEdit(this);">
+                        <i class="fa fa-edit"></i>
+                    </button>
+
+                    <button type="button"
+                            data-id-rel="@renglon.pryind_id"
+                            url-delete="@Url.Action("Delete",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Indicador">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+        refreshData();
+    }
+
+</script>

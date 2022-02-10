@@ -1,0 +1,201 @@
+﻿@model Entidades.Tarea
+
+@{
+    if (Model.tar_id.Equals(0))
+    {
+        ViewBag.Title = "Crear Tarea";
+    }
+    else
+    {
+        ViewBag.Title = "Modificación de la Tarea";
+    }
+
+    ViewBag.Subtitle = "Ingrese datos generales de la Tarea";
+
+    int estadoEdicion = (int)Negocio.TareasEstados.Estados.Edicion;
+    string _ControllerName = "Tareas";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Index", controller = _ControllerName });
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            @if (Model.tar_id > 0)
+            {
+                @: Modificar Tarea
+            }
+            else
+            {
+                @: Crear Tarea
+            }
+        </h4>
+        <p>
+            @if (Model.tar_id > 0)
+            {
+                @: @Model.tar_nombre
+            }
+            else
+            {
+                @: Tarea Nueva <br /> <span class="text-success"> Complete los siguiente datos y haga click en Guardar para publicar la tarea. </span>
+            }
+        </p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    @using (Html.BeginForm("Save", _ControllerName, FormMethod.Post, new { id = "formularioABM", name = "formularioABM", @class = "formularioABM formNotify formRedirect formValidar" }))
+    {
+        @Html.HiddenFor(x => x.IdEncriptado)
+        <div class="row mt-1">
+            <div class="form-group col-md-12">
+                @Html.LabelFor(model => model.tar_nombre, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.tar_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.tar_nombre, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row mt-1">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Prioridad, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => model.Prioridad.tprioridad_id, new SelectList(Negocio.DDL.ListarTipoPrioridades(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Area, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => model.Area.area_id, new SelectList(ViewBag.Areas, "area_id", "area_nombre", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+        </div>
+
+        <div class="row mt-1">
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.tar_fec_ini, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.tar_fec_ini, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.tar_fec_ini, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.tar_fec_fin, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.tar_fec_fin, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.tar_fec_fin, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.tar_tiempo, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.tar_tiempo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.tar_tiempo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.tar_descripcion, htmlAttributes: new { @class = "control-label" })
+                <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.tar_descripcion)" id="@Html.NameFor(model=>model.tar_descripcion)">@Model.tar_descripcion</textarea>
+                @Html.ValidationMessageFor(model => model.tar_descripcion, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="d-flex flex-row-reverse">
+                    <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar</button>
+
+                    @if (Model.tar_id > 0 & Model.EstadoTarea.tarestado_id.Equals(estadoEdicion))
+                    {
+                        <button type="button"
+                                data-id-rel="@Model.IdEncriptado"
+                                accion-url="@Url.Action("PublicarTarea","Tareas")"
+                                accion-nombre-clave="publicarTarea"
+                                accion-titulo-modal="Tarea"
+                                accion-mensaje-modal="Desea publicar la tarea ?"
+                                accion-mensaje-exitoso="Tarea publicada exitosamente!"
+                                class="btn btn-xs btn-primary m-1 btn-question-action" title="Publicar Tarea">
+                            <i class="fa fa-lock"></i> Publicar Tarea
+                        </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.tar_id > 0)
+    {
+        <hr />
+
+        <div class="row">
+            <div class="col-md-8">
+                <h4 class="pb-2"> Indicadores</h4>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex flex-row-reverse">
+                    <button type="button"
+                            modal-value-primary="@Model.IdEncriptado"
+                            modal-value-secondary="0"
+                            modal-value-extra="0"
+                            modal-url="@Url.Action("PartialModalABMVincularIndicador","Tareas")"
+                            class="btnOpenModal btn btn-xs btn-success m-1">
+                        <i class="fa fa-plus"></i> Ingresar nuevo indicador
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <div id="viewGridData" style="zoom:90%"></div>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
+
+@section scripts{
+
+    <script>
+        $('.datepicker').datepicker(
+            {
+                autoclose: true,
+                todayHighlight: true,
+                dateFormat: 'dd/mm/yy'
+
+            });
+    </script>
+
+    @if (Model.tar_id > 0)
+    {
+        <script>
+           
+            $(document).ready(function () {
+                refreshData();
+            });
+
+            function functionAccionCustom(pClave) {
+                if (pClave == "publicarTarea") {
+                    $('#btnRegresar').click();
+                }
+
+            }
+
+            function refreshData()
+            {
+                dataObject = {
+                    tareaID: "@Model.IdEncriptado"
+                };
+                _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataIndicadoresTarea", controller = "Tareas" })";
+                APP_LoadPartialView('#viewGridData', dataObject, _urlPartial);
+            }
+        </script>
+     }
+}

@@ -1,0 +1,89 @@
+﻿@model Entidades.Proyecto
+
+@{
+    string _ControllerName = "Proyectos";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.proy_id.Equals(0) ? "Alta de Proyecto " : "Modificar Proyecto")
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalProyecto", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "true", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.proy_id)
+
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.proy_titulo, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.proy_titulo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.proy_titulo, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="form-group col-md-12">
+                            @Html.LabelFor(model => model.Tipo, new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.Tipo.tproy_id, new SelectList(Negocio.DDL.ListarTipoProyecto(Filters.VerificarToken.ConsultarToken()), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="form-group col-md-12">
+                            @Html.LabelFor(model => model.Area, new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.Area.IdEncriptado, new SelectList(ViewBag.Areas, "IdEncriptado", "descripcion_combo"), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.proy_fec_ini, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.proy_fec_ini, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.proy_fec_ini, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.proy_fec_fin, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.proy_fec_fin, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate datepicker", required = "required", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.proy_fec_fin, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.proy_descripcion, htmlAttributes: new { @class = "control-label" })
+                            <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.proy_descripcion)" id="@Html.NameFor(model=>model.proy_descripcion)">@Model.proy_descripcion</textarea>
+                            @Html.ValidationMessageFor(model => model.proy_descripcion, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $('.datepicker').datepicker(
+        {
+            autoclose: true,
+            todayHighlight: true,
+            dateFormat: 'dd/mm/yy'
+        });
+</script>

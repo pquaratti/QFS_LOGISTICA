@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Entidades.Tarea_Indicador>
+
+@{
+    string _ControllerName = "Indicadores";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+
+
+    var _ixRenglon = 0;
+}
+<div class="d-flex flex-row-reverse mt-1 mb-1">
+    <span class="badge badge-danger">Desvincular</span>
+</div>
+@using (Html.BeginForm("SaveModalConfiguracionTareas", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true" }))
+{
+    <table class="table table-sm table-header-app datatablePartial-scrollbar">
+        <thead>
+            <tr>
+                <th>Tarea</th>
+                <th>Descripción</th>
+                <th width="10%">Ponderancia</th>
+                <th width="5%"></th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Entidades.Tarea_Indicador renglon in Model)
+            {
+
+            <tr>
+                <td>@renglon.Tarea.tar_nombre</td>
+                <td>@renglon.Tarea.tar_descripcion</td>
+
+                <td>
+                    <input id="renglones[@_ixRenglon].pit_porcentaje" name="renglones[@_ixRenglon].tarind_porcentaje" autocomplete="off" class="form-control form-control-sm text-box single-line validarnumero" type="text" value="@renglon.pit_porcentaje">
+                    <input type="hidden" name="renglones[@_ixRenglon].Indicador.pryind_id" id="renglones[@_ixRenglon].Indicador.pryind_id" value="@renglon.Indicador.pryind_id" />
+                    <input type="hidden" name="renglones[@_ixRenglon].tarind_id" id="renglones[@_ixRenglon].pit_id" value="@renglon.pit_id" />
+                    <input type="hidden" name="renglones[@_ixRenglon].Tarea.tar_id" id="renglones[@_ixRenglon].Tarea.prytar_id" value="@renglon.Tarea.prytar_id" />
+                </td>
+                <td>
+                    <button type="button"
+                            data-id-rel="@renglon.tarind_id"
+                            delete-funcionExtra="true"
+                            url-delete="@Url.Action("DesvincularTarea",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Desvincular Tarea">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+
+                _ixRenglon++;
+            }
+        </tbody>
+    </table>
+
+    <div class="row mt-3 pr-2">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-8">
+            <div class="d-flex flex-row-reverse">
+                <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+          
+<script>
+
+    function functionExtraDelete() {
+        refreshData();
+    };
+
+</script>

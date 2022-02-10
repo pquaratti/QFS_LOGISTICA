@@ -1,0 +1,60 @@
+﻿@model Entidades.Proyecto
+
+@{
+    ViewBag.Title = "Indicadores";
+    ViewBag.Subtitle = "Indicadores  ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Indicadores";
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">Indicadores </h4>
+        <p>Listado de Indicadores del Proyecto: @Model.proy_titulo</p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button type="button" modal-value-primary="@Model.IdEncriptado" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABMIndicadores",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Crear un Indicador</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <div id="viewGridData" style="zoom: 90%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            refreshData();
+        });
+
+        function refreshData()
+        {
+            dataObject = {
+                proyectoID: '@Model.proy_id'
+            };
+
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataIndicadores", controller = _ControllerName })";
+            APP_LoadPartialView('#viewGridData', dataObject, _urlPartial);
+
+        }
+
+        $('#btnBuscar').click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+
+    </script>
+}
+
+

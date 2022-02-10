@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Entidades.Proyecto_Indicador>
+
+
+<div class="card card-body col-md-12 shadow-sm p-2 pl-2 ml-1 mr-1 mt-1 bg-gray-100" style="zoom:90%">
+    <table class="table no-footer dtr-inline table-bordered table-sm table-header-app">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Valor base</th>
+                <th>Valor meta</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Entidades.Proyecto_Indicador renglon in Model)
+            {
+            <tr>
+                <td>@renglon.pryind_nombre</td>
+                <td>@renglon.pryind_descripcion</td>
+                <td><span class="text-info" style="font-weight:600">@renglon.pryind_valor_base</span></td>
+                <td><span class="text-info" style="font-weight:600">@renglon.pryind_valor_meta</span></td>
+
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+

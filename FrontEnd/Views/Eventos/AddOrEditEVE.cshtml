@@ -1,0 +1,205 @@
+﻿@model Entidades.Evento
+
+@{
+    if (Model.eve_id.Equals(0))
+    {
+        ViewBag.Title = "Crear un Evento";
+    }
+    else
+    {
+        ViewBag.Title = "Modificación de un Evento";
+    }
+
+    ViewBag.Subtitle = "Ingrese los datos del evento";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Eventos";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Eventos", controller = _ControllerName });
+    if (Model.Cerrado | Model.Finalizado) { Response.Redirect(_urlBack); }
+}
+
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            @if (Model.eve_id > 0)
+            {
+                @: Modificar Evento
+            }
+            else
+            {
+                @: Crear evento
+            }
+        </h4>
+        <p>
+            @if (Model.eve_id > 0)
+            {
+                @: @Model.Tipo.evet_contenido
+            }
+            else
+            {
+                @: Evento Nuevo <br /> <span class="text-success"> Complete los siguiente datos y haga click en Guardar para comenzar a cargar el detalle del evento </span>
+            }
+        </p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    @using (Html.BeginForm("Save", _ControllerName, FormMethod.Post, new { id = "formularioABM", name = "formularioABM", @class = "formularioABM formNotify formRedirect formValidar" }))
+    {
+        @Html.HiddenFor(x => x.eve_id)
+
+        <div class="row row-sm">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.eve_titulo, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.eve_titulo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.eve_titulo, "", new { @class = "text-danger" })
+            </div>
+           
+        </div>
+
+        <div class="row row-sm mt-4">
+            <div class="form-group col-md-3">
+                @Html.LabelFor(model => model.Tipo, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => Model.Tipo.evet_id, new SelectList(ViewBag.Tipo_Evento, "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+            <div class="form-group col-md-2">
+                @Html.LabelFor(model => model.eve_duracion, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.eve_duracion, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.eve_duracion, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-2">
+                @Html.LabelFor(model => model.eve_fecha, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.eve_fecha, new { htmlAttributes = new { @class = "form-control form-control-sm inputDate", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.eve_fecha, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-5">
+                @Html.LabelFor(model => model.eve_pass, htmlAttributes: new { @class = "control-label" }) <span style="cursor:pointer;" title="Ver password" toggle="#password-field" class="fa fa-fw fa-eye field_icon toggle-password"></span>
+                @Html.EditorFor(model => model.eve_pass, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off", id = "passwordType", type = "password" } })
+                @Html.ValidationMessageFor(model => model.eve_pass, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.eve_link, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.eve_link, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.eve_link, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-12">
+                @Html.LabelFor(model => model.eve_objetivo, htmlAttributes: new { @class = "control-label" })
+                <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.eve_objetivo)" id="@Html.NameFor(model=>model.eve_objetivo)">@Model.eve_objetivo</textarea>
+                @Html.ValidationMessageFor(model => model.eve_objetivo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-8">
+                <div class="d-flex flex-row-reverse">
+                    <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar</button>
+
+                    @if (Model.eve_id > 0 && Model.Cerrado == false)
+                    {
+                        <button type="button"
+                                data-id-rel="@Model.eve_id"
+                                accion-url="@Url.Action("CerrarEvento","Eventos")"
+                                accion-nombre-clave="CerrarEvento"
+                                accion-titulo-modal="Evento"
+                                accion-mensaje-modal="Desea cerrar el Evento ?"
+                                accion-mensaje-exitoso="Evento cerrado exitosamente!"
+                                class="btn btn-xs btn-primary m-1 btn-question-action" title="Cerrar Evento">
+                            <i class="fa fa-lock"></i> Cerrar Evento
+                        </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.eve_id > 0)
+    {
+        <hr />
+
+        <div class="row">
+            <div class="col-md-8">
+                <h4 class="pb-2"> Renglones del Evento</h4>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex flex-row-reverse">
+                    <button type="button"
+                            modal-value-primary="@Model.eve_id"
+                            modal-value-secondary="0"
+                            modal-value-extra="0"
+                            modal-url="@Url.Action("PartialModalABMEventoRenglon","Eventos")"
+                            class="btnOpenModal btn btn-xs btn-success m-1">
+                        <i class="fa fa-plus"></i> Ingresar nuevo detalle
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <div id="viewGridData" style="zoom:100%"></div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+</div>
+
+@section scripts{
+
+    @if (Model.eve_id > 0)
+    {
+        <script>
+
+            $(document).ready(function () {
+                refreshData();
+            });
+
+            function refreshData()
+            {
+                dataObject = {
+                    eventoID: @Model.eve_id,
+                    finalizado: "@Model.Finalizado"
+                };
+                _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataRenglones", controller = "Eventos" })";
+                APP_LoadPartialView('#viewGridData', dataObject, _urlPartial);
+            }
+
+            function functionAccionCustom(pClave) {
+
+                if (pClave == "CerrarEvento") {
+                    $('#btnRegresar').click();
+                }
+
+            }
+            $("body").on('click', '.toggle-password', function () {
+                $(this).toggleClass("fa-eye fa-eye-slash");
+                var input = $("#passwordType");
+                if (input.attr("type") === "password") {
+                    input.attr("type", "text");
+                } else {
+                    input.attr("type", "password");
+                }
+
+            });
+
+        </script>
+    }
+
+
+}

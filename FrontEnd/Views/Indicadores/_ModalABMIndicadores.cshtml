@@ -1,0 +1,77 @@
+﻿@model Entidades.Proyecto_Indicador
+
+@{
+    string _ControllerName = "Indicadores";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.pryind_id.Equals(0) ? "Alta de Indicador " : "Modificar Indicador")
+                    <br />
+                    <span class="tx-sm text-success">  Proyecto: @Model.Proyecto.proy_titulo  </span>
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalIndicador", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "true", closeForm = "true", funcionExtra = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.pryind_id)
+                    @Html.HiddenFor(x => x.Proyecto.IdEncriptado)
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.pryind_nombre, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.pryind_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.pryind_nombre, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.pryind_valor_base, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.pryind_valor_base, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.pryind_valor_base, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.pryind_valor_meta, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.pryind_valor_meta, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.pryind_valor_meta, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.pryind_descripcion, htmlAttributes: new { @class = "control-label" })
+                            <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.pryind_descripcion)" id="@Html.NameFor(model=>model.pryind_descripcion)">@Model.pryind_descripcion</textarea>
+                            @Html.ValidationMessageFor(model => model.pryind_descripcion, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function functionExtra() {
+        LoadIndicadores();
+    }
+
+</script>

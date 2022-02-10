@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Entidades.Pregunta_Frecuente>
+
+<div class="content">
+    <div class="content-body content-body-components">
+        <div class="component-section no-code">
+            <div id="accordion1" class="accordion">
+
+                @foreach (Entidades.Pregunta_Frecuente renglon in Model)
+                {
+                    <div class="d-flex flex-row-reverse">
+                        <button type="button"
+                                modal-value-primary="@renglon.pgf_id"
+                                modal-value-secondary="0"
+                                modal-value-extra="0"
+                                modal-url="@Url.Action("PartialModalABMPreguntasFrecuentes","PreguntasFrecuentes")"
+                                class="btnOpenModal btn btn-xs btn-success m-1">
+                            <i class="fa fa-plus"></i> Ingresar nuevo detalle
+                        </button>
+                     </div>
+                    <h6 class="accordion-title">
+                        @renglon.pgf_titulo
+                    </h6>
+                    <div class="accordion-body">@renglon.pgf_contenido</div>
+                    }
+
+                </div><!-- accordion -->
+        </div><!-- component-section -->
+    </div><!-- content body -->
+</div><!-- content -->
+
+    <script src="../lib/jqueryui/jquery-ui.min.js"></script>
+
+    <script>
+        $(function () {
+            $('#accordion1').accordion({
+                heightStyle: 'content'
+            });
+
+        })
+    </script>

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Entidades.Vistas.TotalesGenerico>
+
+<div class="row mt-3 mb-3">
+    @foreach (var itemTotal in Model)
+    {
+        <div class="col-md-4">
+            <div class="card card-hover card-social-one">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mg-b-10">
+                        <h1 class="card-value">@itemTotal.TotalSuma.ToString("C")</h1>
+                    </div>
+                    <h5 class="card-title tx-primary">@itemTotal.Titulo</h5>
+                    <p class="card-desc">@itemTotal.Subtitulo</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

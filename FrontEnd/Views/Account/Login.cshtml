@@ -1,0 +1,153 @@
+﻿@model Entidades.App.SIS_Usuario
+
+@{
+    Layout = null;
+
+    var _includePaths = Resources.Repositorio.IncludeFilePaths();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="QFSTACK - SGM">
+    <meta name="author" content="QFSTACK - SGM">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="@_includePaths/assets/img/favicon/favicon.ico">
+
+    <title>Sistema de Gestión de Metas</title>
+
+    <!-- vendor css -->
+    <link href="@_includePaths/assets/externalplugs/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/sweetalert/sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <!-- template css -->
+    <link rel="stylesheet" href="@_includePaths/assets/css/template_blue.css">
+
+    <style>
+        .backLogin {
+            background-image: url('@Url.Content("~/assets/img/bgLogin.jpg")');
+            background-size: cover;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="signin-panel backLogin">
+        <div style="width: 100%;height: 70px;position: absolute;background: #0000009c;bottom: 0;color:white">
+            <h3 style="padding-top:20px;padding-left:20px;color: #bbcada;font-size: 20px;">SGM</h3>
+        </div>
+
+        <div class="signin-sidebar">
+            <div class="signin-sidebar-body">
+                <a href="dashboard-one.html" class="sidebar-logo mg-b-40">
+                    @*<img src="~/assets/img/logo_sistema.png" alt="" style="width:50px; margin-right:8px">*@
+                    <span style="padding-top: 7px;">SGM <br /> <span style="margin-top: 4px; font-size: 15px;">Sistema de Gestión de Metas</span></span>
+                </a>
+                <h4 class="signin-title">Bienvenido!</h4>
+                <h5 class="signin-subtitle">Ingrese sus credenciales.</h5>
+
+                <div id="contentLogin">
+
+                    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { id = "frmLogin", name = "frmLogin", @class = "signin-form" }))
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.usu_nickname)
+                            @Html.EditorFor(model => model.usu_nickname, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", placeholder = "Ingresa tu nombre de usuario", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.usu_nickname, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.usu_password)
+                            @Html.EditorFor(model => model.usu_password, new { htmlAttributes = new { @class = "form-control", type = "password", autocomplete = "off", placeholder = "Ingresa tu contraseña", @required = "required" } })
+                            @Html.ValidationMessageFor(model => model.usu_password, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group d-flex mg-b-0">
+                            <button id="btnLogin" class="btn btn-brand-01 btn-uppercase flex-fill">Ingresar</button>
+                        </div>
+                    }
+
+                    <a href="@Url.Action("Recuperar","Account")" class="tx-13">Olvidaste tu contraseña?</a>
+                </div>
+
+                <div id="contentLoading" style="display:none;width: 100%;height: 100%;text-align: center;padding-top: 100px;">
+                    <div class="spinner-border" role="status" style="text-align: center;width: 70px;height: 70px;">
+
+                    </div>
+                </div>
+
+                <p class="mg-t-auto mg-b-0 tx-sm tx-color-03">Sistema de Gestión de Metas V.2021 </p>
+            </div><!-- signin-sidebar-body -->
+        </div><!-- signin-sidebar -->
+    </div><!-- signin-panel -->
+
+    <script src="@_includePaths/assets/externalplugs/jquery/jquery.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/bootstrap/js/bootstrap.bundle.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/feather-icons/feather.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/perfect-scrollbar/perfect-scrollbar.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/sweetalert/sweetalert.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.unobtrusive.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/js/PublicResources.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+
+    <script>
+        $(function () {
+
+            'use strict'
+
+            feather.replace();
+
+            new PerfectScrollbar('.signin-sidebar', {
+                suppressScrollX: true
+            });
+        });
+
+    </script>
+
+    <script>
+
+        $('#btnLogin').click(function (e) {
+            e.preventDefault();
+
+            if ($(frmLogin).valid() === false) {
+                return false;
+            }
+
+            StartSpinner();
+
+            APP_SendFormAjax(frmLogin, function (resp) {
+                if (resp.Result.Success === true) {
+                    setTimeout(function () { window.location = resp.Result.urlRedirect; }, 600);
+                }
+                else {
+                    StopSpinner();
+                    APP_SweetAlert_ShowMessageError('Ingreso', resp.Result.Message);
+                }
+            });
+
+        });
+
+        function StartSpinner() {
+            $('#contentLoading').show();
+            $('#contentLogin').hide();
+        }
+
+        function StopSpinner() {
+            $('#contentLoading').hide();
+            $('#contentLogin').show();
+        }
+
+    </script>
+
+</body>
+</html>
+
+

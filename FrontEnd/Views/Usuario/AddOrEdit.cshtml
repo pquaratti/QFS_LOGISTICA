@@ -1,0 +1,307 @@
+﻿@model Entidades.App.SIS_Usuario
+
+@{
+    if (Model.usu_id == 0)
+    {
+        ViewBag.Title = "Creación de usuario";
+    }
+    else
+    {
+        ViewBag.Title = "Modificación de usuario";
+    }
+
+    ViewBag.Subtitle = "Formulario de edición de datos del usuario. Recordá guardar los datos antes de salir del formulario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Usuario";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Index", controller = _ControllerName });
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            @if (Model.usu_id > 0)
+            {
+                @: Modificación de usuario
+            }
+            else
+            {
+                @: Crear Usuario
+            }
+        </h4>
+        <p>
+            @if (Model.usu_id > 0)
+            {
+
+            }
+            else
+            {
+                @: Usuario Nuevo <br /> <span class="text-success"> Complete los siguiente datos y haga click en Guardar para comenzar a asignar los Permisos </span>
+            }
+        </p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="card card-body">
+    @using (Html.BeginForm("Save", _ControllerName, FormMethod.Post, new { id = "formularioABM", name = "formularioABM", @class = "formularioABM formNotify formRedirect formValidar" }))
+    {
+        @Html.HiddenFor(x => x.IdEncriptado)
+
+        <div class="row row-sm">
+            <div class="form-group col-sm-4">
+                @Html.LabelFor(model => model.usu_nombre, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.usu_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.usu_nombre, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-sm-4">
+                @Html.LabelFor(model => model.usu_apellido, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.usu_apellido, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.usu_apellido, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-sm-4">
+                @Html.LabelFor(model => model.usu_documento, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.usu_documento, new { htmlAttributes = new { @class = "form-control form-control-custom form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.usu_documento, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-sm-3">
+                @Html.LabelFor(model => model.usu_nickname, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.usu_nickname, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.usu_nickname, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-sm-4">
+                @Html.LabelFor(model => model.usu_mail, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.usu_mail, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.usu_mail, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group col-md-5">
+                @Html.LabelFor(model => model.Organizacion, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => Model.Organizacion.org_id, new SelectList(ViewBag.Organizaciones, "Value", "Text", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+
+        </div>
+
+
+        if (Model.usu_id.Equals(0))
+        {
+            <div class="row">
+                <div class="form-group col-sm-3">
+                    @Html.LabelFor(model => model.usu_password, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.usu_password, new { htmlAttributes = new { @class = "form-control form-control-custom form-control-sm", required = "required", autocomplete = "off", @type = "password" } })
+                    @Html.ValidationMessageFor(model => model.usu_password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="custom-control custom-switch">
+                    @Html.EditorFor(model => model.usu_administrador, new { htmlAttributes = new { @class = "custom-control-input", autocomplete = "off" } })
+                    @Html.LabelFor(model => model.usu_administrador, htmlAttributes: new { @class = "custom-control-label" })
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="d-flex flex-row-reverse">
+                    <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar</button>
+
+
+                    @if (Model.usu_id > 0)
+                    {
+                        if (Model.Bloqueado == true)
+                        {
+
+                            <button type="button"
+                                    data-id-rel="@Model.usu_id"
+                                    accion-url="@Url.Action("DesbloquearUsuario","Usuario")"
+                                    accion-nombre-clave="desbloquearUsuario"
+                                    accion-titulo-modal="Usuarios"
+                                    accion-mensaje-modal="Desea Desbloquear al usuario @Model.usu_nombre @Model.usu_apellido ?"
+                                    accion-mensaje-exitoso="Usuario desbloqueado exitosamente!"
+                                    class="btn btn-primary btn-xs m-1 btn-question-action" title="Desbloquear usuario">
+                                <i class="fa fa-lock-open"></i> Desbloquear Usuario
+                            </button>
+
+                        }
+
+                        if (Model.Bloqueado == false)
+                        {
+
+                            <button type="button"
+                                    data-id-rel="@Model.usu_id"
+                                    accion-url="@Url.Action("BloquearUsuario","Usuario")"
+                                    accion-nombre-clave="bloquearUsuario"
+                                    accion-titulo-modal="Usuarios"
+                                    accion-mensaje-modal="Desea Bloquear al usuario @Model.usu_nombre @Model.usu_apellido ?"
+                                    accion-mensaje-exitoso="Usuario bloqueado exitosamente!"
+                                    class="btn btn-primary btn-xs m-1 btn-question-action" title="Bloquear usuario">
+                                <i class="fa fa-user-lock"></i> Bloquear Usuario
+                            </button>
+
+                        }
+
+                        if (Model.usu_intentos >= 3)
+                        {
+
+                            <button type="button"
+                                    data-id-rel="@Model.usu_id"
+                                    accion-url="@Url.Action("ReiniciarIntentosFallidos","Usuario")"
+                                    accion-nombre-clave="reiniciarIntentos"
+                                    accion-titulo-modal="Usuarios"
+                                    accion-mensaje-modal="Desea reiniciar los intentos al usuario @Model.usu_nombre @Model.usu_apellido ?"
+                                    accion-mensaje-exitoso="Reinicio de intentos generado exitosamente!"
+                                    class="btn btn-primary btn-xs m-1 btn-question-action" title="Reinicio de intentos">
+                                <i class="fa fa-recycle"></i> Reiniciar intentos
+                            </button>
+
+                        }
+
+                        <button type="button"
+                                modal-value-primary="@Model.usu_id"
+                                modal-value-secondary="0"
+                                modal-value-extra="0"
+                                modal-url="@Url.Action("PartialModalChangePassword",_ControllerName)"
+                                class="btnOpenModal btn btn-xs btn-warning m-1">
+                            <i class="fa fa-lock"></i> Cambiar contraseña
+                        </button>
+
+                        <button type="button"
+                                modal-value-primary="@Model.usu_id"
+                                modal-value-secondary="0"
+                                modal-value-extra="0"
+                                modal-url="@Url.Action("PartialModalPermisosEspeciales",_ControllerName)"
+                                modal-funcionExtra="true"
+                                class="btnOpenModal btn btn-xs btn-info m-1">
+                            <i class="fa fa-list"></i> Permisos Especiales
+                        </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.usu_id > 0)
+    {
+        <hr />
+
+        <div class="row">
+            <div class="col-md-12">
+                <h4> Módulos asignados</h4>
+                <p>Seleccione un módulo y vincule un perfil al usuario</p>
+                <br />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <select id="ddlModulos" class="form-control"></select>
+            </div>
+            <div class="col-md-3">
+                <select id="ddlPerfiles" class="form-control"></select>
+            </div>
+            <div class="col-md-3">
+                <button id="btnAgregarPerfil" type="button" class="btn btn-success"> <i class="fa fa-plus"></i> Asignar Perfil</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="viewPerfiles" class="mt-xl-5"></div>
+            </div>
+        </div>
+
+    }
+
+
+</div>
+
+
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+            LoadComboModulos();
+            LoadPerfiles();
+        });
+
+
+        $('#ddlModulos').change(function () {
+            LoadComboPerfiles();
+        });
+
+
+        function LoadComboModulos(){
+            _urlJson = "@Url.RouteUrl("Default", new { action = "ListarSelect", controller = "Modulo" })";
+            APP_LoadSelect('#ddlModulos',_urlJson, 0);
+        }
+
+        function LoadComboPerfiles() {
+            _filterID = $('#ddlModulos').val();
+            _urlJson = "@Url.RouteUrl("Default", new { action = "ListarSelect", controller = "Perfil" })";
+            APP_LoadSelect('#ddlPerfiles',_urlJson, _filterID);
+        }
+
+        function LoadPerfiles()
+        {
+            dataObject = { "id": '@Model.IdEncriptado' }
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PVModulos", controller = _ControllerName })";
+            APP_LoadPartialView('#viewPerfiles', dataObject, _urlPartial);
+        }
+
+        $('#btnAgregarPerfil').click(function (e) {
+            e.preventDefault();
+            _perfilID = $('#ddlPerfiles').val();
+            dataObject = { "usuario": '@Model.IdEncriptado', "perfil": _perfilID };
+            _urlSend = "@Url.RouteUrl("Default", new { action = "AgregarPerfil", controller = _ControllerName })";
+
+            APP_executeAjaxPostNoClosePopup(_urlSend, dataObject, function (response) {
+                if (response.Result.Success === true) {
+                    APP_SweetAlert_ShowMessageSuccess('Asignación de perfil', response.Result.Message);
+                    LoadPerfiles();
+                }
+                else
+                {
+                    APP_SweetAlert_ShowMessageError('Ocurrió un inconveniente', response.Result.Message);
+                }
+            });
+        });
+
+        function btnQuitarPerfil(control) {
+            var _perfilID = $(control).attr('data-perfil-id');
+            dataObject = { "usuario": '@Model.IdEncriptado', "perfil": _perfilID }
+            _urlSend = "@Url.RouteUrl("Default", new { action = "QuitarPerfil", controller = _ControllerName })";
+
+            APP_executeAjaxPostNoClosePopup(_urlSend, dataObject, function (response) {
+
+                if (response.Result.Success === true) {
+                    APP_SweetAlert_ShowMessageSuccess('Eliminación de sistema', response.Result.Message);
+                    LoadPerfiles();
+                }
+                else
+                {
+                    APP_SweetAlert_ShowMessageError('Ocurrió un inconveniente', response.Result.Message);
+                }
+            });
+        }
+
+        function functionAccionCustom(pClave) {
+
+            if (pClave == "bloquearUsuario" || pClave == "desbloquearUsuario" || pClave == "reiniciarIntentos")
+            {
+                location.href = "@Url.RouteUrl("Default", new { action = "AddOrEdit", controller = _ControllerName, id=Model.IdEncriptado })";
+
+            }
+
+        }
+
+    </script>
+
+}

@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6898C3CE-2503-41EA-9A60-3EB9AB2FE960}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ReportesLocales</RootNamespace>
+    <AssemblyName>ReportesLocales</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ComandoDataSet.cs">
+      <DependentUpon>ComandoDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComandoDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSetCredito.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComandoDataSetCredito.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSetOrdenCompra.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComandoDataSetOrdenCompra.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSetPlanificacion.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComandoDataSetPlanificacion.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSetPresupuesto.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComandoDataSetPresupuesto.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSetSolicitudesPago.cs">
+      <DependentUpon>ComandoDataSetSolicitudesPago.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSetSolicitudesPago.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComandoDataSetSolicitudesPago.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSetViaticos.cs">
+      <DependentUpon>ComandoDataSetViaticos.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="ComandoDataSetViaticos.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComandoDataSetViaticos.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="informe_asignacion_credito.rdlc" />
+    <EmbeddedResource Include="informe_asignacion_presupuestaria.rdlc" />
+    <EmbeddedResource Include="solicitud_pago_viaticos.rdlc" />
+    <EmbeddedResource Include="viaticos_planilla.rdlc" />
+    <EmbeddedResource Include="combustible_tarjetas.rdlc" />
+    <EmbeddedResource Include="legajos_listado.rdlc" />
+    <EmbeddedResource Include="planificacion_informe_gerencial.rdlc" />
+    <EmbeddedResource Include="planificacion_individual.rdlc" />
+    <EmbeddedResource Include="planificacion_resumido.rdlc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ComandoDataSet.xsc">
+      <DependentUpon>ComandoDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSet.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ComandoDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ComandoDataSet.xss">
+      <DependentUpon>ComandoDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetCredito.xsc">
+      <DependentUpon>ComandoDataSetCredito.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetCredito.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ComandoDataSetCredito.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ComandoDataSetCredito.xss">
+      <DependentUpon>ComandoDataSetCredito.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetOrdenCompra.xsc">
+      <DependentUpon>ComandoDataSetOrdenCompra.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetOrdenCompra.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ComandoDataSetOrdenCompra.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ComandoDataSetOrdenCompra.xss">
+      <DependentUpon>ComandoDataSetOrdenCompra.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetPlanificacion.xsc">
+      <DependentUpon>ComandoDataSetPlanificacion.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetPlanificacion.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ComandoDataSetPlanificacion.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ComandoDataSetPlanificacion.xss">
+      <DependentUpon>ComandoDataSetPlanificacion.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetPresupuesto.xsc">
+      <DependentUpon>ComandoDataSetPresupuesto.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetPresupuesto.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ComandoDataSetPresupuesto.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ComandoDataSetPresupuesto.xss">
+      <DependentUpon>ComandoDataSetPresupuesto.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetSolicitudesPago.xsc">
+      <DependentUpon>ComandoDataSetSolicitudesPago.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetSolicitudesPago.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ComandoDataSetSolicitudesPago.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ComandoDataSetSolicitudesPago.xss">
+      <DependentUpon>ComandoDataSetSolicitudesPago.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetViaticos.xsc">
+      <DependentUpon>ComandoDataSetViaticos.xsd</DependentUpon>
+    </None>
+    <None Include="ComandoDataSetViaticos.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ComandoDataSetViaticos.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ComandoDataSetViaticos.xss">
+      <DependentUpon>ComandoDataSetViaticos.xsd</DependentUpon>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,103 @@
+﻿@model Entidades.Proyecto_Objetivo_Indicador
+
+@{
+    string _ControllerName = "Objetivos";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Vincular un indicador al objetivo
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveVinculacionIndicador", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "false", resetForm = "false", closeForm = "true", funcionExtra = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.poi_id)
+                    @Html.HiddenFor(x => x.Objetivo.IdEncriptado)
+                    @Html.HiddenFor(x => x.Objetivo.ProyectoVinculado.IdEncriptado)
+
+                    <div class="row mt-2">
+                        <div class="form-group col-md-12">
+                            @Html.LabelFor(model => model.Indicador, new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.Indicador.pryind_id, new SelectList(ViewBag.Indicadores, "pryind_id", "descripcion_combo"), new { @class = "form-control camporequerido input-sm select2Modal", required = "required" })
+                        </div>
+                    </div>
+
+                    <div id="viewABMIndicador" class="d-none">
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                @Html.LabelFor(model => model.Indicador.pryind_nombre, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.Indicador.pryind_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.Indicador.pryind_nombre, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Indicador.pryind_valor_base, htmlAttributes: new { @class = "control-label" })
+                                    @Html.EditorFor(model => model.Indicador.pryind_valor_base, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                                    @Html.ValidationMessageFor(model => model.Indicador.pryind_valor_base, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Indicador.pryind_valor_meta, htmlAttributes: new { @class = "control-label" })
+                                    @Html.EditorFor(model => model.Indicador.pryind_valor_meta, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                                    @Html.ValidationMessageFor(model => model.Indicador.pryind_valor_meta, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                @Html.LabelFor(model => model.Indicador.pryind_descripcion, htmlAttributes: new { @class = "control-label" })
+                                <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.Indicador.pryind_descripcion)" id="@Html.NameFor(model=>model.Indicador.pryind_descripcion)">@Model.Indicador.pryind_descripcion</textarea>
+                                @Html.ValidationMessageFor(model => model.Indicador.pryind_descripcion, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $('#Indicador_pryind_id').change(function (e) {
+        e.preventDefault();
+
+        var _valSelect = $(this).val();
+
+        if (_valSelect == -1) {
+            $('#viewABMIndicador').removeClass('d-none');
+        }
+        else {
+            $('#viewABMIndicador').addClass('d-none');
+        }
+
+    });
+
+
+
+
+
+</script>

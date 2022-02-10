@@ -1,0 +1,29 @@
+﻿@model Entidades.Vistas.DashboardGestion
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-sm table-header-app datatablePartial-scrollbar">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Descripcion</th>
+                    <th>Importe</th>
+                    <th>Origen</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Entidades.Vistas.ItemProvisorio renglon in Model.ItemsProvisorios)
+                {
+                    <tr>
+                        <td>@renglon.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@renglon.Concepto.ticon_nombre</td>
+                        <td>@renglon.Descripcion</td>
+                        <td>@renglon.Importe.ToString("C")</td>
+                        <td>@renglon.Origen</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

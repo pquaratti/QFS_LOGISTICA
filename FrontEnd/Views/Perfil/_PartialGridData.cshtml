@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Entidades.App.SIS_Perfil>
+
+@{
+    Layout = null;
+    string _ControllerName = "Afiliado";
+    string _urlAddOrEdit = Url.RouteUrl("Default", new { action = "AddOrEdit", controller = _ControllerName });
+    string _urlDelete = Url.RouteUrl("Default", new { action = "Delete", controller = _ControllerName });
+}
+
+@if (Model.Count() > 0)
+{
+    <table id="dtPerfiles" class="table table-striped datatablePartial">
+        <thead>
+            <tr>
+                <th>Nombre del perfil</th>
+                <th width="150px">
+                    Acciones
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Entidades.App.SIS_Perfil obj in Model)
+            {
+                <tr>
+                    <td>@obj.prf_nombre</td>
+                    <td>
+                        <button class="btn btn-info btn-grid" data-perfil-id="@obj.IdEncriptado" onclick="AddActions(this);" ><i class="fa fa-list"></i></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+  @Html.Partial("_MensajeSinResultados")
+}
+
+    <div id="viewAccionesPerfiles"></div>
+
+
+<script>
+
+    function AddActions(control) {
+        var _idPerfil = $(control).attr('data-perfil-id');
+
+        var dataToPost = {
+            perfilID: _idPerfil
+        }
+        APP_OpenModalFormCallback('#viewAccionesPerfiles', '#formGridAcciones', dataToPost, '@Url.Action("PartialViewGridAcciones", "Perfil")', function () {
+            
+        });
+
+    }
+    
+</script>

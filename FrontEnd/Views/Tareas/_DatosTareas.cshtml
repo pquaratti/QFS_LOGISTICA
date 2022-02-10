@@ -1,0 +1,64 @@
+﻿@model Entidades.Tarea
+@{
+
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-hover card-project-three">
+            <div class="card-body">
+                <h5 class="project-title"><a href="">@Model.tar_nombre</a></h5>
+                <p class="tx-13 tx-gray-600">@Model.tar_descripcion</p>
+
+                <div class="project-data-group mg-b-25">
+                    <div>
+                        <h3><span class="@Model.Prioridad.tprioridad_css_text">@Model.Prioridad.tprioridad_nombre</span></h3>
+                        <label>Prioridad</label>
+                    </div>
+                    <div>
+                        <h3 class="@Model.EstadoTarea.tarestado_css_text">@Model.EstadoTarea.tarestado_titulo <i class="@Model.EstadoTarea.tarestado_css_icon"></i> </h3>
+                        <label>Estado</label>
+                    </div>
+                    @if (Model.tar_porcentaje < 100)
+                    {
+                        <div>
+                            <h3 class="tx-center"><span>@Model.tar_porcentaje %</span></h3>
+                            <label>Porcentaje de Avance</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-hover card-project-three">
+            <div class="card-body">
+                <h5 class="project-title"><a href="">Detalle de ejecución</a></h5>
+                <p class="tx-13 tx-gray-600">Fechas de inicio y finalización</p>
+
+                <div class="project-data-group mg-b-25">
+                    <div>
+                        <h3>@Model.tar_fec_ini.ToString("dd/MM/yyyy")</h3>
+                        <label>Fecha.Inicio</label>
+                    </div>
+                    <div>
+                        <h3>@Model.tar_fec_fin.ToString("dd/MM/yyyy")</h3>
+                        <label>Fecha.Fin</label>
+                    </div>
+                    <div>
+                        @if (Model.EstadoTarea.tarestado_id == (int)Resources.Enums.TipoEstadosTarea.Finalizada)
+                        {
+                           <h3 class="@(Model.tar_fec_fin_real < Model.tar_fec_fin ? "text-success" : "text-danger")">@Model.tar_fec_fin_real.ToString("dd/MM/yyyy")</h3>
+                        }
+                        else
+                        {
+                            <h3>-</h3>
+                        }
+                        <label>Fecha.Fin.Real</label>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

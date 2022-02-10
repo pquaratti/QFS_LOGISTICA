@@ -1,0 +1,30 @@
+﻿@model ICollection<Entidades.App.SIS_Modulo>
+
+<table class="table table-sm table-header-app">
+    <thead>
+        <tr>
+            <th>Módulo</th>
+            <th>Descripcion</th>
+            <th>Perfil</th>
+            <th>Ultimo acceso</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.App.SIS_Modulo modulo in Model)
+        {
+            foreach (Entidades.App.SIS_Perfil perfil in modulo.Perfiles)
+            {
+                <tr>
+                    <td>@modulo.mod_nombre</td>
+                    <td>@modulo.mod_descripcion</td>
+                    <td>@perfil.prf_nombre</td>
+                    <td>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm btn-grid" title="Quitar Sistema" data-perfil-id="@perfil.IdEncriptado" onclick="btnQuitarPerfil(this);"><i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

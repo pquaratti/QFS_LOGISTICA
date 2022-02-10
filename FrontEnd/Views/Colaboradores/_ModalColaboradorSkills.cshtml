@@ -1,0 +1,83 @@
+﻿@model Entidades.Colaborador_Skill
+
+@{
+    string _ControllerName = "Colaboradores";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Modificar Skills del Colaborador
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalColaboradorSkill", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "true", closeForm = "true" }))
+            {
+        <div class="modal-body">
+            @Html.HiddenFor(x => x.IdEncriptado)
+            @Html.HiddenFor(x => x.Colaborador.usu_id)
+            @Html.HiddenFor(x => x.Colaborador.IdEncriptado)
+            @Html.HiddenFor(x => x.colskill_id)
+
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(m => m.Skill, new { @class = "control-label" })
+                    @Html.DropDownListFor(m => m.Skill.skill_id, new SelectList(Negocio.DDL.ListarSkills(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", required = "required", @id="_ddlSkill" })
+                </div>
+            </div>
+
+            <div class="row mt-2 mb-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.colskill_puntaje, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.colskill_puntaje, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off", @id="puntajeSkill" } })
+                    @Html.ValidationMessageFor(model => model.colskill_puntaje, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <label for="txtExtra"> Descripción </label>
+                    @Html.TextArea("txtExtra", new { @class = "form-control camporequerido input-sm", required = "required", @rows = "3", @id = "txtExtra" })
+                </div>
+            </div>
+
+
+        </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                <button id="submitGuardar" type="submit" class="btn btn-success pull-left btn-app disabled"> <i class="fa fa-save"></i> Guardar</button>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $('#puntajeSkill').change(function (e) {
+        $('#submitGuardar').removeClass("disabled");
+    });
+
+
+
+    $('#_ddlSkill').change(function (e) {
+        $('#submitGuardar').addClass("disabled");
+        dataObject = {
+            skillID: $('#_ddlSkill').val(),
+            usuarioID: '@Model.Colaborador.IdEncriptado'
+        };
+        _urlJson = "@Url.RouteUrl("Default", new { action = "PuntajeSkill", controller = "Colaboradores" })";
+
+        APP_executeAjaxPostNoClosePopup(_urlJson, dataObject, function (res)
+        {
+            $("#puntajeSkill").val(res.Result.ObjectRelation);
+        });
+
+    });
+</script>

@@ -1,0 +1,293 @@
+﻿@model Entidades.Vistas.InformeEjecucion
+
+@{
+
+    decimal _porcentajePlanificadoComprobantes = 0;
+    decimal _porcentajeAsignadoComprobantes = 0;
+    decimal _saldoDisponible = Model.totalAsignadoCombustible - Model.totalEjecutadoCombustible;
+    _porcentajePlanificadoComprobantes = (Model.totalEjecutadoCombustible > 0 && Model.totalPlanificadoCombustible > 0 ? 
+        Model.totalEjecutadoCombustible / Model.totalPlanificadoCombustible : 0);
+    _porcentajeAsignadoComprobantes = (Model.totalEjecutadoCombustible > 0 && Model.totalAsignadoCombustible > 0 ?
+        Model.totalEjecutadoCombustible / Model.totalAsignadoCombustible : 0);
+
+}
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card card-hover card-event-two">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <h5 class="card-title mg-b-0">Planificado vs Comprobantes</h5>
+                <nav class="nav">
+                </nav>
+            </div>
+            <div class="card-body">
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="col-md-12 ml-0 mr-0 pl-0 pr-0">
+                            <div class="card card-hover card-social-one alert-primary">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                        <h1 class="card-value">@Model.totalPlanificadoCombustible.ToString("C")</h1>
+                                    </div>
+                                    <h5 class="card-title tx-primary">Planificación</h5>
+                                    <p class="card-desc">Total Planificado</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                            <div class="card card-hover card-social-one alert-success">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                        <h1 class="card-value">@Model.totalEjecutadoCombustible.ToString("C")</h1>
+                                    </div>
+                                    <h5 class="card-title tx-primary">Comprobantes</h5>
+                                    <p class="card-desc">Total de comprobantes generados</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                            <div class="card card-hover card-social-one @(_porcentajePlanificadoComprobantes <= 0 ? "alert-danger" : "alert-success")">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                        <h1 class="card-value">@_porcentajePlanificadoComprobantes.ToString("P")</h1>
+                                    </div>
+                                    <h5 class="card-title tx-primary">Relación Planificado / Comprobantes</h5>
+                                    <p class="card-desc">Comprobantes generados en base a lo planificado (En porcentaje)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-body">
+                            <div id="planificacionPieChart" data-print="@Model.PieChartPlanificacionCombustible"></div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-hover card-event-two">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <h5 class="card-title mg-b-0">Asignado vs Comprobantes</h5>
+                <nav class="nav">
+
+                </nav>
+            </div>
+            <div class="card-body">
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="col-md-12 ml-0 mr-0 pl-0 pr-0">
+                            <div class="card card-hover card-social-one alert-primary">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                        <h1 class="card-value">@Model.totalAsignadoCombustible.ToString("C")</h1>
+                                    </div>
+                                    <h5 class="card-title tx-primary">Asignación</h5>
+                                    <p class="card-desc">Total Asignado para el concepto combustible</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                            <div class="card card-hover card-social-one alert-success">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                        <h1 class="card-value">@Model.totalEjecutadoCombustible.ToString("C")</h1>
+                                    </div>
+                                    <h5 class="card-title tx-primary">Comprobantes</h5>
+                                    <p class="card-desc">Total de comprobantes generados</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                            <div class="card card-hover card-social-one @(_saldoDisponible < 0 ? "alert-danger" : "alert-success")">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                        <h1 class="card-value @(_saldoDisponible < 0 ? "text-danger" : "")">@_saldoDisponible.ToString("C")</h1>
+                                    </div>
+                                    <h5 class="card-title @(_saldoDisponible < 0 ? "tx-danger" : "tx-primary") ">Disponible</h5>
+                                    <p class="card-desc">Importe disponible para generación de comprobantes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card card-body">
+                            <div id="asignacionPieChart" data-print="@Model.PieChartAsignacionCombustible"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card card-hover card-total-sales">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <h5 class="card-title mg-b-0">Acumulado en Ejercicio</h5>
+                <nav class="nav">
+
+                </nav>
+            </div>
+            <div class="card-body pd-x-15 pd-sm-x-20 pd-t-5">
+                <div id="ejecucionAsignacion"
+                     data-print1="@Model.asignacionesPorDia"
+                     data-print2="@Model.planificacionesPorDia"
+                     data-print3="@Model.comprobantesPorDia"
+                     data-max="@Model.acumuladoPlanificado"
+                     style="width:100%; height: 400px;">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-hover card-transactions">
+            <div class="card-header bg-transparent">
+                <h5 class="card-title mg-b-0">Tarjetas Vinculadas</h5>
+                <nav class="nav nav-card-icon">
+
+                </nav>
+            </div><!-- card-header -->
+
+            <div id="scroll1" class="pos-relative ht-350 bd bd-gray-200 bg-white">
+                <div class="pd-0">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var itemTarjeta in Model.TarjetasCombustible.OrderBy(o => o.tar_numero))
+                        {
+                            <li class="list-group-item">
+                                <div><i class="fa fa-credit-card"></i></div>
+                                <div class="mg-l-10 mg-sm-l-15">
+                                    <h6>@itemTarjeta.tar_numero</h6>
+                                    <small>@itemTarjeta.tar_denominacion <br /> @itemTarjeta.Distrito.dis_nombre</small>
+                                </div>
+                                <div class="mg-l-auto tx-right">
+                                    <h6>@Model.ComprobantesCombustible.Where(w => w.Tarjeta.tar_id == itemTarjeta.tar_id).Sum(s => s.coc_importe).ToString("C")</h6>
+                                    <small class="d-none d-sm-inline">Consumo</small>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card card-hover card-event-two">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <h5 class="card-title mg-b-0">Listado de comprobantes</h5>
+                <nav class="nav">
+
+                </nav>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-header-app datatablePartial-scrollbar">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Eleccion</th>
+                            <th>Distrito</th>
+                            <th>Comprobante</th>
+                            <th>Tarjeta</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Entidades.Comprobante_Combustible renglon in Model.ComprobantesCombustible)
+                        {
+                            <tr>
+                                <td>@renglon.coc_fecha.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @renglon.Eleccion.ele_nombre
+                                </td>
+                                <td>@renglon.Distrito.dis_nombre</td>
+                                <td>@renglon.coc_nro_comprobante</td>
+                                <td>
+                                    @renglon.Tarjeta.tar_numero
+                                </td>
+                                <td>@renglon.coc_importe.ToString("C")</td>
+
+                            </tr>
+                        }
+
+                        <tr class="bg-success-light tx-bolder">
+                            <td colspan="5">TOTAL</td>
+                            <td colspan="2">@Model.ComprobantesCombustible.Sum(s => s.coc_importe).ToString("C")</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    new PerfectScrollbar('#scroll1', {
+        suppressScrollX: true
+    });
+    CreateDonutMorrisChart('planificacionPieChart');
+    CreateDonutMorrisChart('asignacionPieChart');
+    var dataset = [
+        { label: "Asignación", data: $('#ejecucionAsignacion').data('print1'), color: '#22d273' },
+        { label: "Planificación", data: $('#ejecucionAsignacion').data('print2'), color: '#38c4fa' },
+        { label: "Ejecución", data: $('#ejecucionAsignacion').data('print3'), color: '#ffaa80' }
+
+    ];
+    $.plot('#ejecucionAsignacion',
+        dataset,
+        {
+            series: {
+                stack: false,
+                shadowSize: 5,
+                points: { show: true },
+                lines: {
+                    show: true,
+                    steps: false,
+                    lineWidth: 3,
+                    fill: true,
+                    fillColor: { colors: [{ opacity: 0.2 }, { opacity: 0.3 }] },
+                }
+            },
+            grid: {
+                borderWidth: 0,
+                labelMargin: 10,
+            },
+            yaxis: {
+                show: true,
+                max: parseInt($('#ejecucionAsignacion').data('max'), 10) + parseInt($('#ejecucionAsignacion').data('max'), 10) * 0.1,
+                axisLabelFontSizePixels: 14,
+                gridLines: true,
+                tickFormatter: function numberWithCommas(x) {
+                    return "$ "+x.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+                }
+            },
+            xaxis: {
+                show: true,
+                ticks: [[1, 'Enero'], [31, 'Febrero'], [60, 'Marzo'], [91, 'Abril'], [121, 'Mayo'], [152, 'Junio'], [182, 'Julio'],
+                [213, 'Agosto'], [244, 'Septiembre'], [274, 'Octubre'], [305, 'Noviembre'], [335, 'Diciembre']],
+                axisLabelUseCanvas: true,
+                axisLabelFontSizePixels: 14,
+                gridLines: true
+            },
+            legend: {
+                show: true,
+                position: "nw",
+                margin: [20,20]
+
+            }
+  });
+</script>
+

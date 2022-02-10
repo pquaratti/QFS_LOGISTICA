@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Entidades.Tutorial>
+
+@{
+    string _ControllerName = "Tutoriales";
+}
+
+
+<div class="row">
+
+    @foreach (var itemTuto in Model)
+    {
+        <div class="col-sm-6 col-md-4 col-lg col-xl-3 mg-t-15 mg-sm-t-20">
+            <div class="card card-profile-two card-dark bg-primary bd-primary ht-xl-100p">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="fa @itemTuto.tut_icono"></i> @itemTuto.tut_titulo</h6>
+                    <p class="card-desc">@itemTuto.tut_descrip</p>
+                </div><!-- card-body -->
+                <div class="card-footer bg-transparent pd-t-0 bd-t-0">
+
+                    @if (itemTuto.tut_archivo.Length > 0)
+                    {
+                        <a href="@Url.Content("~/UploadTutoriales/" + itemTuto.tut_archivo)" target="_blank" class="btn btn-sm btn-info"><i class="fa fa-download"></i> Descargar</a>
+                    }
+
+                </div><!-- card-footer -->
+            </div><!-- card -->
+        </div>
+    }
+
+</div>

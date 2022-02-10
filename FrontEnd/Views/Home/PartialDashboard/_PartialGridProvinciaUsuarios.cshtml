@@ -1,0 +1,77 @@
+﻿@model IEnumerable<Entidades.Vistas.ResumenProvincia>
+
+<div class="row mt-2">
+    <div class="col-md-6">
+        <div class="card card-hover">
+            <div class="card-header alert-success bd-b-0">
+                <h6 class="card-title mg-b-0">Estado del escrutinio por Provincia</h6>
+                <nav class="nav nav-card-icon">
+
+                </nav>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-header-app datatablePartial-scrollbar">
+                    <thead>
+                        <tr>
+                            <th>Provincia</th>
+                            <th>Cantidad de Usuarios</th>
+                            <th>Total de Telegramas</th>
+                            <th>Telegramas Ingresados</th>
+                            <th>Porcentaje Escrutado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Entidades.Vistas.ResumenProvincia renglon in Model)
+                        {
+                            <tr>
+                                <td>@renglon.Provincia</td>
+                                <td>@renglon.CantidadUsuarios</td>
+                                <td>@renglon.TelegramaTotal</td>
+                                <td>@renglon.TelegramasIngresados</td>
+                                <td>@renglon.PorcentajeEscrutado</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+        <div class="card card-hover">
+            <div class="card-header alert-success bd-b-0">
+                <h6 class="card-title mg-b-0">Mapa por Regiones</h6>
+                <nav class="nav nav-card-icon">
+
+                </nav>
+            </div>
+            <div class="card-body">
+                <div id="vmap5"
+                     data-print="@ViewBag.jsdata"
+                     class="ht-500 ht-lg-500 bd pd-25"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var data = $('#vmap5').data('print')
+    $('#vmap5').vectorMap({
+        map: 'argentina_en',
+        backgroundColor: '#fff',
+        borderColor: '#fff',
+        color: '#8392a5',
+        hoverOpacity: 0.8,
+        selectedColor: '#5556fd',
+        showTooltip: true,
+        onLabelShow: function (e, el, code) {
+            if (typeof data[code.toUpperCase()] === 'undefined') {
+                el.text(el[0].innerHTML + " | Usuarios: 0 ");
+            } else {
+                el.text(el[0].innerHTML + " | Usuarios: " + data[code.toUpperCase()]);
+            }
+           
+        }
+    });
+</script>

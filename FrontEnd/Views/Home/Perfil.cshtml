@@ -1,0 +1,205 @@
+﻿@model Entidades.App.SIS_Usuario
+
+@{
+    Layout = null;
+
+    string _urlBack = Url.RouteUrl("Default", new { action = "Modules", controller = "Home" });
+
+    var _includePaths = Resources.Repositorio.IncludeFilePaths();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon/favicon.ico">
+
+    <title>Comando General Electoral</title>
+
+    <!-- vendor css -->
+    <link href="@_includePaths/assets/externalplugs/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/jqvmap/jqvmap.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/toast-master/css/jquery.toast.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/sweetalert/sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="@_includePaths/assets/externalplugs/select2/css/select2.min.css" rel="stylesheet">
+
+<!-- template css -->
+    <link rel="stylesheet" href="@_includePaths/assets/css/template_green.css?v=@DateTime.Now.ToString()">
+</head>
+
+<body>
+    <div class="m-2">
+        <div class="header">
+            <div class="header-left">
+                <a href="@Url.Action("Modules","Home")" class="sidebar-logo">
+                    <img src="~/assets/img/logo_sistema.png" alt="" style="width:35px; margin-right:8px;font-size: 21px;">
+                    <span style="padding-top: 7px;">CGE <br /> <span style="margin-top: 4px; font-size: 12px;">Comando General Electoral</span></span>
+                </a>
+            </div><!-- header-left -->
+
+            <div class="header-right">
+                <h6>Bienvenido! @Model.usu_nickname</h6>
+                <div class="dropdown dropdown-loggeduser">
+                    <a href="" class="dropdown-link" data-toggle="dropdown">
+                        <div class="avatar avatar-sm d-inline-flex">
+                            <img src="~/assets/img/avatar_default.png" class="rounded-circle" alt="">
+                        </div><!-- avatar -->
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <div class="dropdown-menu-header">
+                            <div class="media align-items-center">
+                                <div class="avatar">
+                                    <img src="~/assets/img/avatar_default.png" class="rounded-circle" alt="">
+                                </div><!-- avatar -->
+                                <div class="media-body mg-l-10">
+                                    <h6>@Model.usu_nickname</h6>
+                                    <span></span>
+                                </div>
+                            </div><!-- media -->
+                        </div>
+                        <div class="dropdown-menu-body">
+                            <a href="" class="dropdown-item"><i class="fa fa-user mr-1"></i> Perfil</a>
+                            <a href="@Url.Action("CloseSession","Account")" class="dropdown-item"><i class="fa fa-lock mr-1"></i> Cerrar Sesión</a>
+                        </div>
+                    </div><!-- dropdown-menu -->
+                </div>
+            </div><!-- header-right -->
+        </div><!-- header -->
+
+        <div class="content-body mt-4">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="alert alert-success mg-b-0" role="alert">
+                        <h6 class="alert-heading">Datos de Perfil</h6>
+                        <p>A continuación podrás editar tus datos de perfil de usuario.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    @using (Html.BeginForm("ActualizarDatosPerfil", "Usuario", FormMethod.Post, new { id = "formularioABM", name = "formularioABM", @class = "formularioABM formNotify formValidar" }))
+                    {
+                        @Html.HiddenFor(x => x.IdEncriptado)
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.LabelFor(model => model.usu_nombre, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.usu_nombre, new { htmlAttributes = new { @class = "form-control camporequerido", required = "required", autocomplete = "off", @disabled="disabled" } })
+                                @Html.ValidationMessageFor(model => model.usu_nombre, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6">
+                                @Html.LabelFor(model => model.usu_apellido, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.usu_apellido, new { htmlAttributes = new { @class = "form-control camporequerido", required = "required", autocomplete = "off", @disabled = "disabled" } })
+                                @Html.ValidationMessageFor(model => model.usu_apellido, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                @Html.LabelFor(model => model.usu_mail, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.usu_mail, new { htmlAttributes = new { @class = "form-control camporequerido", required = "required", autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.usu_mail, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="d-flex flex-row-reverse">
+                                    <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Guardar</button>
+                                    <button type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+                <div class="col-md-4">
+                    @using (Html.BeginForm("ChangePassword", "Usuario", FormMethod.Post, new { id = "frmChangePassword", name = "frmChangePassword" }))
+                    {
+                        @Html.HiddenFor(x => x.IdEncriptado)
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label" for="passwordOld">Contraseña actual</label>
+                                <input autocomplete="off" class="form-control camporequerido text-box single-line valid" data-val="true" data-val-required="Campo requerido" id="passwordOld" name="passwordOld" required="required" type="password" value="" aria-describedby="passwordOld-error" aria-invalid="false">
+                                <span class="text-danger field-validation-valid" data-valmsg-for="passwordOld" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label" for="passwordNew">Contraseña Nueva</label>
+                                <input autocomplete="off" class="form-control camporequerido text-box single-line valid" data-val="true" data-val-required="Campo requerido" id="passwordNew" name="passwordNew" required="required" type="password" value="" aria-describedby="passwordNew-error" aria-invalid="false">
+                                <span class="text-danger field-validation-valid" data-valmsg-for="passwordNew" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label" for="passwordNew2">Contraseña Nueva (Confirmación)</label>
+                                <input autocomplete="off" class="form-control camporequerido text-box single-line valid" data-val="true" data-val-required="Campo requerido" id="passwordNew2" name="passwordNew2" required="required" type="password" value="" aria-describedby="passwordNew2-error" aria-invalid="false">
+                                <span class="text-danger field-validation-valid" data-valmsg-for="passwordNew2" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="d-flex flex-row-reverse">
+                                    <button type="submit" class="btn btn-xs btn-success pull-left m-1"> <i class="fa fa-check"></i> Cambiar Contraseña</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="@_includePaths/assets/externalplugs/jquery/jquery.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/feather-icons/feather.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/sweetalert/sweetalert.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/toast-master/js/jquery.toast.js"></script>
+    <script src="@_includePaths/assets/externalplugs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/select2/js/select2.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.min.js"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.unobtrusive.min.js"></script>
+    <script src="@_includePaths/assets/js/AppResources.js?v=@DateTime.Now.ToString()"></script>
+
+    <script>
+        $('#frmChangePassword').submit(function (e) {
+            e.preventDefault();
+
+            var paramData = $(this).serialize();
+            
+            APP_executeAjaxPostNoClosePopup(this.action, paramData, function (res) {
+
+                if (res.Result.Success === true) {
+                    APP_SweetAlert_ShowMessageSuccess('Cambio de contraseña', 'Realizado exitosamente!');
+                }
+                else
+                {
+                    APP_SweetAlert_ShowMessageError('Cambio de contraseña', 'No se pudo cambiar la contraseña: La contraseña nueva no coincide con su verificación');
+                }
+            });
+            
+        });
+
+
+    </script>
+
+</body>
+
+</html>

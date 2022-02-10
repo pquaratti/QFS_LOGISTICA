@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Entidades.Encuesta>
+
+@{
+    string _ControllerName = "Encuestas";
+}
+
+<div class="d-flex flex-row-reverse mt-1 mb-2">
+    <span class="badge badge-info">Respuestas</span>
+    <span class="badge badge-primary">Preguntas</span>
+    <span class="badge badge-danger">Borrar</span>
+    <span class="badge badge-info">Editar</span>
+    <span class="badge badge-light">Resultado</span>
+</div>
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Fec.Ini</th>
+            <th>Fec.Fin</th>
+            <th width="100px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Encuesta renglon in Model)
+        {
+        <tr>
+            <td>@renglon.enc_titulo</td>
+            <td>@renglon.enc_descripcion</td>
+            <td>@renglon.enc_fec_desde.ToString("dd/MM/yy")</td>
+            <td>@renglon.enc_fec_hasta.ToString("dd/MM/yy")</td>
+            <td>
+
+                @if (renglon.Cerrado)
+                {
+                    <button url="@Url.RouteUrl("Default", new { action = "Resultado", controller = _ControllerName, id=renglon.IdEncriptado })"
+                            onclick="ClickRedirect(this);"
+                            class="btn btn-light btn-sm btn-grid"
+                            title="Resultado">
+                        <i class="fa fa-rocket"></i>
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-info btn-sm btn-grid op-btn-new" title=""
+                            data-url-redirect="@Url.RouteUrl("Default", new { action = "Edit", controller = _ControllerName, id = renglon.IdEncriptado })" onclick="TbEdit(this);">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            data-id-rel="@renglon.IdEncriptado"
+                            url-delete="@Url.Action("Delete", _ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar item">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                }
+
+                <button type="button"
+                        modal-value-primary="@renglon.IdEncriptado"
+                        modal-value-secondary="0"
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalPreguntasVista",_ControllerName)"
+                        class="btn btn-primary btn-sm btn-grid btnOpenModal" title="Preguntas">
+                    <i class="fa fa-question"></i>
+                </button>
+                <button type="button"
+                        modal-value-primary="@renglon.IdEncriptado"
+                        modal-value-secondary="0"
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalRespuestasVista",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="Respuestas">
+                    <i class="fa fa-user-edit"></i>
+                </button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+<script>
+
+   
+    function functionAccionCustom(pClave) {
+       refreshData();
+    }
+  
+
+</script>

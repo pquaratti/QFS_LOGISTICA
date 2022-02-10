@@ -1,0 +1,89 @@
+﻿@model Entidades.App.SIS_Usuario_Password_Recovery
+
+@{
+    Layout = null;
+}
+
+<h5 class="signin-subtitle">Ingrese los datos solicitados.</h5>
+
+<div class="mt-4">
+    <p>@Html.Raw(Model.LeyendaEnvioCodigo)</p>
+</div>
+
+<div class="mt-1">
+    Colocá el código aquí para reestablecer la contraseña
+</div>
+
+
+@using (Html.BeginForm("RequestRecoveryAccountCode", "Account", FormMethod.Post, new { id = "frmCodeVerify", name = "frmCodeVerify", @class = "signin-form" }))
+{
+    @Html.HiddenFor(h => h.recoveryTokenID)
+
+    <div class="row">
+        <div class="form-group col-md-2">
+            @Html.EditorFor(model => model.code1, new { htmlAttributes = new { @class = "form-control validarsolonumero", autocomplete = "off", @required = "required"} })
+        </div>
+
+        <div class="form-group col-md-2">
+            @Html.EditorFor(model => model.code2, new { htmlAttributes = new { @class = "form-control validarsolonumero", autocomplete = "off", @required = "required" } })
+        </div>
+
+        <div class="form-group col-md-2">
+            @Html.EditorFor(model => model.code3, new { htmlAttributes = new { @class = "form-control validarsolonumero", autocomplete = "off", @required = "required" } })
+        </div>
+        <div class="form-group col-md-2">
+            @Html.EditorFor(model => model.code4, new { htmlAttributes = new { @class = "form-control validarsolonumero", autocomplete = "off", @required = "required" } })
+        </div>
+        <div class="form-group col-md-2">
+            @Html.EditorFor(model => model.code5, new { htmlAttributes = new { @class = "form-control validarsolonumero", autocomplete = "off", @required = "required" } })
+        </div>
+
+        <div class="form-group col-md-2">
+            @Html.EditorFor(model => model.code6, new { htmlAttributes = new { @class = "form-control validarsolonumero", autocomplete = "off", @required = "required" } })
+        </div>
+    </div>
+
+
+    <div class="form-group d-flex mg-b-0">
+        <button id="btnConfirmarCodigo" class="btn btn-brand-01 btn-uppercase flex-fill">Confirmar código</button>
+    </div>
+}
+
+
+<script>
+
+    $('#btnConfirmarCodigo').click(function (e) {
+        e.preventDefault();
+
+        if ($(frmCodeVerify).valid() === false) {
+            return false;
+        }
+
+        StartSpinner();
+
+        APP_SendFormAjax(frmCodeVerify, function (resp) {
+            $('#contentLogin').html(resp);
+            StopSpinner();
+        });
+
+    });
+
+
+    $(".validarsolonumero").keypress(function (evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            evt.preventDefault();
+        }
+    });
+
+
+</script>
+
+
+
+@if (Model.customMessageError.Length > 0)
+{
+    <script>
+        APP_SweetAlert_ShowMessageError("Validación de código", "@Model.customMessageError");
+    </script>
+}

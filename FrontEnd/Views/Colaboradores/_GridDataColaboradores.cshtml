@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Entidades.App.SIS_Usuario>
+
+@{
+    string _ControllerName = "Colaboradores";
+}
+
+<div class="d-flex flex-row-reverse mt-1 mb-2">
+
+
+    <span class="badge badge-dark">Skills Modificar</span>
+    <span class="badge badge-secondary">Skills Evolución</span>
+    <span class="badge badge-warning">Cat. Modificar</span>
+    <span class="badge badge-info">Cat. Evolución</span>
+
+
+</div>
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <td>DNI</td>
+            <td>Categoría</td>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.App.SIS_Usuario renglon in Model)
+        {
+        <tr>
+
+            <td>@renglon.usu_nombre</td>
+            <td>@renglon.usu_apellido</td>
+            <td>@renglon.usu_documento</td>
+            <td>@renglon.Categoria.cat_nombre</td>
+            <td>
+                <button type="button"
+                        modal-value-primary="@renglon.IdEncriptado"
+                        modal-value-secondary="0"
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalEvolucionCategoria",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
+                    <i class="fa fa-chart-line"></i>
+                </button>
+                <button type="button"
+                        modal-value-primary="@renglon.IdEncriptado"
+                        modal-value-secondary="0"
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalColaboradorCategoria",_ControllerName)"
+                        class="btn btn-warning btn-sm btn-grid btnOpenModal" title="">
+                    <i class="fa fa-arrow-up"></i>
+                </button>
+
+                <button type="button"
+                        modal-value-primary="@renglon.IdEncriptado"
+                        modal-value-secondary="0"
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalEvolucionSkills",_ControllerName)"
+                        class="btn btn-secondary btn-sm btn-grid btnOpenModal" title="">
+                    <i class="fa fa-chart-line"></i>
+                </button>
+                <button type="button"
+                        modal-value-primary="@renglon.IdEncriptado"
+                        modal-value-secondary=""
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalColaboradorSkills",_ControllerName)"
+                        class="btn btn-dark btn-sm btn-grid btnOpenModal" title="">
+                    <i class="fa fa-arrow-up"></i>
+                </button>
+
+
+
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+</script>

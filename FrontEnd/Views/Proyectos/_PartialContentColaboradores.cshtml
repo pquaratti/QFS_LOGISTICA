@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Entidades.Proyecto_Colaborador>
+
+<div class="d-flex flex-row-reverse mt-2 mb-2">
+    <span class="badge badge-danger">Desvincular</span>
+</div>
+<div style="zoom:90%">
+    <table class="table table-sm table-header-app datatablePartial-scrollbar">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>DNI</th>
+                <th>Mail</th>
+                <th width="10%">
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Entidades.Proyecto_Colaborador renglon in Model)
+            {
+                <tr>
+
+                    <td>@renglon.Legajo.usu_nombre @renglon.Legajo.usu_apellido</td>
+                    <td>@renglon.Legajo.usu_documento</td>
+                    <td>@renglon.Legajo.usu_mail</td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        <button type="button"
+                                data-id-rel="@renglon.prycolab_id"
+                                url-delete="@Url.Action("DeleteProyectoColaborador","Proyectos")"
+                                class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Desvincular">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

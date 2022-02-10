@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Entidades.Tarea>
+
+
+<div class="d-flex flex-row-reverse mt-1 mb-2">
+    <span class="badge badge-info">Editar</span>
+    <span class="badge badge-danger">Borrar</span>
+    <span class="badge badge-white">Act.Evolución</span>
+    <span class="badge badge-success">Resumen</span>
+</div>
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Prioridad</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha de Finalización</th>
+            <th>Descripción</th>
+            <th>Completada</th>
+            <th width="80px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Tarea renglon in Model)
+        {
+
+            int estadoActual = renglon.EstadoTarea.tarestado_id;
+        <tr>
+            <td>@renglon.tar_nombre</td>
+            <td>@renglon.Prioridad.tprioridad_nombre</td>
+            <td>@renglon.tar_fec_ini.ToString("dd/MM/yyyy")</td>
+            <td>@renglon.tar_fec_fin.ToString("dd/MM/yyyy")</td>
+            <td>@renglon.tar_descripcion</td>
+            <td>@renglon.tar_porcentaje.ToString("0.00")%</td>
+            <td style="text-align: left; vertical-align: middle;">
+                @if (estadoActual.Equals((int)Negocio.TareasEstados.Estados.Edicion))
+                {
+                    <button class="btn btn-info btn-sm btn-grid op-btn-new" title="Editar"
+                            data-url-redirect="@Url.RouteUrl("Default", new { action = "AddOrEdit", controller = "Tareas", id=renglon.IdEncriptado })" onclick="TbEdit(this);">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button"
+                            data-id-rel="@renglon.tar_id"
+                            url-delete="@Url.Action("Delete","Tareas")"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Tarea">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                }
+                else
+                {
+                    if (
+                        estadoActual.Equals((int)Negocio.TareasEstados.Estados.Pendiente) ||
+                        estadoActual.Equals((int)Negocio.TareasEstados.Estados.EnProgreso))
+                    {
+                        <button type="button"
+                                modal-value-primary="@renglon.IdEncriptado"
+                                modal-value-secondary="0"
+                                modal-value-aux="0"
+                                modal-url="@Url.Action("PartialModalRealizarAvance","Tareas")"
+                                class="btn btn-white btn-sm btn-grid btnOpenModal" title="Actualizar Evolución">
+                            <i class="fa fa-arrow-up"></i>
+                        </button>
+                    }
+                    <button class="btn btn-success btn-sm btn-grid op-btn-new" title="Resumen"
+                            data-url-redirect="@Url.RouteUrl("Default", new { action = "ResumenTareas", controller = "Tareas", id=renglon.IdEncriptado })" onclick="TbEdit(this);">
+                        <i class="fa fa-file"></i>
+                    </button>
+
+                }
+
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+        refreshData();
+    }
+
+</script>

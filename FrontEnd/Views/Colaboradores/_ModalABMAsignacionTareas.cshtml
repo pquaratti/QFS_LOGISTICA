@@ -1,0 +1,47 @@
+﻿@model Entidades.Proyecto_Tarea_Colaborador
+
+@{
+    string _controllerName = "Colaboradores";
+
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Asignar Colaborador
+                    <br />
+                    <span class="tx-sm text-success"> Tarea: @Model.Tarea.tar_nombre </span>
+
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalAsignacionTareas", _controllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "false", closeForm = "true", funcionExtra = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.Proyecto.proy_id)
+                    @Html.HiddenFor(x => x.Tarea.tar_id)
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            @Html.LabelFor(m => m.Legajo, new { @class = "control-label" })
+                            @Html.DropDownListFor(m => m.Legajo.usu_id, new SelectList(Negocio.DDL.Select2.OptionSeleccionada(Model.Legajo.usu_id.ToString(), Model.Legajo.usu_nombre + " " + Model.Legajo.usu_apellido + " (" + Model.Legajo.usu_documento + ") "), "Value", "Text"), new { @class = "form-control camporequerido select2-sm select2ModalAjax", required = "required", data_ajax__url = Url.Action("GetSelect2Items", "Usuario") })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+             }
+        </div>
+    </div>
+</div>
+
+<script>
+    function functionExtra() {
+    }
+</script>

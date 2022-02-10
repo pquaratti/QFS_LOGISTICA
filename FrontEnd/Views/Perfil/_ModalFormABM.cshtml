@@ -1,0 +1,55 @@
+﻿@model Entidades.App.SIS_Perfil
+
+@{
+    string _ControllerName = "Perfil";
+}
+
+<div class="modal fade" id="formABMPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">Perfiles</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("Save", _ControllerName, FormMethod.Post, new { id = "formularioABMModal", name = "formularioABMModal", @class = "formularioABMModal" , funcionExtra = "true", closeForm = "true" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.IdEncriptado)
+                    @Html.HiddenFor(x => x.prf_mod_id)
+
+                    <div class="row row-sm">
+                        <div class="form-group col-sm-12">
+                            @Html.LabelFor(model => model.prf_nombre, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.prf_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.prf_nombre, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left"> <i class="fa fa-check"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //$('#formularioABMModal').submit(function (e) {
+    //    e.preventDefault();
+        
+    //    APP_SaveModalForm(this, function () {
+    //        LoadPerfiles();
+    //    });
+        
+    //});
+
+    function functionExtra() {
+        LoadPerfiles();
+    }
+
+</script>
+

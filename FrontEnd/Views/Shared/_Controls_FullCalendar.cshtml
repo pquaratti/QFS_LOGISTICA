@@ -1,0 +1,97 @@
+﻿@model  Entidades.Controls.fullCalendar
+
+<div id="calendar"></div>
+
+<script>
+
+    var myArrayEventos = [];
+    
+     @foreach (Entidades.Controls.eventCalendar objEvento in Model.Eventos)
+    {
+        @:    myArrayEventos.push({
+        @:        id: '@objEvento.ID',
+        @:        title: '@Html.Raw(objEvento.Titulo)',
+        @:        start: new Date(@objEvento.Anio, @objEvento.Mes - 1, @objEvento.Dia, @objEvento.Hour, @objEvento.Minutes, @objEvento.Seconds),
+        @:        end: new Date(@objEvento.Anio_Hasta, @objEvento.Mes_Hasta - 1, @objEvento.Dia_Hasta, @objEvento.Hour_Hasta, @objEvento.Minutes_Hasta, @objEvento.Seconds_Hasta),
+        @:        className: '@objEvento.ClassNameBackground',
+        @:        htmlContent: '@Html.Raw(objEvento.ContentHtmlPopup)',
+        @:        action: '@objEvento.UrlAction',
+        @:        controller: '@objEvento.UrlController',
+        @:        urlRedirect: '@objEvento.UrlRedirect'
+        @:    });
+
+    }
+    
+        (function ($) {
+
+            'use strict';
+
+            var initCalendar = function () {
+
+                var $calendar = $('#calendar');
+                var date = new Date();
+                var d = @Model.fechaInicio.Day;
+                var m = @Model.fechaInicio.Month;
+                var y = @Model.fechaInicio.Year;
+
+                $calendar.fullCalendar({    
+                    eventClick: function (eventObj) {
+                        APP_CustomEventCalendar(eventObj);
+                    },
+                    eventRender: function (eventObj, $el) {
+                        $el.popover({
+                            title: eventObj.title,
+                            content: eventObj.htmlContent + ' <br/> ',
+                            trigger: 'hover',
+                            placement: 'top',
+                            container: 'body',
+                            html: true
+                        });
+                    },
+                    lang: 'es',
+                    header: {
+                        left: 'title',
+                        right: 'prev,today,next,basicDay,basicWeek,month'
+                    },
+
+                    timeFormat: 'hh:mm',
+
+                    titleFormat: {
+                        month: 'MMMM YYYY',      // September 2009
+                        week: "MMM D YYYY",      // Sep 13 2009
+                        day: 'dddd, MMM D, YYYY' // Tuesday, Sep 8, 2009
+                    },
+
+                    themeButtonIcons: {
+                        prev: 'fa fa-caret-left',
+                        next: 'fa fa-caret-right',
+                    },
+                    editable: false,
+                    droppable: false, // this allows things to be dropped onto the calendar !!!
+                    events: myArrayEventos
+                });
+
+                // FIX INPUTS TO BOOTSTRAP VERSIONS
+                var $calendarButtons = $calendar.find('.fc-header-right > span');
+                $calendarButtons
+                    .filter('.fc-button-prev, .fc-button-today, .fc-button-next')
+                    .wrapAll('<div class="btn-group mt-sm mr-md mb-sm ml-sm"></div>')
+                    .parent()
+                    .after('<br class="hidden"/>');
+
+                $calendarButtons
+                    .not('.fc-button-prev, .fc-button-today, .fc-button-next')
+                    .wrapAll('<div class="btn-group mb-sm mt-sm"></div>');
+
+                $calendarButtons
+                    .attr({ 'class': 'btn btn-sm btn-default' });
+            };
+
+            $(function () {
+                initCalendar();
+            });
+
+        }).apply(this, [jQuery]);
+
+
+</script>

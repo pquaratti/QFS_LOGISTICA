@@ -1,0 +1,496 @@
+﻿@{
+    List<Entidades.App.SIS_Accion> AccionesMenu = new List<Entidades.App.SIS_Accion>();
+    string _actionName = "";
+    string _controllerName = "";
+    Entidades.App.SIS_Accion currentAction = new Entidades.App.SIS_Accion();
+    Entidades.App.SIS_Modulo datosModulo = new Entidades.App.SIS_Modulo();
+    Entidades.App.Token oToken;
+
+    try
+    {
+        oToken = Filters.VerificarToken.ConsultarToken();
+        Negocio.App.SIS_Modulos negocioMOD = new Negocio.App.SIS_Modulos(oToken);
+        AccionesMenu = Filters.VerificarAccion.ListarAcciones(oToken.ModuloID).Where(w => w.acc_menu == true).ToList();
+        datosModulo = negocioMOD.ObtenerPorID(oToken.ModuloID);
+
+        if (AccionesMenu.Count == 0)
+        {
+            Response.RedirectToRoute("CerrarSesion");
+        }
+
+        _actionName = ViewContext.Controller.ValueProvider.GetValue("action").RawValue.ToString().ToUpper();
+        _controllerName = ViewContext.Controller.ValueProvider.GetValue("controller").RawValue.ToString().ToUpper();
+        currentAction = AccionesMenu.Where(w => w.acc_controller.ToUpper() == _controllerName && w.acc_accion.ToUpper() == _actionName).FirstOrDefault();
+
+        if (currentAction == null)
+        {
+            currentAction = new Entidades.App.SIS_Accion()
+            {
+                acc_id = -1,
+                acc_id_padre = -1
+            };
+        }
+
+    }
+    catch (Exception ex)
+    {
+        oToken = new Entidades.App.Token();
+        Response.RedirectToRoute("CerrarSesion");
+    }
+
+    var _includePaths = Resources.Repositorio.IncludeFilePaths();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon/favicon.ico">
+
+    <title>SGM - Sistema de Gestión de Metas</title>
+
+    <!-- vendor css -->
+    <link href="@_includePaths/assets/externalplugs/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/fontawesome5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/jqvmap/jqvmap.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/toast-master/css/jquery.toast.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/sweetalert/sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="@_includePaths/assets/externalplugs/select2/css/select2.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/fullcalendar/fullcalendar.min.css" rel="stylesheet">
+    <link href="@_includePaths/assets/externalplugs/datatables.net/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <!-- template css -->
+    <link rel="stylesheet" href="@_includePaths/assets/css/template_blue.css?v=@DateTime.Now.ToString("yyyyMMddHHmmss")">
+    <link rel="stylesheet" href="@_includePaths/assets/css/App.css?v=@DateTime.Now.ToString("yyyyMMddHHmmss")">
+
+    @RenderSection("head", required: false)
+</head>
+
+<body>
+    <div id="spinnerBackground" class="preloader">
+        <div id="spinnerElement" class="text-center" style="color: white;">
+            <div class="spinner-border"></div>
+            <h5>Cargando</h5>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div>
+                <a href="@Url.Action("dashboard","home")" class="sidebar-logo">
+                    @*<img src="~/assets/img/logo_sistema.png" alt="" style="width:30px; margin-right:8px;font-size: 15px;">*@
+                    <span style="padding-top: 7px; font-size:20px;">SGM <br /> <span style="margin-top: 4px; font-size: 10px;">@datosModulo.mod_nombre</span></span>
+                </a>
+                <small class="sidebar-logo-headline" style="font-size:12px;"></small>
+            </div>
+        </div><!-- sidebar-header -->
+        <div id="dpSidebarBody" class="sidebar-body">
+
+
+
+            <ul class="nav nav-sidebar">
+                <li class="nav-item"><a href="@Url.Action("dashboard","home")" class="nav-link @(_actionName == "DASHBOARD" && _controllerName == "HOME" ? "active" : "")"><i class="fa fa-home pr-2"></i> Dashboard</a></li>
+
+                @foreach (Entidades.App.SIS_Accion accionPadre in AccionesMenu.Where(w => w.acc_id_padre == 0).OrderBy(o => o.acc_orden))
+                {
+                    if (accionPadre.acc_controller.Trim().Length > 0)
+                    {
+                        @*<li class="nav-item"><a href="@Url.RouteUrl("Default", new { action=accionPadre.acc_accion, controller=accionPadre.acc_controller })" class="nav-link"><i class="ti-dashboard p-r-10"></i> <span class="hide-menu">@accionPadre.acc_nombre</span></a> </li>*@
+                    }
+                    else
+                    {
+                        <li class="nav-item @(accionPadre.acc_id == currentAction.acc_id_padre ? "show" : "")">
+                            <a href="" class="nav-link with-sub @(accionPadre.acc_id == currentAction.acc_id_padre ? "active" : "")"><i class="fa @accionPadre.acc_icono pr-2"></i>@accionPadre.acc_nombre</a>
+                            <ul class="nav nav-sub">
+                                @foreach (Entidades.App.SIS_Accion accionHijo in AccionesMenu.Where(w => w.acc_id_padre == accionPadre.acc_id).OrderBy(o => o.acc_orden))
+                                {
+                                    @*<li class="nav-sub-item"> <a href="@Url.RouteUrl("Default", new { action=accionHijo.acc_accion, controller=accionHijo.acc_controller })" class="nav-sub-link @(accionHijo.acc_accion.ToUpper() == _actionName && accionHijo.acc_controller.ToUpper() ==_controllerName ? "active" : "")"><i class="fa fa-circle pr-2" style="font-size: 9px;"></i> @accionHijo.acc_nombre</a></li>*@
+
+                                    <li class="nav-sub-item"> <a href="@Url.RouteUrl("Default", new { action=accionHijo.acc_accion, controller=accionHijo.acc_controller })" class="nav-sub-link redirectLinkMenu @(accionHijo.acc_accion.ToUpper() == _actionName && accionHijo.acc_controller.ToUpper() ==_controllerName ? "active" : "")" data-id-rel="@accionHijo.IdEncriptado"><i class="fa fa-circle pr-2" style="font-size: 9px;"></i> @accionHijo.acc_nombre</a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                }
+
+                <li class="nav-item"><a href="@Url.Action("PreguntasFrecuentes","PreguntasFrecuentes")" class="nav-link @(_actionName == "PREGUNTASFRECUENTES" && _controllerName == "PREGUNTASFRECUENTES" ? "active" : "")"><i class="fa fa-question-circle pr-2"></i> Preguntas Frecuentes</a></li>
+                <li class="nav-item"><a href="@Url.Action("Index","Tutoriales")" class="nav-link @(_actionName == "INDEX" && _controllerName == "TUTORIALES" ? "active" : "")"><i class="fa fa-book pr-2"></i>  Tutoriales</a></li>
+                <li class="nav-item"><a href="@Url.Action("Index","MesaAyuda")" class="nav-link @(_actionName == "INDEX" && _controllerName == "MESAAYUDA" ? "active" : "")"><i class="fa fa-hand-paper pr-2"></i>  Mesa de Ayuda</a></li>
+            </ul>
+
+
+        </div><!-- sidebar-body -->
+    </div><!-- sidebar -->
+
+    <div class="content content-page">
+        <div class="header">
+            <div class="header-left">
+                <a href="" class="burger-menu"><i data-feather="menu"></i></a>
+            </div><!-- header-left -->
+
+            <div class="header-right">
+
+                <h6 style="margin-top: 8px;" class="tx-right">@oToken.UserName <br /> </h6>
+                <div class="dropdown dropdown-loggeduser">
+                    <a href="" class="dropdown-link" data-toggle="dropdown">
+                        <div class="avatar avatar-sm">
+                            <img src="~/assets/img/avatar_default.png" class="rounded-circle" alt="">
+                        </div><!-- avatar -->
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <div class="dropdown-menu-header">
+                            <div class="media align-items-center">
+                                <div class="avatar">
+                                    <img src="~/assets/img/avatar_default.png" class="rounded-circle" alt="">
+                                </div><!-- avatar -->
+                                <div class="media-body mg-l-10">
+                                    <h6>@oToken.UserName</h6>
+                                    <span>
+                                        @if (oToken.Administrador)
+                                        {
+                                            @: Usuario Administrador
+                                        }
+                                        else
+                                        {
+                                            @: Usuario Común
+                                        }
+                                    </span>
+                                </div>
+                            </div><!-- media -->
+                        </div>
+                        <div class="dropdown-menu-body">
+                            <a href="@Url.Action("CloseModule","Account")" class="dropdown-item"><i data-feather="log-out"></i> Cerrar Módulo</a>
+
+                            @if (oToken.Administrador)
+                            {
+                                <a modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalParametros","Configuracion")" class="btnOpenModal dropdown-item" style="cursor:pointer;"><i data-feather="menu"></i> Cambiar parámetros</a>
+                            }
+
+                        </div>
+                    </div><!-- dropdown-menu -->
+                </div>
+            </div><!-- header-right -->
+        </div><!-- header -->
+
+        <div class="content-body">
+            @RenderBody()
+
+            <button id="btnHelpButton"
+                    modal-value-primary="0"
+                    modal-value-secondary="0"
+                    modal-value-extra="0"
+                    modal-url="@Url.Action("PartialModalTutorialsSection","Tutoriales")"
+                    class="floatHelpButton btnOpenModal">
+                <i class="fa fa-question my-float-help-button"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="viewModalForm"></div>
+
+    <script>
+        // Variables globales
+
+        var _urlDatatableJSSpanish = "@Url.Content("~/assets/Spanish.json")";
+
+    </script>
+
+
+
+    <script src="@_includePaths/assets/externalplugs/jquery/jquery.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/bootstrap/js/bootstrap.bundle.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/moment/moment.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/feather-icons/feather.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/perfect-scrollbar/perfect-scrollbar.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    @*<script src="@_includePaths/lib/js-cookie/js.cookie.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>*@
+    <script src="@_includePaths/assets/externalplugs/chart.js/Chart.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.flot/jquery.flot.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.flot/jquery.flot.stack.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.flot/jquery.flot.resize.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.flot/jquery.flot.threshold.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.flot/jquery.flot.time.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jqvmap/jquery.vmap.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jqvmap/maps/jquery.vmap.world.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/sweetalert/sweetalert.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/toast-master/js/jquery.toast.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/datatables.net/js/jquery.dataTables.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/datatables.net/js/datetime.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/fullcalendar/fullcalendar.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/raphael/raphael.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/morris.js/morris.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+
+    <script src="@_includePaths/assets/externalplugs/select2/js/select2.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/cleave.js/cleave.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jqueryui/jquery-ui.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/externalplugs/jquery.validate.unobtrusive.min.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+
+    <script src="@_includePaths/assets/js/template.js?v=@DateTime.Now.ToString("yyyyMMddHHmmss")"></script>
+    <script src="@_includePaths/assets/js/AppResources.js?v=@DateTime.Now.ToString()"></script>
+
+
+    <script>
+        $.datepicker.regional['es'] = {
+            closeText: 'Cerrar',
+            prevText: '< Ant',
+            nextText: 'Sig >',
+            currentText: 'Hoy',
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Juv', 'Vie', 'Sáb'],
+            dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+            weekHeader: 'Sm',
+            dateFormat: 'dd/mm/yy',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: ''
+        };
+
+        $.datepicker.setDefaults($.datepicker.regional['es']);
+    </script>
+
+    <script>
+        $('.datatabledefault').DataTable();
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            try {
+                $('.inputDate').toArray().forEach(function (field) {
+                    new Cleave(field, {
+                        date: true,
+                        datePattern: ['d', 'm', 'Y']
+                    });
+                });
+            } catch (e) {
+
+            }
+
+            try {
+                $('.cuilMask').toArray().forEach(function (field) {
+                    new Cleave(field, {
+                        delimiters: ['-', '-'],
+                        blocks: [2, 8, 1]
+                    });
+                });
+            }
+            catch (e) {
+
+            }
+
+
+            $('.inputDate').each(function (ix, element) {
+                var _valor = $(element).val();
+
+                if (_valor === "01/01/0001" || _valor === "1/1/0001 12:00:00 AM") {
+                    $(element).val('');
+                    $(element).attr('value', '');
+                }
+
+            });
+
+            $('.inputDate').focusout(function (element) {
+                if ($(this).val().length < 10) {
+                    $(this).val('');
+                    $(this).attr('value', '');
+                }
+            });
+
+
+            $.validator.methods.date = function (value, element) {
+                value = dateValue(value);
+                return this.optional(element) || !/Invalid|NaN/.test(new Date(value).toString());;
+            };
+
+            $.validator.methods.number = function (value, element) {
+                return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
+            };
+
+        });
+    </script>
+
+    <script>
+        function dateValue(value) {
+            var date = value.split("/");
+            return date[2] + "/" + date[1] + "/" + date[0]
+        }
+    </script>
+
+    <script>
+        $(".validarnumero").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                evt.preventDefault();
+            }
+        });
+
+        $(".validarnumerocomma").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode != 44 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                evt.preventDefault();
+            }
+        });
+
+        $(".validarsolonumero").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                evt.preventDefault();
+            }
+        });
+
+        $(".validarmail").change(function (evt) {
+            var regex = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+            if (!regex.test($(this).val())) {
+                $(this).val("");
+                evt.preventDefault();
+            }
+        });
+
+        $(".validarnumero_letra").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || (charCode > 57 && charCode < 65) || (charCode > 90 && charCode < 97) || charCode > 122)) {
+                evt.preventDefault();
+            }
+        });
+
+        $(".validarnumero_letra_espacio").keypress(function (evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode != 32 && charCode > 31 && (charCode < 48 || (charCode > 57 && charCode < 65) || (charCode > 90 && charCode < 97) || charCode > 122)) {
+                evt.preventDefault();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        $(".select2").select2();
+    </script>
+
+    <script>
+
+        function ExecuteReporte(parametros) {
+                executeAjaxPostReport('@Url.Action("ExecuteReporte", "Reporte")', parametros, function (response) {
+                if (response.Success == true) {
+                    window.open('@Url.Action("ShowReport", "Reporte")' + response.ObjectData, "_blank");
+                }
+                else
+                {
+                    alert(response.Message);
+                    //openNotify('Presentación', response.Message, notifyTypes.NError);
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $(function () {
+            'use strict'
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('.component-section .btn-primary').tooltip({
+                template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+            })
+
+            $('.component-section .btn-secondary').tooltip({
+                template: '<div class="tooltip tooltip-secondary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+            })
+
+            $('.component-section .btn-success').tooltip({
+                template: '<div class="tooltip tooltip-success" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+            })
+
+            $('.component-section .btn-danger').tooltip({
+                template: '<div class="tooltip tooltip-danger" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+            })
+
+
+        });
+    </script>
+
+    <script>
+        try {
+            //$(".select2ajax").each(function () {
+            //    var urlSearch = $(this).attr("select2ajax");
+
+
+
+            //});
+
+            $(".select2ajax").select2({
+                ajax: {
+                    //url: urlSearch,
+                    delay: 200,
+                    width: 'resolve',
+                    data: function (params) {
+                        return {
+                            q: params.term// search term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.items
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: "Escribiendo",
+                minimumInputLength: 3,
+                language: "es"
+            });
+
+        } catch (e) {
+
+        }
+
+    </script>
+
+    <script>
+        $('body > input[type="text"]').on('keydown', function (e) {
+            var keyCode = e.keyCode || e.which;
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                $('input')[$('input').index(this) + 1].focus();
+            }
+        });
+    </script>
+
+    <script>
+
+                //$('.redirectLinkMenu').click(function (e) {
+                //    e.preventDefault();
+
+
+                //    alert('OLEEE');
+                //});
+
+
+
+    </script>
+
+
+
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>
+
+
+
+

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Entidades.Distritos>
+
+<div class="row mt-3 mb-3">
+    <div class="col-md-12">
+        <div class="card card-hover card-projects">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5 class="card-title mg-b-0">Distritos activos</h5>
+                    </div>
+                    <div class="col-md-12">
+                        <p class="card-title mg-b-0 mt-2">Información de los distritos operativos en el sistema</p>
+                    </div>
+                </div>
+
+                <nav class="nav">
+                    @*<a href="" class="link-gray-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-help-circle svg-16"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12" y2="17"></line></svg></a>
+                        <a href="" class="link-gray-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical svg-16"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></a>*@
+                </nav>
+            </div>
+            <div>
+                <div class="table-responsive">
+                    <table class="table table-primary table-hover table-striped mg-b-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Datos de contacto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th scope="row">@item.dis_nombre</th>
+                                    <td>
+                                        <i class="fa fa-phone"></i>  @item.dis_telefono <br />
+                                        <i class="fa fa-envelope"></i> @item.dis_mail
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

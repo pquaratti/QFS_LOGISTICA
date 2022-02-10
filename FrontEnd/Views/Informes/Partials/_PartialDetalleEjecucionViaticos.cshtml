@@ -1,0 +1,212 @@
+﻿@model Entidades.Vistas.InformeEjecucion
+
+@{
+
+    decimal _porcentajePlanificadoPlanillas = 0;
+    decimal _porcentajeAsignadoPlanillas = 0;
+    decimal _saldoDisponible = Model.DetalleAsignaciones.Sum(s => s.total_asignacion) - Model.PlanillasViaticos.Sum(s => s.total_planilla);
+
+    _porcentajePlanificadoPlanillas = (Model.PlanillasViaticos.Sum(s => s.total_planilla) > 0 && Model.DetallesPlanificacion.Sum(s => s.plad_importe) > 0 ? Model.PlanillasViaticos.Sum(s => s.total_planilla) / Model.DetallesPlanificacion.Sum(s => s.plad_importe) : 0);
+    _porcentajeAsignadoPlanillas = (Model.PlanillasViaticos.Sum(s => s.total_planilla) > 0 && Model.DetalleAsignaciones.Sum(s => s.total_asignacion) > 0 ? Model.PlanillasViaticos.Sum(s => s.total_planilla) / Model.DetalleAsignaciones.Sum(s => s.total_asignacion) : 0);
+}
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card card-hover card-event-two">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <h6 class="card-title mg-b-0">Planificado vs Planillas</h6>
+                <nav class="nav">
+
+                </nav>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0">
+                    <div class="card card-hover card-social-one alert-primary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value">@Model.DetallesPlanificacion.Sum(s => s.plad_importe).ToString("C")</h1>
+                            </div>
+                            <h5 class="card-title tx-primary">Planificación de Viáticos</h5>
+                            <p class="card-desc">Total Planificado de Viáticos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                    <div class="card card-hover card-social-one alert-success">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value">@Model.PlanillasViaticos.Sum(s => s.total_planilla).ToString("C")</h1>
+                            </div>
+                            <h5 class="card-title tx-primary">Planillas</h5>
+                            <p class="card-desc">Total de Planillas generadas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                    <div class="card card-hover card-social-one @(_porcentajePlanificadoPlanillas <= 0 ? "alert-danger" : "alert-success")">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value">@_porcentajePlanificadoPlanillas.ToString("P")</h1>
+                            </div>
+                            <h5 class="card-title tx-primary">Relación Planificado / Planillas</h5>
+                            <p class="card-desc">Planillas generadas en base a lo planificado (En porcentaje)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-hover card-event-two">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <h6 class="card-title mg-b-0">Asignado vs Planillas</h6>
+                <nav class="nav">
+
+                </nav>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0">
+                    <div class="card card-hover card-social-one alert-primary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value">@Model.DetalleAsignaciones.Sum(s => s.total_asignacion).ToString("C")</h1>
+                            </div>
+                            <h5 class="card-title tx-primary">Asignación</h5>
+                            <p class="card-desc">Total Asignado para el concepto Viáticos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                    <div class="card card-hover card-social-one alert-success">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value">@Model.PlanillasViaticos.Sum(s => s.total_planilla).ToString("C")</h1>
+                            </div>
+                            <h5 class="card-title tx-primary">Planillas</h5>
+                            <p class="card-desc">Total de Planillas generadas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                    <div class="card card-hover card-social-one @(_saldoDisponible < 0 ? "alert-danger" : "alert-success")">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value @(_saldoDisponible < 0 ? "text-danger" : "")">@_saldoDisponible.ToString("C")</h1>
+                            </div>
+                            <h5 class="card-title @(_saldoDisponible < 0 ? "tx-danger" : "tx-primary") ">Disponible</h5>
+                            <p class="card-desc">Importe disponible para generación de Planillas de viáticos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="card card-hover card-event-two">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <h6 class="card-title mg-b-0">Totales</h6>
+                <nav class="nav">
+
+                </nav>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0">
+                    <div class="card card-hover card-social-one alert-info">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value">@Model.PlanillasViaticos.Sum(s=>s.total_planilla).ToString("C")</h1>
+                            </div>
+                            <h5 class="card-title tx-primary">Total</h5>
+                            <p class="card-desc">Total generado en Planillas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                    <div class="card card-hover card-social-one alert-info">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value">@Model.PlanillasViaticos.Count()</h1>
+                            </div>
+                            <h5 class="card-title tx-primary">Planillas</h5>
+                            <p class="card-desc">Total de Planillas generadas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0 mt-2">
+                    <div class="card card-hover card-social-one alert-info">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mg-b-10">
+                                <h1 class="card-value">@Model.PlanillasViaticos.Sum(s=>s.total_personas)</h1>
+                            </div>
+                            <h5 class="card-title tx-primary">Viáticos</h5>
+                            <p class="card-desc">Total de viáticos individuales generados</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card card-hover card-event-two">
+            <div class="card-header bg-transparent pd-y-15 pd-l-15 pd-r-10">
+                <h6 class="card-title mg-b-0">Personal Incluido en Plantillas Generadas (Definitívas)</h6>
+                <nav class="nav">
+
+                </nav>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12 ml-0 mr-0 pl-0 pr-0">
+                    <table class="table table-sm table-header-app datatablePartial-scrollbar">
+                        <thead>
+                            <tr>
+                                <th>Personal</th>
+                                <th>Fuerza</th>
+                                <th>Dni</th>
+                                <th>Origen</th>
+                                <th>Circuito</th>
+                                <th>Planilla</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Entidades.Planilla_Viaticos_Detalle renglon in Model.PersonalIncluidoPlanillas)
+                            {
+                                <tr>
+                                    <td>@renglon.PersonaVinculada.Grado.gra_nombre @renglon.PersonaVinculada.per_nombre @renglon.PersonaVinculada.per_apellido</td>
+                                    <td>@renglon.PersonaVinculada.Grado.Fuerza.fue_abreviatura</td>
+                                    <td>
+                                        @renglon.PersonaVinculada.per_documento
+                                    </td>
+                                    <td>
+                                        @renglon.DatosCabecera.Distrito.dis_nombre <br />
+                                        @renglon.DatosCabecera.Subdistrito.sud_nombre
+                                    </td>
+                                    <td>
+                                        @renglon.CircuitoElectoral.cirele_nombre
+                                    </td>
+                                    <td>
+                                        @renglon.DatosCabecera.pvc_numero / @renglon.DatosCabecera.pvc_ejercicio
+                                    </td>
+                                    <td>@renglon.pvd_importe.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
