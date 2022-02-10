@@ -13,7 +13,7 @@
 
     <div class="col-md-3 pr-0">
         <div class="d-flex flex-row-reverse">
-            <button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABM",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Agragar una Categoría</button>
+            <button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABMCategoriaColaborador",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Agragar una Categoría</button>
         </div>
     </div>
 </div>
@@ -45,7 +45,7 @@
 
         function refreshData()
         {
-            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridData", controller = _ControllerName })";
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataCategoriaColaborador", controller = _ControllerName })";
             APP_LoadPartialView('#viewGridData', {} , _urlPartial);
 
         }

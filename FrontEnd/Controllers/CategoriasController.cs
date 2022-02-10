@@ -13,13 +13,13 @@ namespace FrontEnd.Controllers
     public class CategoriasController : ControllerBaseV2
     {
 
-        public ActionResult Index()
+        public ActionResult Colaborador()
         {
             return View();
         }
 
         [HttpGet]
-        public ActionResult PartialModalABM(string cabeceraID, string detalleID, string subdetalleID)
+        public ActionResult PartialModalABMCategoriaColaborador(string cabeceraID, string detalleID, string subdetalleID)
         {
             Entidades.Categoria item = new Entidades.Categoria();
             item = new Negocio.Categorias(GetToken()).ObjetoNuevo();
@@ -27,19 +27,19 @@ namespace FrontEnd.Controllers
             {
                 item = new Negocio.Categorias(GetToken()).ObtenerPorID(cabeceraID);
             }
-            string _partialViewName = "_ModalABM";
+            string _partialViewName = "_ModalABMCategoriaColaborador";
             return PartialView(_partialViewName, item);
         }
 
         [HttpGet]
-        public ActionResult PartialGridData()
+        public ActionResult PartialGridDataCategoriaColaborador()
         {
             List<Entidades.Categoria> lst = new List<Entidades.Categoria>();
             lst = new Negocio.Categorias(GetToken()).Listar();
            
             if (lst.Count > 0)
             {
-                string _partialViewName = "_GridData";
+                string _partialViewName = "_GridDataCategoriaColaborador";
                 return PartialView(_partialViewName, lst);
             }
             else
@@ -51,7 +51,7 @@ namespace FrontEnd.Controllers
         }
 
         [HttpPost]
-        public JsonResult Delete(string BorrarID)
+        public JsonResult DeleteCategoriaColaborador(string BorrarID)
         {
             Entidades.App.ObjectMessage oM = new Entidades.App.ObjectMessage();
             Negocio.Categorias n = new Negocio.Categorias(GetToken());
@@ -61,7 +61,7 @@ namespace FrontEnd.Controllers
         }
        
         [HttpPost]
-        public JsonResult SaveModal(Entidades.Categoria obj)
+        public JsonResult SaveModalCategoriaColaborador(Entidades.Categoria obj)
         {
             Entidades.App.ObjectMessage oM = new Entidades.App.ObjectMessage();
 

@@ -17,7 +17,7 @@
                     <span aria-hidden="true"><i data-feather="x"></i></span>
                 </button>
             </div>
-            @using (Html.BeginForm("SaveModal", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "true", closeForm = "true" }))
+            @using (Html.BeginForm("SaveModalCategoriaColaborador", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "true", closeForm = "true" }))
             {
         <div class="modal-body">
             @Html.HiddenFor(x => x.IdEncriptado)

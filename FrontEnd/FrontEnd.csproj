@@ -18,8 +18,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44309</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -2907,9 +2906,9 @@
     <Content Include="Views\Tareas\AddOrEdit.cshtml" />
     <Content Include="Views\Tareas\_DatosTareas.cshtml" />
     <Content Include="Views\Tareas\_ModalAvanceTarea.cshtml" />
-    <Content Include="Views\Categorias\_GridData.cshtml" />
-    <Content Include="Views\Categorias\_ModalABM.cshtml" />
-    <Content Include="Views\Categorias\Index.cshtml" />
+    <Content Include="Views\Categorias\_GridDataCategoriaColaborador.cshtml" />
+    <Content Include="Views\Categorias\_ModalABMCategoriaColaborador.cshtml" />
+    <Content Include="Views\Categorias\Colaborador.cshtml" />
     <Content Include="Views\Objetivos\_ModalVincularIndicador.cshtml" />
     <Content Include="Views\Encuestas\_GridDataTipoEncuesta.cshtml" />
     <Content Include="Views\Encuestas\_ModalABMTipoEncuesta.cshtml" />
