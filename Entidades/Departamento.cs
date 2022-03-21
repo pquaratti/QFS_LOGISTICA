@@ -18,7 +18,7 @@ namespace Entidades
 
         [Display(Name = "Provincia")]
         [Required(ErrorMessage = "Campo requerido")]
-        public Provincia Provincia { get; set; }
+        public SIS_Provincia Provincia { get; set; }
 
         [Display(Name = "Código de Departamento")]
         [Required(ErrorMessage = "Campo requerido")]
@@ -30,7 +30,7 @@ namespace Entidades
         {
             this.dto_id = 0;
             this.dto_activo = true;
-            Provincia = new Provincia();
+            Provincia = new SIS_Provincia();
         }
     }
       

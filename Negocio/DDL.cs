@@ -64,15 +64,15 @@ namespace Negocio
         {
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
             Negocio.Provincias negocio = new Provincias(token);
-            List<Entidades.Provincia> lstDatos = negocio.Listar();
+            List<Entidades.SIS_Provincia> lstDatos = negocio.Listar();
 
-            lstDatos.Add(new Entidades.Provincia()
+            lstDatos.Add(new Entidades.SIS_Provincia()
             {
                 prv_id = 0,
                 prv_nombre = "-"
             });
 
-            foreach (Entidades.Provincia item in lstDatos)
+            foreach (Entidades.SIS_Provincia item in lstDatos)
             {
                 lst.Add(new DLLObject()
                 {
@@ -89,15 +89,15 @@ namespace Negocio
         {
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
             Negocio.Provincias negocio = new Provincias(token);
-            List<Entidades.Provincia> lstDatos = negocio.Listar();
+            List<Entidades.SIS_Provincia> lstDatos = negocio.Listar();
 
-            lstDatos.Add(new Entidades.Provincia()
+            lstDatos.Add(new Entidades.SIS_Provincia()
             {
                 prv_id = 0,
                 prv_nombre = "-"
             });
 
-            foreach (Entidades.Provincia item in lstDatos)
+            foreach (Entidades.SIS_Provincia item in lstDatos)
             {
                 lst.Add(new DLLObject()
                 {
@@ -787,7 +787,7 @@ namespace Negocio
         {
             Negocio.Localidades negocio = new Localidades(token);
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            List<Entidades.Localidades> objetos = new List<Entidades.Localidades>();
+            List<Entidades.SIS_Localidad> objetos = new List<Entidades.SIS_Localidad>();
 
             if (agregaDefault)
             {
@@ -802,7 +802,7 @@ namespace Negocio
             {
                 objetos.AddRange(negocio.ListarConFiltros(new List<ObjectParameter>() { new ObjectParameter() { Name = "dto_id", Value = dto_id } }));
 
-                foreach (Entidades.Localidades item in objetos.OrderBy(o => o.loc_nombre))
+                foreach (Entidades.SIS_Localidad item in objetos.OrderBy(o => o.loc_nombre))
                 {
                     lst.Add(new Entidades.App.DLLObject()
                     {
