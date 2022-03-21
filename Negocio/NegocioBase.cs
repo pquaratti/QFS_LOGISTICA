@@ -142,139 +142,6 @@ namespace Negocio
             return lst;
         }
 
-        #region REFLECTION
-        public Entidades.App.ObjectMessage SaveReflection(T item, bool conSeguimiento = false)
-        {
-            Entidades.App.ObjectMessage oM = new Entidades.App.ObjectMessage();
-            DataRow row = db.Estructura(nombreTablaPrincipal);
-            var pList = item.GetType().GetProperties();
-            var fkpList = pList.Where(x => x.CustomAttributes.Any(attr => attr.AttributeType == typeof(KeyRelationAttribute))).ToList();
-            var itemID = pList.Where(x => x.CustomAttributes.Any(attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
-            var idEncriptado = pList.Where(x => x.Name == "IdEncriptado").FirstOrDefault();
-
-            foreach (DataColumn c in row.Table.Columns)
-            {
-                System.Reflection.PropertyInfo p = pList.Where(x => x.Name == c.ColumnName).FirstOrDefault();
-
-                if (p != null)
-                    row[c] = p.GetValue(item);
-
-            }
-
-            foreach (System.Reflection.PropertyInfo prop in fkpList)
-            {
-                var obj = prop.GetValue(item);
-                var pId = obj.GetType().GetProperties().Where(x =>
-                   x.CustomAttributes.Any(
-                       attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();     
-                if (pId != null)
-                    row[nombrePrefijoCampo + "_" + pId.Name] = pId.GetValue(obj);                  
-            }
-
-            if (itemID.GetValue(item).Equals(0))
-            {
-                if (conSeguimiento)
-                {
-                    row[nombrePrefijoCampo + "_" + "fec_alta"] = DateTime.Now;
-                    row[nombrePrefijoCampo + "_" + "fec_mod"] = DateTime.Now;
-                    row[nombrePrefijoCampo + "_" + "usu_id_alta"] = Token.UserID;
-                }
-
-                ///CAMPOS DEL TOKEN ASOCIADOS A LA ENTIDAD//////////////////////////////////
-                if (row.Table.Columns.Contains(nombrePrefijoCampo + "_" + "org_id"))
-                    row[nombrePrefijoCampo + "_" + "org_id"] = Token.OrganizacionID;
-                ////////////////////////////////////////////////////////////////////////////
-               
-                int idvalue = db.SQLInsert(row, fieldID).Valor;
-                itemID.SetValue(item, idvalue , null);
-                idEncriptado.SetValue(item, Negocio.App.Security.EncriptarID(Convert.ToString(idvalue)),null);                  
-                oM.Message = "Datos ingresados";
-            }
-            else
-            {
-                if (conSeguimiento)
-                {
-                    row[nombrePrefijoCampo + "_" + "fec_mod"] = DateTime.Now;
-                    row[nombrePrefijoCampo + "_" + "usu_id_mod"] = Token.UserID;
-                }
-               
-                db.SQLUpdate(row, fieldID+"=@"+fieldID , fieldID, new List<System.Data.SqlClient.SqlParameter>() {
-                        new System.Data.SqlClient.SqlParameter(fieldID,itemID.GetValue(item))
-                    });
-
-                oM.Message = "Datos actualizados";
-            }
-            oM.ObjectRelation = idEncriptado.GetValue(item);
-            oM.Success = true;
-
-            return oM;
-        }
-
-        public static T MapearReflection(T item, DataRow row)
-        {
-            var pList = item.GetType().GetProperties();
-            string idEncriptado = "";
-            var propID = pList.Where(x => x.CustomAttributes.Any(attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
-            string propIDName = propID.Name;
-            string prefixID = propID.Name.Split('_')[0];
-            idEncriptado = Negocio.App.Security.EncriptarID(
-                        Resources.Validaciones.valNULLString(row[propIDName]));
-            var fkpList = pList.Where(x => x.CustomAttributes.Any(attr => attr.AttributeType == typeof(KeyRelationAttribute))).ToList();
-            System.Reflection.PropertyInfo p;
-
-            foreach (DataColumn c in row.Table.Columns)
-            {
-                p = pList.Where(x => x.Name == c.ColumnName).FirstOrDefault();
-
-                if (p != null && row[c] != DBNull.Value)
-                    p.SetValue(item, row[c], null);
-            }
-            pList.Where(x => x.Name == "IdEncriptado").FirstOrDefault()
-                    .SetValue(item, idEncriptado, null);
-
-
-            foreach (System.Reflection.PropertyInfo prop in fkpList)
-            {
-                var obj = Activator.CreateInstance(prop.PropertyType);
-                var pId = obj.GetType().GetProperties().Where(x =>
-                   x.CustomAttributes.Any(
-                       attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
-                var pIdEncriptado = item.GetType().GetProperties().Where(x => x.Name == "IdEncriptado").FirstOrDefault();
-
-                if (pId != null && pIdEncriptado != null && row[prefixID + "_" + pId.Name] != DBNull.Value)
-                {
-                    pId.SetValue(obj, row[prefixID + "_" + pId.Name], null);
-                    pIdEncriptado.SetValue(obj,
-                        Negocio.App.Security.EncriptarID(
-                               Resources.Validaciones.valNULLString(row[prefixID + "_" + pId.Name])), null);
-                }
-                prop.SetValue(item, obj, null);
-            }
-            return item;
-        }
-
-
-
-
-        public static T MapearReflectionID(T item, DataRow row)
-        {
-            var pId = item.GetType().GetProperties().Where(x =>
-                   x.CustomAttributes.Any(
-                       attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
-            var pIdEncriptado = item.GetType().GetProperties().Where(x => x.Name == "IdEncriptado").FirstOrDefault();
-
-            if (pId != null && pIdEncriptado != null && row[pId.Name] != DBNull.Value)
-            {
-                pId.SetValue(item, row[pId.Name], null);
-                pIdEncriptado.SetValue(item,
-                    Negocio.App.Security.EncriptarID(
-                           Resources.Validaciones.valNULLString(row[pId.Name])), null);
-            }
-            
-            return item;
-        }
-
-        #endregion
 
         public abstract T MapearSimple(DataRow dr);
         public abstract T Mapear(DataRow dr);
@@ -641,6 +508,138 @@ namespace Negocio
             }
         }
 
+        #region REFLECTION
+        public Entidades.App.ObjectMessage SaveReflection(T item, DataRow row, bool conSeguimiento = false)
+        {
+            Entidades.App.ObjectMessage oM = new Entidades.App.ObjectMessage();
+            var pList = item.GetType().GetProperties();
+            var fkpList = pList.Where(x => x.CustomAttributes.Any(attr => attr.AttributeType == typeof(KeyRelationAttribute))).ToList();
+            var itemID = pList.Where(x => x.CustomAttributes.Any(attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
+            var idEncriptado = pList.Where(x => x.Name == "IdEncriptado").FirstOrDefault();
+
+            foreach (DataColumn c in row.Table.Columns)
+            {
+                System.Reflection.PropertyInfo p = pList.Where(x => x.Name == c.ColumnName).FirstOrDefault();
+
+                if (p != null)
+                    if (p.GetValue(item) != null)
+                        row[c] = p.GetValue(item);
+            }
+
+            foreach (System.Reflection.PropertyInfo prop in fkpList)
+            {
+                var obj = prop.GetValue(item);
+                var pId = obj.GetType().GetProperties().Where(x =>
+                   x.CustomAttributes.Any(
+                       attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
+                if (pId != null)
+                    row[nombrePrefijoCampo + "_" + pId.Name] = pId.GetValue(obj);
+            }
+
+            if (itemID.GetValue(item).Equals(0))
+            {
+                if (conSeguimiento)
+                {
+                    row[nombrePrefijoCampo + "_" + "fec_alta"] = DateTime.Now;
+                    row[nombrePrefijoCampo + "_" + "fec_mod"] = DateTime.Now;
+                    row[nombrePrefijoCampo + "_" + "usu_id_alta"] = Token.UserID;
+                }
+
+                ///CAMPOS DEL TOKEN ASOCIADOS A LA ENTIDAD//////////////////////////////////
+                row = SaveTokenFilters(row);
+                ////////////////////////////////////////////////////////////////////////////
+
+                int idvalue = db.SQLInsert(row, fieldID).Valor;
+                itemID.SetValue(item, idvalue, null);
+                idEncriptado.SetValue(item, Negocio.App.Security.EncriptarID(Convert.ToString(idvalue)), null);
+                oM.Message = "Datos ingresados";
+            }
+            else
+            {
+                if (conSeguimiento)
+                {
+                    row[nombrePrefijoCampo + "_" + "fec_mod"] = DateTime.Now;
+                    row[nombrePrefijoCampo + "_" + "usu_id_mod"] = Token.UserID;
+                }
+
+                db.SQLUpdate(row, fieldID + "=@" + fieldID, fieldID, new List<System.Data.SqlClient.SqlParameter>() {
+                        new System.Data.SqlClient.SqlParameter(fieldID,itemID.GetValue(item))
+                    });
+
+                oM.Message = "Datos actualizados";
+            }
+            oM.ObjectRelation = idEncriptado.GetValue(item);
+            oM.Success = true;
+
+            return oM;
+        }
+
+        public static T MapearReflection(T item, DataRow row)
+        {
+            var pList = item.GetType().GetProperties();
+            string idEncriptado = "";
+            var propID = pList.Where(x => x.CustomAttributes.Any(attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
+            string propIDName = propID.Name;
+            string prefixID = propID.Name.Split('_')[0];
+            idEncriptado = Negocio.App.Security.EncriptarID(
+                        Resources.Validaciones.valNULLString(row[propIDName]));
+            var fkpList = pList.Where(x => x.CustomAttributes.Any(attr => attr.AttributeType == typeof(KeyRelationAttribute))).ToList();
+            System.Reflection.PropertyInfo p;
+
+            foreach (DataColumn c in row.Table.Columns)
+            {
+                p = pList.Where(x => x.Name == c.ColumnName).FirstOrDefault();
+
+                if (p != null & row[c] != DBNull.Value)
+                    p.SetValue(item, row[c], null);
+            }
+            pList.Where(x => x.Name == "IdEncriptado").FirstOrDefault()
+                    .SetValue(item, idEncriptado, null);
+
+
+            foreach (System.Reflection.PropertyInfo prop in fkpList)
+            {
+                var obj = Activator.CreateInstance(prop.PropertyType);
+                var pId = obj.GetType().GetProperties().Where(x =>
+                   x.CustomAttributes.Any(
+                       attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
+                var pIdEncriptado = item.GetType().GetProperties().Where(x => x.Name == "IdEncriptado").FirstOrDefault();
+
+                if (pId != null & pIdEncriptado != null & row[prefixID + "_" + pId.Name] != DBNull.Value)
+                {
+                    pId.SetValue(obj, row[prefixID + "_" + pId.Name], null);
+                    pIdEncriptado.SetValue(obj,
+                        Negocio.App.Security.EncriptarID(
+                               Resources.Validaciones.valNULLString(row[prefixID + "_" + pId.Name])), null);
+                }
+                prop.SetValue(item, obj, null);
+            }
+            return item;
+        }
+
+
+
+
+        public static T MapearReflectionID(T item, DataRow row)
+        {
+            var pId = item.GetType().GetProperties().Where(x =>
+                   x.CustomAttributes.Any(
+                       attr => attr.AttributeType == typeof(KeyAttribute))).FirstOrDefault();
+            var pIdEncriptado = item.GetType().GetProperties().Where(x => x.Name == "IdEncriptado").FirstOrDefault();
+
+            if (pId != null && pIdEncriptado != null && row[pId.Name] != DBNull.Value)
+            {
+                pId.SetValue(item, row[pId.Name], null);
+                pIdEncriptado.SetValue(item,
+                    Negocio.App.Security.EncriptarID(
+                           Resources.Validaciones.valNULLString(row[pId.Name])), null);
+            }
+
+            return item;
+        }
+
+        #endregion
+
         public string GetFilterTokenQuery()
         {
             string sQueryParams = "";
@@ -661,6 +660,17 @@ namespace Negocio
             }
 
             return lst;
+        }
+
+        private DataRow SaveTokenFilters(DataRow row)
+        {
+            if (TokenFilter)
+                foreach (var filter in GetFilterTokenParams())
+                {
+                    if (row.Table.Columns.Contains(nombrePrefijoCampo + "_" + filter.ParameterName))
+                        row[nombrePrefijoCampo + "_" + filter.ParameterName] = filter.Value;
+                }
+            return row;
         }
 
     }
