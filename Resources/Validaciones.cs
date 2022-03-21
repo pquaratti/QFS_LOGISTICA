@@ -31,7 +31,7 @@ namespace Resources
             }
             else
             {
-                return (int)(obj);
+                return Convert.ToInt32(obj);
             }  
         }
 
@@ -40,16 +40,16 @@ namespace Resources
             if (obj is DBNull)
                 return defaultValue;
             else
-                return (string)(obj);
+                return Convert.ToString(obj);
                 //return obj.ToString();
         }
 
         public static Decimal valNULLDecimal(object obj)
         {
             if (obj is DBNull)
-                return new decimal(0.00);
+                return Convert.ToDecimal(0.00);
             else
-                return (decimal)(obj);
+                return Convert.ToDecimal(obj);
             //return obj.ToString();
         }
 
@@ -58,7 +58,7 @@ namespace Resources
             if (obj is DBNull)
                 return false;
             else
-                return (bool)(obj)  ;
+                return Convert.ToBoolean(obj)  ;
         }
 
         public static DateTime valNULLDateTime(object obj)
@@ -69,7 +69,7 @@ namespace Resources
                 return s;
             else
             {
-                if (((string)obj).Trim().Length.Equals(0))
+                if (obj.ToString().Trim().Length.Equals(0))
                 {
                     return s;
                 }
