@@ -69,12 +69,15 @@
     <Compile Include="App\Token.cs" />
     <Compile Include="App\Transaction.cs" />
     <Compile Include="App\ViewConfiguration.cs" />
+    <Compile Include="Deposito.cs" />
+    <Compile Include="Planta.cs" />
     <Compile Include="Colaborador_Skill_Evolucion.cs" />
     <Compile Include="Categoria_Colaborador_Evolucion.cs" />
     <Compile Include="Categoria.cs" />
     <Compile Include="Controls\IAgendable.cs" />
     <Compile Include="Controls\eventCalendar.cs" />
     <Compile Include="Controls\fullCalendar.cs" />
+    <Compile Include="Cliente.cs" />
     <Compile Include="Encuesta_Cabecera.cs" />
     <Compile Include="Encuesta_Pregunta.cs" />
     <Compile Include="Encuesta_Usuario_Respuesta.cs" />
@@ -90,7 +93,6 @@
     <Compile Include="Tarea_Colaborador.cs" />
     <Compile Include="Colaborador_Skill.cs" />
     <Compile Include="Proyecto_Colaborador.cs" />
-    <Compile Include="Departamento.cs" />
     <Compile Include="Proyecto_Objetivo.cs" />
     <Compile Include="Proyecto.cs" />
     <Compile Include="Mesa_Ayuda.cs" />

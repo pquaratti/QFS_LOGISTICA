@@ -63,16 +63,16 @@ namespace Negocio
         public static List<Entidades.App.DLLObject> ListarProvincias(Entidades.App.Token token, bool agregarDefault = false)
         {
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Provincias negocio = new Provincias(token);
-            List<Entidades.SIS_Provincia> lstDatos = negocio.Listar();
+            App.SIS_Provincias negocio = new Negocio.App.SIS_Provincias(token);
+            List<Entidades.App.SIS_Provincia> lstDatos = negocio.Listar();
 
-            lstDatos.Add(new Entidades.SIS_Provincia()
+            lstDatos.Add(new Entidades.App.SIS_Provincia()
             {
                 prv_id = 0,
                 prv_nombre = "-"
             });
 
-            foreach (Entidades.SIS_Provincia item in lstDatos)
+            foreach (Entidades.App.SIS_Provincia item in lstDatos)
             {
                 lst.Add(new DLLObject()
                 {
@@ -85,56 +85,9 @@ namespace Negocio
             return lst;
         }
 
-        public static List<Entidades.App.DLLObject> ListarDepartamentos(Entidades.App.Token token, bool agregarDefault = false)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Provincias negocio = new Provincias(token);
-            List<Entidades.SIS_Provincia> lstDatos = negocio.Listar();
 
-            lstDatos.Add(new Entidades.SIS_Provincia()
-            {
-                prv_id = 0,
-                prv_nombre = "-"
-            });
 
-            foreach (Entidades.SIS_Provincia item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item.prv_id.ToString(),
-                    Text = item.prv_nombre
-                });
-            }
-
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
-
-        public static List<Entidades.App.DLLObject> ListarTiposDocumento(Entidades.App.Token token, bool agregarDefault = false)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Tipo_Documento negocio = new Tipo_Documento(token);
-            List<Entidades.Tipo_Documento> lstDatos = negocio.Listar();
-
-            lstDatos.Add(new Entidades.Tipo_Documento()
-            {
-                tid_id = 0,
-                tid_nombre = "-"
-            });
-
-            foreach (Entidades.Tipo_Documento item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item.tid_id.ToString(),
-                    Text = item.tid_nombre
-                });
-            }
-
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
-
+ 
         public static List<Entidades.App.DLLObject> ListarTiposSexos(Entidades.App.Token token, bool agregarDefault = false)
         {
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
@@ -302,102 +255,6 @@ namespace Negocio
             return lst;
         }
 
-        public static List<Entidades.App.DLLObject> TiposPersonal()
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Seleccione",
-                Value = "0"
-            });
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Militar",
-                Value = "1"
-            });
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Civil",
-                Value = "2"
-            });
-
-            return lst;
-        }
-
-
-
-        public Decimal ObtieneSaldo(int tarjeta)
-        {
-            Decimal saldo = 0;
-            string sQuery = "select sum(Saldo) as Saldo from (";
-            sQuery += " Select Case when mvf_mov_id = 1 then sum(mvf_importe) else sum(mvf_importe * -1) end as Saldo from Movimientos_Visa_Flota";
-            sQuery += " where mvf_tar_id = @tarjeta and mvf_fec_baja is null and mvf_activo = 1";
-            sQuery += " group by mvf_tar_id, mvf_mov_id) as aux";
-
-            DataTable dt_tarjeta = dbStatic.SQLSelect(sQuery, new List<System.Data.SqlClient.SqlParameter>()
-                {
-                    new System.Data.SqlClient.SqlParameter("tarjeta", tarjeta)
-                });
-            if (dt_tarjeta.Rows.Count > 0)
-            {
-                DataRow row = dt_tarjeta.Rows[0];
-                saldo = Decimal.Parse(row["Saldo"].ToString());
-                return saldo;
-            }
-            else
-            {
-                return saldo;
-            }
-        }
-
-        public bool NoPermiteConsumo(int tarjeta, decimal consumo)
-        {
-            Decimal saldo = ObtieneSaldo(tarjeta);
-            if (saldo > consumo)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-
-        }
-
-        public bool ExisteSaldo(string Query, List<Entidades.App.ObjectParameterSigno> listaFiltros)
-        {
-            string sWhere = "";
-            string sQuery = "";
-            foreach (var itemFiltro in listaFiltros)
-            {
-                sWhere += itemFiltro.Name + itemFiltro.Signo + "@" + itemFiltro.Name + " and ";
-            }
-            sWhere += " 1=1 ";
-
-            List<System.Data.SqlClient.SqlParameter> lstParamsSQL = new List<System.Data.SqlClient.SqlParameter>();
-
-            foreach (var itemParam in listaFiltros)
-            {
-                lstParamsSQL.Add(new System.Data.SqlClient.SqlParameter(itemParam.Name, itemParam.Value));
-            }
-
-            sQuery = Query + " " + sWhere;
-
-            DataTable dt = dbStatic.SQLSelect(sQuery, lstParamsSQL);
-
-            if (dt.Rows.Count > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public static List<Entidades.App.DLLObject> ListarCategoriaDePreguntas(Entidades.App.Token token, bool mostrarActivos = true, bool agregarDefault = false)
         {
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
@@ -534,53 +391,9 @@ namespace Negocio
             return lst;
         }
 
-        public static List<Entidades.App.DLLObject> ListarProyectoPorEstado(Entidades.App.Token token)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
+   
 
-            List<string> lstDatos = new List<string>() { " Finalizado ", " En Curso " , " Configurado " , " Sin Configurar " };
-            foreach (string item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item,
-                    Text = item
-                }); ;
-            }
-            lst.Add(new DLLObject()
-            {
-                Value = "0",
-                Text = " Todos "
-            });
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
 
-        public static List<Entidades.App.DLLObject> ListarTipoProyecto(Entidades.App.Token token, bool agregarDefault = true)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Tipo_Proyectos negocio = new Tipo_Proyectos(token);
-            List<Entidades.Tipo_Proyecto> lstDatos = negocio.Listar();
-
-            foreach (Entidades.Tipo_Proyecto item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item.tproy_id.ToString(),
-                    Text = item.tproy_nombre
-                });
-            }
-            if (agregarDefault == true)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = "0",
-                    Text = " No vincula "
-                });
-            }
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
 
         public static List<Entidades.App.DLLObject> ListarPorcentajesDefault()
         {
@@ -660,11 +473,11 @@ namespace Negocio
             return lst;
         }
 
-        public static List<Entidades.App.DLLObject> ListarDepartamentosPorProvincias(Entidades.App.Token token, bool agregaDefault = false, int prv_id = 0, string textoDefault = "Seleccione")
+        public static List<Entidades.App.DLLObject> ListarLocalidadesPorProvincias(Entidades.App.Token token, bool agregaDefault = false, int prv_id = 0, string textoDefault = "Seleccione")
         {
-            Negocio.Departamentos negocio = new Departamentos(token);
+            Negocio.App.SIS_Localidades negocio = new App.SIS_Localidades(token);
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            List<Entidades.Departamento> objetos = new List<Entidades.Departamento>();
+            List<Entidades.App.SIS_Localidad> objetos = new List<Entidades.App.SIS_Localidad>();
 
             if (agregaDefault)
             {
@@ -679,130 +492,7 @@ namespace Negocio
             {
                 objetos.AddRange(negocio.ListarConFiltros(new List<ObjectParameter>() { new ObjectParameter() { Name = "prv_id", Value = prv_id } }));
 
-                foreach (Entidades.Departamento item in objetos.OrderBy(o => o.Provincia.prv_nombre))
-                {
-                    lst.Add(new Entidades.App.DLLObject()
-                    {
-                        Value = item.dto_id.ToString(),
-                        Text = item.dto_nombre
-                    });
-                }
-            }
-            return lst;
-        }
-
-        public static List<Entidades.App.DLLObject> ListarProyectosPorOrganizacion(Entidades.App.Token token, bool agregarDefault = false)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Proyectos negocio = new Proyectos(token);
-            List<Entidades.Proyecto> lstDatos = negocio.ListarPorOrganizacion(Convert.ToInt32(token.OrganizacionID));
-
-            lstDatos.Add(new Entidades.Proyecto()
-            {
-                proy_id = 0,
-                proy_titulo = "-"
-            });
-
-            foreach (Entidades.Proyecto item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item.proy_id.ToString(),
-                    Text = item.proy_titulo
-                });
-            }
-
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
-
-        public static List<Entidades.App.DLLObject> ListarObjetivosPorProyecto(Entidades.App.Token token, bool agregaDefault = true, int proy_id = 0, string textoDefault = "Seleccione")
-        {
-            Negocio.ProyectosObjetivos negocio = new ProyectosObjetivos(token);
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            List<Entidades.Proyecto_Objetivo> objetos = new List<Entidades.Proyecto_Objetivo>();
-
-            if (agregaDefault)
-            {
-                lst.Add(new Entidades.App.DLLObject()
-                {
-                    Value = "0",
-                    Text = textoDefault
-                });
-            }
-
-            if (proy_id > 0)
-            {
-                objetos.AddRange(negocio.ListarConFiltros(new List<ObjectParameter>() { new ObjectParameter() { Name = "proy_id", Value = proy_id } }));
-
-                foreach (Entidades.Proyecto_Objetivo item in objetos.OrderBy(o => o.pryobj_nombre))
-                {
-                    lst.Add(new Entidades.App.DLLObject()
-                    {
-                        Value = item.pryobj_id.ToString(),
-                        Text = item.pryobj_nombre
-                    });
-                }
-            }
-            return lst;
-        }
-
-        public static List<Entidades.App.DLLObject> ListarTareasPorProyectoObjetivos(Entidades.App.Token token, bool agregaDefault = true, int proy_id = 0, int pryobj_id = 0, string textoDefault = "Seleccione")
-        {
-            Negocio.Tareas negocio = new Tareas(token);
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            List<Entidades.Tarea> objetos = new List<Entidades.Tarea>();
-            List<ObjectParameter> filtros = new List<ObjectParameter>();
-
-            if (agregaDefault)
-            {
-                lst.Add(new Entidades.App.DLLObject()
-                {
-                    Value = "0",
-                    Text = textoDefault
-                });
-            }
-
-            if (pryobj_id > 0)
-                filtros.Add(new ObjectParameter() { Name = "pryobj_id", Value = pryobj_id });
-            if (proy_id > 0)
-                filtros.Add(new ObjectParameter() { Name = "proy_id", Value = proy_id });
-
-            objetos.AddRange(negocio.ListarConFiltros(filtros));
-
-            foreach (Entidades.Tarea item in objetos.OrderBy(o => o.tar_nombre))
-            {
-                lst.Add(new Entidades.App.DLLObject()
-                {
-                    Value = item.tar_id.ToString(),
-                    Text = item.tar_nombre
-                });
-            }
-
-            return lst;
-        }
-
-
-        public static List<Entidades.App.DLLObject> ListarLocalidadesPorDepartamentos(Entidades.App.Token token, bool agregaDefault = false, int dto_id = 0, string textoDefault = "Seleccione")
-        {
-            Negocio.Localidades negocio = new Localidades(token);
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            List<Entidades.SIS_Localidad> objetos = new List<Entidades.SIS_Localidad>();
-
-            if (agregaDefault)
-            {
-                lst.Add(new Entidades.App.DLLObject()
-                {
-                    Value = "0",
-                    Text = textoDefault
-                });
-            }
-
-            if (dto_id > 0)
-            {
-                objetos.AddRange(negocio.ListarConFiltros(new List<ObjectParameter>() { new ObjectParameter() { Name = "dto_id", Value = dto_id } }));
-
-                foreach (Entidades.SIS_Localidad item in objetos.OrderBy(o => o.loc_nombre))
+                foreach (Entidades.App.SIS_Localidad item in objetos.OrderBy(o => o.Provincia.prv_nombre))
                 {
                     lst.Add(new Entidades.App.DLLObject()
                     {
@@ -814,87 +504,31 @@ namespace Negocio
             return lst;
         }
 
-        public static List<Entidades.App.DLLObject> ListarTareasPorProyecto(Entidades.App.Token token, bool agregaDefault = false, int proy_id = 0, string textoDefault = "Seleccione")
+        public static List<Entidades.App.DLLObject> ListarPlantas(Entidades.App.Token token, bool agregarDefault = true)
         {
-            Negocio.Tareas negocio = new Tareas(token);
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            List<Entidades.Tarea> objetos = new List<Entidades.Tarea>();
+            Negocio.Plantas negocio = new Plantas(token);
+            List<Entidades.Planta> lstDatos = negocio.ListarActivos();
 
-            if (agregaDefault)
+            foreach (Entidades.Planta item in lstDatos)
             {
-                lst.Add(new Entidades.App.DLLObject()
+                lst.Add(new DLLObject()
+                {
+                    Value = item.planta_id.ToString(),
+                    Text = item.planta_nombre
+                });
+            }
+
+            if (agregarDefault == true)
+            {
+                lst.Add(new DLLObject()
                 {
                     Value = "0",
-                    Text = textoDefault
+                    Text = " Seleccione "
                 });
             }
 
-            if (proy_id > 0)
-            {
-                objetos.AddRange(negocio.ListarConFiltros(new List<ObjectParameter>() { new ObjectParameter() { Name = "proy_id", Value = proy_id } }));
-
-                foreach (Entidades.Tarea item in objetos.OrderBy(o => o.tar_nombre))
-                {
-                    lst.Add(new Entidades.App.DLLObject()
-                    {
-                        Value = item.tar_id.ToString(),
-                        Text = item.tar_nombre
-                    });
-                }
-            }
-
-            if (lst.Count.Equals(0))
-            {
-                lst.Add(new Entidades.App.DLLObject()
-                {
-                    Value = "0",
-                    Text = "No se encontraron tareas para vincular."
-                });
-            }
-            return lst;
-        }
-
-        public static List<Entidades.App.DLLObject> ListarIndicadoresPorProyecto(Entidades.App.Token token, bool agregaDefault = false, string proy_id = "0", string textoDefault = "Sin Filtro")
-        {
-            Negocio.ProyectosIndicadores negocio = new ProyectosIndicadores(token);
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            List<Entidades.Proyecto_Indicador> objetos = new List<Entidades.Proyecto_Indicador>();
-
-            if (agregaDefault)
-            {
-                lst.Add(new Entidades.App.DLLObject()
-                {
-                    Value = "0",
-                    Text = textoDefault
-                });
-            }
-
-            if (proy_id != "0")
-            {
-                int id = Convert.ToInt32(proy_id);
-                objetos.AddRange(negocio.ListarConFiltros(new List<ObjectParameter>() { new ObjectParameter() { Name = "proy_id", Value = id } }));
-            }
-            else
-                objetos = negocio.Listar();
-
-            foreach (Entidades.Proyecto_Indicador item in objetos.OrderBy(o => o.pryind_nombre))
-            {
-                lst.Add(new Entidades.App.DLLObject()
-                {
-                    Value = item.pryind_id.ToString(),
-                    Text = item.pryind_nombre
-                });
-            }
-
-            if (lst.Count.Equals(0))
-            {
-                lst.Add(new Entidades.App.DLLObject()
-                {
-                    Value = "0",
-                    Text = "No se encontraron Indicadores" +
-                    "."
-                });
-            }
+            lst = lst.OrderBy(o => o.Value).ToList();
             return lst;
         }
 
@@ -913,34 +547,6 @@ namespace Negocio
                 });
             }
             
-            if (agregarDefault == true)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = "0",
-                    Text = " Seleccione "
-                });
-            }
-
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
-
-        public static List<Entidades.App.DLLObject> ListarProyectos(Entidades.App.Token token, bool agregarDefault = true)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Proyectos negocio = new Proyectos(token);
-            List<Entidades.Proyecto> lstDatos = negocio.Listar();
-
-            foreach (Entidades.Proyecto item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item.proy_id.ToString(),
-                    Text = item.proy_titulo
-                });
-            }
-
             if (agregarDefault == true)
             {
                 lst.Add(new DLLObject()
@@ -1004,93 +610,7 @@ namespace Negocio
             return lst;
         }
 
-        public static List<Entidades.App.DLLObject> ListarEstadosTarea()
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Sin Filtro",
-                Value = "0"
-            });
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Edición",
-                Value = Convert.ToString((int)Negocio.TareasEstados.Estados.Edicion)
-            });
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "En Progreso",
-                Value = Convert.ToString((int)Negocio.TareasEstados.Estados.EnProgreso)
-            });
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Pendiente",
-                Value = Convert.ToString((int)Negocio.TareasEstados.Estados.Pendiente)
-            });
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Finalizada",
-                Value = Convert.ToString((int)Negocio.TareasEstados.Estados.Finalizada)
-            });
-
-            return lst;
-        }
-
-
-        public static List<Entidades.App.DLLObject> ListarCategorias(Entidades.App.Token token, bool agregarDefault = false)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Categorias negocio = new Categorias(token);
-            List<Entidades.Categoria> lstDatos = negocio.Listar();
-
-            lstDatos.Add(new Entidades.Categoria()
-            {
-                cat_id = 0,
-                cat_nombre = "Seleccione una Categoría"
-            });
-
-            foreach (Entidades.Categoria item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item.cat_id.ToString(),
-                    Text = item.cat_nombre
-                });
-            }
-
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
-
-
-        public static List<Entidades.App.DLLObject> ListarSkills(Entidades.App.Token token, bool agregarDefault = false)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Skills negocio = new Skills(token);
-            List<Entidades.Skill> lstDatos = negocio.Listar();
-
-            lstDatos.Add(new Entidades.Skill()
-            {
-                skill_id = 0,
-                skill_nombre = "Seleccione un Skill"
-            });
-
-            foreach (Entidades.Skill item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item.skill_id.ToString(),
-                    Text = item.skill_nombre
-                });
-            }
-
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
+      
 
         public static List<Entidades.App.DLLObject> ListarAreas(Entidades.App.Token token, bool agregarDefault = false)
         {
@@ -1117,56 +637,6 @@ namespace Negocio
             return lst;
         }
 
-
-        public static List<Entidades.App.DLLObject> ListarTipoEncuesta(Entidades.App.Token token, bool agregarDefault = false)
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-            Negocio.Tipo_Encuestas negocio = new Tipo_Encuestas(token);
-            List<Entidades.Tipo_Encuesta> lstDatos = negocio.Listar();
-
-            lstDatos.Add(new Tipo_Encuesta()
-            {
-                tenc_id = 0,
-                tenc_contenido = "Seleccione un Tipo de Encuesta"
-            });
-
-            foreach (Entidades.Tipo_Encuesta item in lstDatos)
-            {
-                lst.Add(new DLLObject()
-                {
-                    Value = item.tenc_id.ToString(),
-                    Text = item.tenc_contenido
-                });
-            }
-
-            lst = lst.OrderBy(o => o.Value).ToList();
-            return lst;
-        }
-
-        public static List<Entidades.App.DLLObject> ListarEstadosEncuesta()
-        {
-            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Sin Filtro",
-                Value = "0"
-            });
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Disponibles",
-                Value = Convert.ToString((int)Negocio.EncuestasUsuarios.Estados.Disponibles)
-            });
-
-            lst.Add(new Entidades.App.DLLObject()
-            {
-                Text = "Realizadas",
-                Value = Convert.ToString((int)Negocio.EncuestasUsuarios.Estados.Realizadas)
-            });
-
-            return lst;
-        }
 
     }
 

@@ -9,6 +9,7 @@ namespace Entidades.App
 {
     public class SIS_Organizacion : EntidadBase
     {
+        [Key]
         public int org_id { get; set; }
 
         [Display(Name = "Nombre")]

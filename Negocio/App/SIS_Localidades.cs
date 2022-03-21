@@ -9,14 +9,14 @@ using Entidades.App;
 
 namespace Negocio.App
 {
-    public class Localidades : NegocioBase<Entidades.App.SIS_Localidad>
+    public class SIS_Localidades : NegocioBase<Entidades.App.SIS_Localidad>
     {
-        Negocio.Departamentos negocioDTO;
 
-        public Localidades(Entidades.App.Token paramToken) : base("loc_id", "loc_activo", "Localidades", "loc")
+
+        public SIS_Localidades(Entidades.App.Token paramToken) : base("loc_id", "sin", "Localidades", "loc")
         {
             Token = paramToken;
-            negocioDTO = new Departamentos(Token);
+
         }
 
         public override Entidades.App.SIS_Localidad MapearSimple(DataRow dr)
@@ -36,7 +36,7 @@ namespace Negocio.App
         public override Entidades.App.SIS_Localidad Mapear(DataRow dr)
         {
             Entidades.App.SIS_Localidad obj = MapearSimple(dr);
-            obj. = Negocio.App.SIS_Provincias.MapearStatic(dr);
+            obj.Provincia = Negocio.App.SIS_Provincias.MapearStatic(dr);
             return obj;
         }
 

@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Entidades.Planta>
+
+@{
+    string _ControllerName = "Plantas";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Latitud</th>
+            <th>Longitud</th>
+            <th>Descripción</th>
+            <th width="80px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.Planta renglon in Model)
+        {
+        <tr>
+
+            <td>@renglon.planta_nombre</td>
+            <td>@renglon.planta_direccion</td>
+            <td>@renglon.planta_latitud</td>
+            <td>@renglon.planta_longitud</td>
+            <td>@renglon.planta_descripcion</td>
+            <td style="text-align: center; vertical-align: middle;">
+
+                <button type="button"
+                        modal-value-primary="@renglon.IdEncriptado"
+                        modal-value-secondary="0"
+                        modal-value-aux="0"
+                        modal-url="@Url.Action("PartialModalABMPlantas",_ControllerName)"
+                        class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
+                    <i class="fa fa-edit"></i>
+                </button>
+
+
+                <button type="button"
+                        data-id-rel="@renglon.IdEncriptado"
+                        url-delete="@Url.Action("Delete",_ControllerName)"
+                        class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Planta">
+                    <i class="fa fa-trash"></i>
+                </button>
+
+
+
+
+            </td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+        refreshData();
+    }
+
+</script>

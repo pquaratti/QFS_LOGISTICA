@@ -9,6 +9,7 @@ namespace Entidades.App
 {
     public class SIS_Provincia : EntidadBase
     {
+        [Key]
         public int prv_id { get; set; }
 
         [Display(Name = "Nombre")]

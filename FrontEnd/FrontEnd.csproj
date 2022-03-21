@@ -129,15 +129,16 @@
     <Compile Include="Controllers\ConfiguracionController.cs" />
     <Compile Include="Controllers\ControllerBase.cs" />
     <Compile Include="Controllers\ControllerBaseV2.cs" />
+    <Compile Include="Controllers\ClientesController.cs" />
+    <Compile Include="Controllers\PlantasController.cs" />
+    <Compile Include="Controllers\DepositosController.cs" />
     <Compile Include="Controllers\StatisticsReportsController.cs" />
     <Compile Include="Controllers\MaquetadosController.cs" />
     <Compile Include="Controllers\ObjetivosController.cs" />
-    <Compile Include="Controllers\IndicadoresController.cs" />
     <Compile Include="Controllers\CategoriasController.cs" />
     <Compile Include="Controllers\EncuestasController.cs" />
     <Compile Include="Controllers\TareasController.cs" />
     <Compile Include="Controllers\SkillsController.cs" />
-    <Compile Include="Controllers\ProyectosController.cs" />
     <Compile Include="Controllers\EventosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InformesController.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Controllers\ReportesController.cs" />
     <Compile Include="Controllers\TestingController.cs" />
     <Compile Include="Controllers\TutorialesController.cs" />
+    <Compile Include="Controllers\LocalidadesController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="CustomAttributes\ViewBagData.cs" />
     <Compile Include="Filters\CustomAuthorizeAttribute.cs" />
@@ -2875,6 +2877,12 @@
     <Content Include="Views\Encuestas\Resultado.cshtml" />
     <Content Include="Views\Encuestas\Informe\_GridDataPreguntaValor.cshtml" />
     <Content Include="Views\Encuestas\Informe\_PartialDetalleCabeceraEncuesta.cshtml" />
+    <Content Include="Views\Depositos\_GridDataDepositos.cshtml" />
+    <Content Include="Views\Depositos\_ModalABMDepositos.cshtml" />
+    <Content Include="Views\Depositos\Index.cshtml" />
+    <Content Include="Views\Plantas\_GridDataPlantas.cshtml" />
+    <Content Include="Views\Plantas\_ModalABMPlantas.cshtml" />
+    <Content Include="Views\Plantas\Index.cshtml" />
     <None Include="Views\Maquetados\SeguimientoProyecto.cshtml" />
     <Content Include="Views\Shared\_Controls_FullCalendar.cshtml" />
     <Content Include="Views\Proyectos\_GridDataAsignacionTareas.cshtml" />
@@ -2915,6 +2923,9 @@
     <Content Include="Views\Encuestas\Tipos.cshtml" />
     <Content Include="Views\StatisticsReports\Proyectos_PartialGridStatus.cshtml" />
     <Content Include="Views\Proyectos\Seguimiento.cshtml" />
+    <Content Include="Views\Clientes\_GridDataClientes.cshtml" />
+    <Content Include="Views\Clientes\_ModalABMClientes.cshtml" />
+    <Content Include="Views\Clientes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Entidades\Entidades.csproj">

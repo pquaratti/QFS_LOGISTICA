@@ -38,11 +38,12 @@ namespace Negocio
         public override ObjectMessage Save(Encuesta Obj)
         {
             ObjectMessage oM = new ObjectMessage();
-          
+
             try
             {
                 PermiteGuardar(Obj);
-                oM = SaveReflection(Obj, true); 
+                DataRow row = db.Estructura(nombreTablaPrincipal);
+                oM = SaveReflection(Obj, row, true);
             }
             catch (Exception ex)
             {

@@ -1,0 +1,95 @@
+﻿@model Entidades.Planta
+
+@{
+    string _ControllerName = "Plantas";
+
+    Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+}
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    @(Model.planta_id.Equals(0) ? "Alta de Planta " : "Modificar Planta")
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+            @using (Html.BeginForm("SaveModalPlantas", _ControllerName, FormMethod.Post, new { id = "formABMDefault", name = "formABMDefault", @class = "formularioABMModal", refreshDatatable = "true", resetForm = "true", closeForm = "true" }))
+            {
+        <div class="modal-body">
+            @Html.HiddenFor(x => x.planta_id)
+
+
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.planta_nombre, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.planta_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.planta_nombre, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.planta_direccion, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.planta_direccion, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.planta_direccion, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.planta_latitud, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.planta_latitud, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.planta_latitud, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    @Html.LabelFor(model => model.planta_longitud, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.planta_longitud, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.planta_longitud, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.planta_descripcion, htmlAttributes: new { @class = "control-label" })
+                    <textarea class="form-control" rows="5" placeholder="" required autocomplete="off" name="@Html.NameFor(model=>model.planta_descripcion)" id="@Html.NameFor(model=>model.planta_descripcion)">@Model.planta_descripcion</textarea>
+                    @Html.ValidationMessageFor(model => model.planta_descripcion, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(m => m.Provincia, new { @class = "control-label" })
+                    @Html.DropDownListFor(m => m.Provincia.prv_id, new SelectList(Negocio.DDL.ListarProvincias(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", @id = "provinciaModal", required = "required" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(m => m.Localidad, new { @class = "control-label" })
+                    @Html.DropDownListFor(m => m.Localidad.loc_id, new SelectList(Negocio.DDL.ListarLocalidadesPorProvincias(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", @id = "localidadModal", required = "required" })
+                </div>
+            </div>
+
+
+        </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success pull-left btn-app"> <i class="fa fa-save"></i> Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+    });
+
+    $('#provinciaModal').change();
+    $('#provinciaModal').change(function (e) {
+        _filterID = $('#provinciaModal').val();
+        _urlJson = "@Url.RouteUrl("Default", new { action = "ListarSelect", controller = "Localidades" })";
+        APP_LoadSelectModal('#localidadModal', _urlJson, _filterID);
+    });
+
+</script>

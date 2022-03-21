@@ -216,7 +216,7 @@ namespace Negocio
 
             if (_QueryFilter.Trim().Length > 0)
             {
-                sQuery = " and " + _QueryFilter;
+                sQuery += " and " + _QueryFilter;
                 lstParam.AddRange(GetFilterTokenParams());
             }
             
