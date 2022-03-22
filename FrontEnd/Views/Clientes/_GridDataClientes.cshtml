@@ -3,6 +3,12 @@
 @{
     string _ControllerName = "Clientes";
 }
+<div class="d-flex flex-row-reverse mt-1 mb-2">
+    <span class="badge badge-info">Editar</span>
+    <span class="badge badge-danger">Borrar</span>
+    <span class="badge badge-secondary">Ver Contactos</span>
+    <span class="badge badge-success">+ Contactos</span>
+</div>
 
 <table class="table table-sm table-header-app datatablePartial-scrollbar">
     <thead>
@@ -10,7 +16,7 @@
             <th>Razón Social</th>
             <th>CUIT</th>
             <th>Mail</th>
-            <th width="80px"></th>
+            <th width="100px"></th>
         </tr>
     </thead>
     <tbody>
@@ -22,27 +28,36 @@
                 <td>@renglon.cli_cuit</td>
                 <td>@renglon.cli_mail</td>
                 <td style="text-align: center; vertical-align: middle;">
-
                     <button type="button"
                             modal-value-primary="@renglon.IdEncriptado"
                             modal-value-secondary="0"
                             modal-value-aux="0"
-                            modal-url="@Url.Action("PartialModalABMClientes",_ControllerName)"
-                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="">
-                        <i class="fa fa-edit"></i>
+                            modal-url="@Url.Action("PartialModalABMClientesContactos",_ControllerName)"
+                            class="btn btn-success btn-sm btn-grid btnOpenModal" title="Agregar Contacto">
+                        <i class="fa fa-plus"></i>
                     </button>
-
-
+                    <button type="button"
+                            modal-value-primary="@renglon.IdEncriptado"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalClientesContactosVista",_ControllerName)"
+                            class="btn btn-secondary btn-sm btn-grid btnOpenModal" title="Contactos">
+                        <i class="fa fa-user"></i>
+                    </button>
                     <button type="button"
                             data-id-rel="@renglon.IdEncriptado"
                             url-delete="@Url.Action("Delete",_ControllerName)"
                             class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Cliente">
                         <i class="fa fa-trash"></i>
                     </button>
-
-
-
-
+                    <button type="button"
+                            modal-value-primary="@renglon.IdEncriptado"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalABMClientes",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar Cliente">
+                        <i class="fa fa-edit"></i>
+                    </button>
                 </td>
             </tr>
         }

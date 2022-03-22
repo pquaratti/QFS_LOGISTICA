@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Entidades.ClienteContacto>
+
+<div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel3">
+                    Contactos del Cliente<br>
+                </h6>
+                    <span class="text-success"> Razón Social: @Model.First().Cliente.cli_razon_social / Cuit: @Model.First().Cliente.cli_cuit </span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i data-feather="x"></i></span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <table class="table table-sm table-header-app">
+                            <thead>
+                                <tr>
+                                    <th>Contenido</th>
+                                    <th>Tipo de Contacto</th>
+                                    <th>Detalle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Entidades.ClienteContacto renglon in Model)
+                                {
+                                <tr>
+                                    <td>@renglon.clicont_contenido </td>
+                                    <td>@renglon.Tipo.tipcontcli_nombre</td>
+                                    <td>@renglon.clicont_detalle </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-cerrar btn-app" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+    </script>
+}

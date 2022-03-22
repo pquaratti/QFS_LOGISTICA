@@ -637,6 +637,29 @@ namespace Negocio
             return lst;
         }
 
+        public static List<Entidades.App.DLLObject> ListarTipoDeContactoClientes(Entidades.App.Token oToken, string textoDefault = "")
+        {
+            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
+
+            List<Entidades.TipoContactoCliente> tipos = new Negocio.TipoContactosClientes(oToken).Listar();
+
+            lst.Add(new Entidades.App.DLLObject()
+            {
+                Text = "Seleccione",
+                Value = "0"
+            });
+
+            foreach (Entidades.TipoContactoCliente item in tipos)
+            {
+                lst.Add(new Entidades.App.DLLObject()
+                {
+                    Text = item.tipcontcli_nombre,
+                    Value = item.tipcontcli_id.ToString()
+                });
+            }
+
+            return lst;
+        }
 
     }
 

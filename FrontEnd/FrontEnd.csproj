@@ -125,6 +125,7 @@
     <Compile Include="Controllers\ActualizacionesController.cs" />
     <Compile Include="Controllers\AreasController.cs" />
     <Compile Include="Controllers\CalendarioController.cs" />
+    <Compile Include="Controllers\TipoOperacionesController.cs" />
     <Compile Include="Controllers\ColaboradoresController.cs" />
     <Compile Include="Controllers\ConfiguracionController.cs" />
     <Compile Include="Controllers\ControllerBase.cs" />
@@ -2883,6 +2884,11 @@
     <Content Include="Views\Plantas\_GridDataPlantas.cshtml" />
     <Content Include="Views\Plantas\_ModalABMPlantas.cshtml" />
     <Content Include="Views\Plantas\Index.cshtml" />
+    <Content Include="Views\TipoOperaciones\_GridDataTipoOperaciones.cshtml" />
+    <Content Include="Views\TipoOperaciones\_ModalABMTipoOperaciones.cshtml" />
+    <Content Include="Views\TipoOperaciones\Index.cshtml" />
+    <Content Include="Views\Clientes\_ModalABMClientesContactos.cshtml" />
+    <Content Include="Views\Clientes\_ModalClientesContactosVista.cshtml" />
     <None Include="Views\Maquetados\SeguimientoProyecto.cshtml" />
     <Content Include="Views\Shared\_Controls_FullCalendar.cshtml" />
     <Content Include="Views\Proyectos\_GridDataAsignacionTareas.cshtml" />

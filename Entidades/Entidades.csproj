@@ -69,6 +69,9 @@
     <Compile Include="App\Token.cs" />
     <Compile Include="App\Transaction.cs" />
     <Compile Include="App\ViewConfiguration.cs" />
+    <Compile Include="ClienteContacto.cs" />
+    <Compile Include="TipoContactoCliente.cs" />
+    <Compile Include="TipoOperacionLogistica.cs" />
     <Compile Include="Deposito.cs" />
     <Compile Include="Planta.cs" />
     <Compile Include="Colaborador_Skill_Evolucion.cs" />

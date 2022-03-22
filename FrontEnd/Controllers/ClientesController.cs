@@ -53,5 +53,45 @@ namespace FrontEnd.Controllers
 
         #endregion
 
+        #region Contactos
+
+        [HttpGet]
+        public ActionResult PartialModalClientesContactosVista(string cabeceraID, string detalleID, string subdetalleID)
+        {
+            List<Entidades.ClienteContacto> lst = new Negocio.ClientesContactos(GetToken())
+                .ListarClientesContactosPorClienteTipo(Negocio.App.Security.DesencriptarID(cabeceraID));
+
+            return lst.Count > 0 ?
+                PartialView("_ModalClientesContactosVista", lst) :
+                PartialView("~/Views/Shared/_MensajeSinResultados.cshtml", new ObjectMessage() { Message = "No Hay Contactos para mostrar." });
+        }
+
+        [HttpGet]
+        public ActionResult PartialModalABMClientesContactos(string cabeceraID, string detalleID, string subdetalleID)
+        {
+            Entidades.ClienteContacto contacto = new Negocio.ClientesContactos(GetToken()).ObtenerPorID(detalleID);
+            if(cabeceraID!="0")
+                contacto.Cliente = new Negocio.Clientes(GetToken()).ObtenerPorID(cabeceraID);
+            return PartialView("_ModalABMClientesContactos", contacto);
+        }
+        [HttpPost]
+        public JsonResult SaveModalClientesContactos(Entidades.ClienteContacto obj)
+        {
+            ObjectMessage oM = new Negocio.ClientesContactos(GetToken()).Save(obj);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+        [HttpPost]
+        public JsonResult DeleteContacto(string BorrarID)
+        {
+            ObjectMessage oM = new ObjectMessage();
+            Negocio.ClientesContactos n = new Negocio.ClientesContactos(GetToken());
+            string _id = Negocio.App.Security.DesencriptarID(BorrarID);
+            oM = n.Delete(Convert.ToInt32(_id));
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
     }
 }
