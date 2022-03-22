@@ -33,10 +33,7 @@ namespace Negocio
 
         public override void PermiteGuardar(Planta obj)
         {
-            if (!Resources.Repositorio.IsNumeric(obj.planta_latitud))
-                throw new Exception("La latitud debe ser numérica.");
-            if (!Resources.Repositorio.IsNumeric(obj.planta_longitud))
-                throw new Exception("La longitud debe ser numérica.");
+        
         }
 
         public override ObjectMessage Save(Planta Obj)
