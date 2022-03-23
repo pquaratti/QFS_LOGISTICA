@@ -66,6 +66,7 @@
     <Compile Include="TipoRotacionesLogisticas.cs" />
     <Compile Include="TipoManipulacionesLogisticas.cs" />
     <Compile Include="TipoEstadosUbicacionesLogisticas.cs" />
+    <Compile Include="ZonasLogisticas.cs" />
     <Compile Include="TipoUbicacionesLogisticas.cs" />
     <Compile Include="TipoOperacionesLogisticas.cs" />
     <Compile Include="Plantas.cs" />

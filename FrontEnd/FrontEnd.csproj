@@ -127,6 +127,7 @@
     <Compile Include="Controllers\CalendarioController.cs" />
     <Compile Include="Controllers\RotacionesLogisticasController.cs" />
     <Compile Include="Controllers\ManipulacionesLogisticasController.cs" />
+    <Compile Include="Controllers\ZonasLogisticasController.cs" />
     <Compile Include="Controllers\UbicacionesLogisticasController.cs" />
     <Compile Include="Controllers\TipoOperacionesController.cs" />
     <Compile Include="Controllers\ColaboradoresController.cs" />
@@ -2947,6 +2948,9 @@
     <Content Include="Views\UbicacionesLogisticas\_GridDataTipoUbicaciones.cshtml" />
     <Content Include="Views\UbicacionesLogisticas\_ModalABMTipoEstadoUbicaciones.cshtml" />
     <Content Include="Views\UbicacionesLogisticas\Estados.cshtml" />
+    <Content Include="Views\ZonasLogisticas\_GridDataZonas.cshtml" />
+    <Content Include="Views\ZonasLogisticas\_ModalABMZonas.cshtml" />
+    <Content Include="Views\ZonasLogisticas\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Entidades\Entidades.csproj">
