@@ -65,7 +65,7 @@
             <div class="row mt-2">
                 <div class="col-md-12">
                     @Html.LabelFor(m => m.Localidad, new { @class = "control-label" })
-                    @Html.DropDownListFor(m => m.Localidad.loc_id, new SelectList(Negocio.DDL.ListarLocalidadesPorProvincias(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", @id = "localidadModal", required = "required" })
+                    @Html.DropDownListFor(m => m.Localidad.loc_id, new SelectList(Negocio.DDL.ListarLocalidadesPorProvincias(Filters.VerificarToken.ConsultarToken(), true, Model.Provincia.prv_id), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", @id = "localidadModal", required = "required" })
                 </div>
             </div>
 
