@@ -63,6 +63,7 @@
     <Compile Include="App\SIS_Usuarios_Password_Recovery.cs" />
     <Compile Include="CategoriasColaboradoresEvolucion.cs" />
     <Compile Include="ClientesContactos.cs" />
+    <Compile Include="TipoUbicacionesLogisticas.cs" />
     <Compile Include="TipoOperacionesLogisticas.cs" />
     <Compile Include="Plantas.cs" />
     <Compile Include="Depositos.cs" />

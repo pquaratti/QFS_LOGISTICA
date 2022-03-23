@@ -69,7 +69,7 @@ namespace Negocio
             lstDatos.Add(new Entidades.App.SIS_Provincia()
             {
                 prv_id = 0,
-                prv_nombre = "-"
+                prv_nombre = "Seleccione"
             });
 
             foreach (Entidades.App.SIS_Provincia item in lstDatos)
@@ -501,6 +501,35 @@ namespace Negocio
                     });
                 }
             }
+           
+            return lst;
+        }
+
+        public static List<Entidades.App.DLLObject> ListarLocalidades(Entidades.App.Token token, bool agregaDefault = false, string textoDefault = "Seleccione")
+        {
+            Negocio.App.SIS_Localidades negocio = new App.SIS_Localidades(token);
+            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
+            List<Entidades.App.SIS_Localidad> objetos = new List<Entidades.App.SIS_Localidad>();
+
+            if (agregaDefault)
+            {
+                lst.Add(new Entidades.App.DLLObject()
+                {
+                    Value = "0",
+                    Text = textoDefault
+                });
+            }
+            objetos.AddRange(negocio.Listar());
+
+            foreach (Entidades.App.SIS_Localidad item in objetos.OrderBy(o => o.Provincia.prv_nombre))
+            {
+                lst.Add(new Entidades.App.DLLObject()
+                {
+                    Value = item.loc_id.ToString(),
+                    Text = item.loc_nombre
+                });
+            }
+
             return lst;
         }
 

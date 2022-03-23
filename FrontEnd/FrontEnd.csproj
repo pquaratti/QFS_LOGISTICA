@@ -125,6 +125,7 @@
     <Compile Include="Controllers\ActualizacionesController.cs" />
     <Compile Include="Controllers\AreasController.cs" />
     <Compile Include="Controllers\CalendarioController.cs" />
+    <Compile Include="Controllers\TipoUbicacionesController.cs" />
     <Compile Include="Controllers\TipoOperacionesController.cs" />
     <Compile Include="Controllers\ColaboradoresController.cs" />
     <Compile Include="Controllers\ConfiguracionController.cs" />
@@ -2932,6 +2933,9 @@
     <Content Include="Views\Clientes\_GridDataClientes.cshtml" />
     <Content Include="Views\Clientes\_ModalABMClientes.cshtml" />
     <Content Include="Views\Clientes\Index.cshtml" />
+    <Content Include="Views\TipoUbicaciones\_GridDataTipoUbicaciones.cshtml" />
+    <Content Include="Views\TipoUbicaciones\_ModalABMTipoUbicaciones.cshtml" />
+    <Content Include="Views\TipoUbicaciones\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Entidades\Entidades.csproj">
