@@ -1,19 +1,19 @@
 ﻿@{
-    ViewBag.Title = "Tipo de Ubicaciones";
-    ViewBag.Subtitle = "Tipo de Ubicaciones (Administrador) ";
+    ViewBag.Title = "Tipo de Manipulaciones";
+    ViewBag.Subtitle = "Tipo de Manipulaciones (Administrador) ";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string _ControllerName = "UbicacionesLogisticas";
+    string _ControllerName = "ManipulacionesLogisticas";
 }
 
 <div class="content-header header-title-page ml-0 mr-0">
     <div class="col-md-9">
-        <h4 class="content-title content-title-xs">Tipo Ubicaciones Logísticas</h4>
-        <p>Listado de Tipo de Ubicaciones</p>
+        <h4 class="content-title content-title-xs">Tipo Manipulaciones Logísticas</h4>
+        <p>Listado de Tipo de Manipulaciones</p>
     </div>
 
     <div class="col-md-3 pr-0">
         <div class="d-flex flex-row-reverse">
-            <button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABMTipoUbicaciones",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Tipo de Ubicación </button>
+            <button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABMTipoManipulaciones",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Tipo de Manipulación </button>
         </div>
     </div>
 </div>
@@ -45,7 +45,7 @@
 
         function refreshData()
         {
-            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataTipoUbicaciones", controller = _ControllerName })";
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataTipoManipulaciones", controller = _ControllerName })";
             APP_LoadPartialView('#viewGridData', { } , _urlPartial);
 
         }

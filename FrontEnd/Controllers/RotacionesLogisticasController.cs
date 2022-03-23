@@ -15,7 +15,7 @@ namespace FrontEnd.Controllers
 
         #region Gestión Tipos de Rotaciones
 
-        public ActionResult Index()
+        public ActionResult Tipos()
         {
             return View();
         }

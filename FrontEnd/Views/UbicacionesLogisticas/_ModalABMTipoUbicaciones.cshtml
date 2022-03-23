@@ -1,7 +1,7 @@
 ﻿@model Entidades.TipoUbicacionLogistica
 
 @{
-    string _ControllerName = "TipoUbicaciones";
+    string _ControllerName = "UbicacionesLogisticas";
 
     Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
 }
@@ -21,6 +21,7 @@
             {
         <div class="modal-body">
             @Html.HiddenFor(x => x.tubilog_id)
+            @Html.HiddenFor(x => x.IdEncriptado)
 
 
             <div class="row mt-2">

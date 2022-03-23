@@ -7,32 +7,32 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Entidades
 {
-    public class TipoRotacionLogistica : EntidadBase
+    public class TipoManipulacionLogistica : EntidadBase
     {
 
         [KeyAttribute]
-        public int trolog_id { get; set; }
+        public int tmanilog_id { get; set; }
 
         [Display(Name = "Nombre")]
         [Required(ErrorMessage = "Campo requerido")]
-        public string trolog_nombre { get; set; }
-
-        [Display(Name = "Descipción")]
-        [Required(ErrorMessage = "Campo requerido")]
-        public string trolog_descripcion { get; set; }
+        public string tmanilog_nombre { get; set; }
 
         [Display(Name = "Código")]
         [Required(ErrorMessage = "Campo requerido")]
-        public string trolog_codigo { get; set; }
+        public string tmanilog_codigo { get; set; }
+
+        [Display(Name = "Descipción")]
+        [Required(ErrorMessage = "Campo requerido")]
+        public string tmanilog_descripcion { get; set; }
 
         [Display(Name = "Activo")]
         [Required(ErrorMessage = "Campo requerido")]
-        public bool trolog_activo { get; set; }
+        public bool tmanilog_activo { get; set; }
 
-        public TipoRotacionLogistica()
+        public TipoManipulacionLogistica()
         {
-            this.trolog_activo = true;
-            this.trolog_id = 0;
+            this.tmanilog_activo = true;
+            this.tmanilog_id = 0;
 
         }
 

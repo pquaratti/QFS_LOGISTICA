@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Entidades.TipoRotacionLogistica>
+﻿@model IEnumerable<Entidades.TipoManipulacionLogistica>
 
 @{
-    string _ControllerName = "RotacionesLogisticas";
+    string _ControllerName = "ManipulacionesLogisticas";
 }
 
 <table class="table table-sm table-header-app datatablePartial-scrollbar">
@@ -14,13 +14,13 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (Entidades.TipoRotacionLogistica renglon in Model)
+        @foreach (Entidades.TipoManipulacionLogistica renglon in Model)
         {
         <tr>
 
-            <td>@renglon.trolog_nombre</td>
-            <td>@renglon.trolog_codigo</td>
-            <td>@renglon.trolog_descripcion</td>
+            <td>@renglon.tmanilog_nombre</td>
+            <td>@renglon.tmanilog_codigo</td>
+            <td>@renglon.tmanilog_descripcion</td>
 
             <td style="text-align: center; vertical-align: middle;">
 
@@ -28,7 +28,7 @@
                         modal-value-primary="@renglon.IdEncriptado"
                         modal-value-secondary="0"
                         modal-value-aux="0"
-                        modal-url="@Url.Action("PartialModalABMTipoRotaciones",_ControllerName)"
+                        modal-url="@Url.Action("PartialModalABMTipoManipulaciones",_ControllerName)"
                         class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar Tipo">
                     <i class="fa fa-edit"></i>
                 </button>

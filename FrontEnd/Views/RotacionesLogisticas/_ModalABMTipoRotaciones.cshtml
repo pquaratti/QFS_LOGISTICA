@@ -1,7 +1,7 @@
 ﻿@model Entidades.TipoRotacionLogistica
 
 @{
-    string _ControllerName = "TipoRotaciones";
+    string _ControllerName = "RotacionesLogisticas";
 
     Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
 }
@@ -21,6 +21,7 @@
             {
         <div class="modal-body">
             @Html.HiddenFor(x => x.trolog_id)
+            @Html.HiddenFor(x => x.IdEncriptado)
 
 
             <div class="row mt-2">
@@ -28,6 +29,13 @@
                     @Html.LabelFor(model => model.trolog_nombre, htmlAttributes: new { @class = "control-label" })
                     @Html.EditorFor(model => model.trolog_nombre, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
                     @Html.ValidationMessageFor(model => model.trolog_nombre, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => model.trolog_codigo, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.trolog_codigo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.trolog_codigo, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="row mt-2">
