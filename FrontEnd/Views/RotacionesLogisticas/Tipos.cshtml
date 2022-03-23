@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Tipo de Rotaciones";
+    ViewBag.Subtitle = "Tipo de Rotaciones (Administrador) ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "TipoRotaciones";
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">Tipo Rotaciones Logísticas</h4>
+        <p>Listado de Tipo de Rotaciones</p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABMTipoRotaciones",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Tipo de Rotación </button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="white-box">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <div id="viewGridData" style="zoom:90%"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            refreshData();
+        });
+
+        function refreshData()
+        {
+            _urlPartial = "@Url.RouteUrl("Default", new { action = "PartialGridDataTipoRotaciones", controller = _ControllerName })";
+            APP_LoadPartialView('#viewGridData', { } , _urlPartial);
+
+        }
+
+        $('#btnBuscar').click(function (e) {
+            e.preventDefault();
+            refreshData();
+        });
+
+    </script>
+}
+
+

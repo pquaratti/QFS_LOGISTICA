@@ -10,7 +10,7 @@ namespace FrontEnd.Controllers
 {
     [Filters.VerificarToken]
     [Filters.VerificarModule]
-    public class TipoUbicacionesController : ControllerBaseV2
+    public class UbicacionesLogisticasController : ControllerBaseV2
     {
 
         #region Gestión Tipos de Ubicaciones

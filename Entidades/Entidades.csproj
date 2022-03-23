@@ -71,6 +71,7 @@
     <Compile Include="App\ViewConfiguration.cs" />
     <Compile Include="ClienteContacto.cs" />
     <Compile Include="TipoContactoCliente.cs" />
+    <Compile Include="TipoRotacionLogistica.cs" />
     <Compile Include="TipoUbicacionLogistica.cs" />
     <Compile Include="TipoOperacionLogistica.cs" />
     <Compile Include="Deposito.cs" />

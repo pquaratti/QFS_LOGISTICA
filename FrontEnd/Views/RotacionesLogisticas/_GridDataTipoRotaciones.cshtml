@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Entidades.TipoRotacionLogistica>
+
+@{
+    string _ControllerName = "TipoRotaciones";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th width="80px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.TipoRotacionLogistica renglon in Model)
+        {
+            <tr>
+
+                <td>@renglon.trolog_nombre</td>
+                <td>@renglon.trolog_descripcion</td>
+
+                <td style="text-align: center; vertical-align: middle;">
+
+                    <button type="button"
+                            modal-value-primary="@renglon.IdEncriptado"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalABMTipoRotaciones",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar Tipo">
+                        <i class="fa fa-edit"></i>
+                    </button>
+
+
+                    <button type="button"
+                            data-id-rel="@renglon.IdEncriptado"
+                            url-delete="@Url.Action("Delete",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar Tipo">
+                        <i class="fa fa-trash"></i>
+                    </button>
+
+
+
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+        refreshData();
+    }
+
+</script>
