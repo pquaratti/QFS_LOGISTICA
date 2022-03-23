@@ -73,6 +73,7 @@
     <Compile Include="TipoContactoCliente.cs" />
     <Compile Include="TipoRotacionLogistica.cs" />
     <Compile Include="TipoManipulacionLogistica .cs" />
+    <Compile Include="TipoEstadoUbicacionLogistica.cs" />
     <Compile Include="TipoUbicacionLogistica.cs" />
     <Compile Include="TipoOperacionLogistica.cs" />
     <Compile Include="Deposito.cs" />

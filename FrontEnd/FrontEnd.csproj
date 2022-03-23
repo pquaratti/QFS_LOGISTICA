@@ -2938,12 +2938,15 @@
     <Content Include="Views\RotacionesLogisticas\_GridDataTipoRotaciones.cshtml" />
     <Content Include="Views\RotacionesLogisticas\_ModalABMTipoRotaciones.cshtml" />
     <Content Include="Views\RotacionesLogisticas\Tipos.cshtml" />
-    <Content Include="Views\UbicacionesLogisticas\_GridDataTipoUbicaciones.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_GridDataTipoEstadoUbicaciones.cshtml" />
     <Content Include="Views\UbicacionesLogisticas\_ModalABMTipoUbicaciones.cshtml" />
     <Content Include="Views\UbicacionesLogisticas\Tipos.cshtml" />
     <Content Include="Views\ManipulacionesLogisticas\_GridDataTipoManipulaciones.cshtml" />
     <Content Include="Views\ManipulacionesLogisticas\_ModalABMTipoManipulaciones.cshtml" />
     <Content Include="Views\ManipulacionesLogisticas\Tipos.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_GridDataTipoUbicaciones.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_ModalABMTipoEstadoUbicaciones.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\Estados.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Entidades\Entidades.csproj">

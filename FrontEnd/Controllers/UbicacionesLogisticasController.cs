@@ -53,5 +53,44 @@ namespace FrontEnd.Controllers
 
         #endregion
 
+        #region Gestión Tipos de EstadoUbicaciones
+
+        public ActionResult Estados()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult PartialGridDataTipoEstadoUbicaciones()
+        {
+            List<Entidades.TipoEstadoUbicacionLogistica> lst = new Negocio.TipoEstadosUbicacionesLogisticas(GetToken()).ListarActivos();
+
+            return lst.Count > 0 ?
+                PartialView("_GridDataTipoEstadoUbicaciones", lst) :
+                PartialView("~/Views/Shared/_MensajeSinResultados.cshtml", new ObjectMessage() { Message = "No Hay Tipos de Estados de Ubicaciones para mostrar." });
+        }
+
+        [HttpPost]
+        public JsonResult DeleteEstado(string BorrarID)
+        {
+            ObjectMessage oM = new Negocio.TipoEstadosUbicacionesLogisticas(GetToken()).DeleteLogico(BorrarID);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpGet]
+        public ActionResult PartialModalABMTipoEstadoUbicaciones(string cabeceraID, string detalleID, string subdetalleID)
+        {
+            return PartialView("_ModalABMTipoEstadoUbicaciones", new Negocio.TipoEstadosUbicacionesLogisticas(GetToken()).ObtenerPorID(cabeceraID));
+        }
+
+        [HttpPost]
+        public JsonResult SaveModalTipoEstadoUbicaciones(Entidades.TipoEstadoUbicacionLogistica obj)
+        {
+            ObjectMessage oM = new Negocio.TipoEstadosUbicacionesLogisticas(GetToken()).Save(obj);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
     }
 }
