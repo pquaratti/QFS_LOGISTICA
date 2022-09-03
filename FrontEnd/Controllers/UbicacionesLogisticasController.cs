@@ -92,5 +92,28 @@ namespace FrontEnd.Controllers
         }
 
         #endregion
+
+        #region Gestion de Ubicaciones
+
+        public ActionResult Gestion()
+        {
+            return View();
+        }
+
+        public ActionResult Configuracion()
+        {
+            Entidades.UbicacionLogistica obj = new Entidades.UbicacionLogistica();
+
+            ViewBag.Plantas = new Negocio.Plantas(GetToken()).ListarSimple();
+            ViewBag.Depositos = new Negocio.Depositos(GetToken()).ListarSimple();
+            ViewBag.Zonas = new Negocio.ZonasLogisticas(GetToken()).ListarSimple();
+            ViewBag.TipoUbicacionesLogisticas = new Negocio.TipoUbicacionesLogisticas(GetToken()).ListarSimple();
+
+            return View(obj);
+        }
+
+
+        #endregion
+
     }
 }

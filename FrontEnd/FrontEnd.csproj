@@ -2951,6 +2951,8 @@
     <Content Include="Views\ZonasLogisticas\_GridDataZonas.cshtml" />
     <Content Include="Views\ZonasLogisticas\_ModalABMZonas.cshtml" />
     <Content Include="Views\ZonasLogisticas\Index.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\Gestion.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\Configuracion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Entidades\Entidades.csproj">

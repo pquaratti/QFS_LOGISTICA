@@ -1,0 +1,85 @@
+﻿@model Entidades.UbicacionLogistica
+
+@{
+    ViewBag.Title = "Configuración de Ubicación Logística";
+    ViewBag.Subtitle = "[subtitulo]";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "UbicacionesLogisticas";
+    string _urlBack = Url.RouteUrl("Default", new { action = "Gestion", controller = _ControllerName });
+    //if (Model.Cerrada) { Response.Redirect(_urlBack); }
+}
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-9">
+        <h4 class="content-title content-title-xs">
+            @ViewBag.Title
+        </h4>
+        <p>
+            [Parrafo adicional]
+        </p>
+    </div>
+
+    <div class="col-md-3 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <button id="btnRegresar" type="button" class="btn btn-xs btn-info op-back-form m-1" data-url-redirect="@_urlBack"><i class="fa fa-backward"></i> Regresar</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Planta, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => Model.Planta.planta_id, new SelectList(ViewBag.Plantas, "planta_id", "descripcion_combo", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Deposito, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => Model.Deposito.depo_id, new SelectList(ViewBag.Depositos, "depo_id", "descripcion_combo", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Zona, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => Model.Zona.zonlog_id, new SelectList(ViewBag.Zonas, "zonlog_id", "descripcion_combo", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TipoUbicacion, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => Model.TipoUbicacion.tubilog_id, new SelectList(ViewBag.TipoUbicacionesLogisticas, "tubilog_id", "descripcion_combo", 0), new { @class = "form-control camporequerido input-sm select2", required = "required" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ubilog_codigo, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.ubilog_codigo, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.ubilog_codigo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ubilog_secuencia_ruta, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.ubilog_secuencia_ruta, new { htmlAttributes = new { @class = "form-control form-control-sm", required = "required", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.ubilog_secuencia_ruta, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+
+        });
+    </script>
+}
