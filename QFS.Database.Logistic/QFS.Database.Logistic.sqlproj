@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>QFS.Database.Logistic</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{f553b9d6-0f36-426c-b1fb-181532b1146d}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>QFS.Database.Logistic</RootNamespace>
+    <AssemblyName>QFS.Database.Logistic</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Functions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Ubicaciones_Logisticas.sql" />
+    <Build Include="dbo\Tables\Depositos_Movimientos.sql" />
+    <Build Include="dbo\Tables\Marcas.sql" />
+    <Build Include="dbo\Tables\Modelos.sql" />
+    <Build Include="dbo\Tables\Categorias.sql" />
+    <Build Include="dbo\Tables\Categorias_Colaboradores_Evolucion.sql" />
+    <Build Include="dbo\Tables\SIS_Acciones.sql" />
+    <Build Include="dbo\Tables\SIS_Modulos.sql" />
+    <Build Include="dbo\Tables\SIS_Organizaciones.sql" />
+    <Build Include="dbo\Tables\SIS_Perfiles.sql" />
+    <Build Include="dbo\Tables\Preguntas_Frecuentes.sql" />
+    <Build Include="dbo\Tables\SIS_Perfiles_Acciones.sql" />
+    <Build Include="dbo\Tables\Preguntas_Frecuentes_Categorias.sql" />
+    <Build Include="dbo\Tables\SIS_Permisos_Especiales.sql" />
+    <Build Include="dbo\Tables\Tutoriales.sql" />
+    <Build Include="dbo\Tables\SIS_Usuarios.sql" />
+    <Build Include="dbo\Tables\Mesa_Ayuda.sql" />
+    <Build Include="dbo\Tables\SIS_Usuarios_Login.sql" />
+    <Build Include="dbo\Tables\Mesa_Ayuda_Interaccion.sql" />
+    <Build Include="dbo\Tables\SIS_Usuarios_Modulos.sql" />
+    <Build Include="dbo\Tables\Tipo_Consultas_Ayuda.sql" />
+    <Build Include="dbo\Tables\SIS_Usuarios_Password_Recovery.sql" />
+    <Build Include="dbo\Tables\SIS_Usuarios_Permisos_Especiales.sql" />
+    <Build Include="dbo\Tables\Tipo_Prioridad.sql" />
+    <Build Include="dbo\Tables\SIS_Areas.sql" />
+    <Build Include="dbo\Tables\Clientes.sql" />
+    <Build Include="dbo\Tables\Plantas.sql" />
+    <Build Include="dbo\Tables\Tipo_Operaciones_Logisticas.sql" />
+    <Build Include="dbo\Tables\SIS_Provincias.sql" />
+    <Build Include="dbo\Tables\SIS_Localidades.sql" />
+    <Build Include="dbo\Tables\Depositos.sql" />
+    <Build Include="dbo\Tables\Tipo_Contacto_Cliente.sql" />
+    <Build Include="dbo\Tables\Clientes_Contactos.sql" />
+    <Build Include="dbo\Tables\Tipo_Ubicaciones_Logisticas.sql" />
+    <Build Include="dbo\Tables\Tipo_Manipulaciones_Logisticas.sql" />
+    <Build Include="dbo\Tables\Tipo_Rotaciones_Logisticas.sql" />
+    <Build Include="dbo\Tables\Tipo_Estado_Ubicacion_Logistica.sql" />
+    <Build Include="dbo\Tables\Zonas_Logisticas.sql" />
+  </ItemGroup>
+</Project>

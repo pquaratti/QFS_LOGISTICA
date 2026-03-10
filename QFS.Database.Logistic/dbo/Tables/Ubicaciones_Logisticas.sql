@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[Ubicaciones_Logisticas] (
+    [ubilog_id]                  INT             NOT NULL,
+    [ubilog_codigo]              NVARCHAR (30)   NULL,
+    [ubilog_tubilog_id]          INT             NULL,
+    [ubilog_tmanilog_id]         INT             NULL,
+    [ubilog_trotlog_id]          INT             NULL,
+    [ubilog_teubilog_id]         INT             NULL,
+    [ubilog_zonlog_id]           INT             NULL,
+    [ubilog_secuencia_ruta]      NVARCHAR (50)   NULL,
+    [ubilog_planta_id]           INT             NULL,
+    [ubilog_depo_id]             INT             NULL,
+    [ubilog_nivel]               NVARCHAR (10)   NULL,
+    [ubilog_altura]              DECIMAL (18, 2) NULL,
+    [ubilog_longitud]            DECIMAL (18, 2) NULL,
+    [ubilog_anchura]             DECIMAL (18, 2) NULL,
+    [ubilog_capacidad_cubica]    DECIMAL (18, 2) NULL,
+    [ubilog_peso_maximo]         DECIMAL (18, 2) NULL,
+    [ubilog_multiples_articulos] BIT             NULL,
+    [ubilog_multiples_lotes]     BIT             NULL,
+    [ubilog_usu_id_alta]         INT             NULL,
+    [ubilog_fec_alta]            DATETIME        NULL,
+    [ubilog_usu_id_mod]          INT             NULL,
+    [ubilog_fec_mod]             DATETIME        NULL,
+    [ubilog_activo]              BIT             NULL,
+    CONSTRAINT [PK_Ubicaciones_Logisticas] PRIMARY KEY CLUSTERED ([ubilog_id] ASC)
+);
+
