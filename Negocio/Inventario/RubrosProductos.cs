@@ -6,22 +6,22 @@ using System.Data;
 
 namespace Negocio.Inventario
 {
-    public class CategoriasProductos : NegocioBase<CategoriaProducto>
+    public class RubrosProductos : NegocioBase<RubroProducto>
     {
-        public CategoriasProductos(Token token) : base("catpro_id", "catpro_activo", "Categorias_Productos", "catpro")
+        public RubrosProductos(Token token) : base("rubpro_id", "rubpro_activo", "Rubros_Productos", "rubpro")
         {
             Token = token;
             TokenFilter = true;
         }
 
-        public override CategoriaProducto ObjetoNuevo()
+        public override RubroProducto ObjetoNuevo()
         {
-            var obj = new CategoriaProducto();
+            var obj = new RubroProducto();
             obj.IdEncriptado = App.Security.EncriptarID("0");
             return obj;
         }
 
-        public override ObjectMessage Save(CategoriaProducto Obj)
+        public override ObjectMessage Save(RubroProducto Obj)
         {
             ObjectMessage oM = new ObjectMessage();
             try
@@ -37,25 +37,19 @@ namespace Negocio.Inventario
             return oM;
         }
 
-        public override CategoriaProducto Mapear(DataRow dr)
-        {
-            var obj = MapearStatic(dr);
-            obj.RubroProducto = RubrosProductos.MapearStatic(dr);
-            return obj;
-        }
-        public override CategoriaProducto MapearCompleto(DataRow dr) => Mapear(dr);
-        public override CategoriaProducto MapearSimple(DataRow dr) => MapearStatic(dr);
+        public override RubroProducto Mapear(DataRow dr) => MapearStatic(dr);
+        public override RubroProducto MapearCompleto(DataRow dr) => Mapear(dr);
+        public override RubroProducto MapearSimple(DataRow dr) => Mapear(dr);
 
-        public static CategoriaProducto MapearStatic(DataRow dr)
+        public static RubroProducto MapearStatic(DataRow dr)
         {
-            var obj = new CategoriaProducto();
+            var obj = new RubroProducto();
             return MapearReflection(obj, dr);
         }
 
         protected override string QueryDefault(string sTOP, string sWHERE, string sOrderBy)
         {
-            sQuery = "SELECT * FROM Categorias_Productos ";
-            sQuery += "LEFT JOIN Rubros_Productos ON rubpro_id = catpro_rubpro_id ";
+            sQuery = "SELECT * FROM Rubros_Productos ";
             if (sWHERE != "") sQuery += " WHERE " + sWHERE;
             if (sOrderBy != "") sQuery += " ORDER BY " + sOrderBy;
             return sQuery;
@@ -66,7 +60,7 @@ namespace Negocio.Inventario
             var list = new List<DLLObject>();
             if (agregaDefault) list.Add(new DLLObject() { Value = "0", Text = "Seleccione" });
             foreach (var item in ListarActivos())
-                list.Add(new DLLObject() { Value = item.catpro_id.ToString(), Text = item.catpro_nombre });
+                list.Add(new DLLObject() { Value = item.rubpro_id.ToString(), Text = item.rubpro_nombre });
             return list;
         }
     }

@@ -30,7 +30,11 @@ USING (
         (29, N'Gestión Deposito',         N'Menú de Gestión de Depósitos',                        NULL,                      NULL,                       0,  N'fa fa-home',     50,  CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
         (30, N'Inventario depósito',      N'Submenú - Inventario Depósito',                       N'Depositos',              N'Inventario',              29, N'sin',            50,  CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
         (31, N'Marcas',                   N'Submenú - Gestión de Marcas ',                        N'Marcas',                 N'Index',                   6,  N'fa fa-list',     100, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
-        (32, N'Modelos',                  N'Submenú - Gestión de Modelos',                        N'Modelos',                N'Index',                   6,  N'fa fa-list',     200, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT))
+        (32, N'Modelos',                  N'Submenú - Gestión de Modelos',                        N'Modelos',                N'Index',                   6,  N'fa fa-list',     200, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
+        (33, N'Inventario - Productos',   N'Submenú - Maestro de productos / insumos',            N'InventarioProductos',    N'Index',                   29, N'fa fa-cubes',    300, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
+        (34, N'Inventario - Rubros',      N'Submenú - ABM de rubros de productos',                N'InventarioRubros',       N'Index',                   29, N'fa fa-tags',     310, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
+        (35, N'Inventario - Categorías',  N'Submenú - ABM de categorías de productos',            N'InventarioCategorias',   N'Index',                   29, N'fa fa-folder',   320, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
+        (36, N'Inventario - Subcategorías',N'Submenú - ABM de subcategorías de productos',        N'InventarioSubcategorias',N'Index',                   29, N'fa fa-sitemap',  330, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT))
 ) AS Source (
     NewAccId,
     NewAccNombre,
