@@ -7,6 +7,11 @@ namespace Entidades.Inventario
         [Key]
         public int catpro_id { get; set; }
 
+        [KeyRelation]
+        [Display(Name = "Rubro")]
+        [Required(ErrorMessage = "Campo requerido")]
+        public RubroProducto RubroProducto { get; set; }
+
         [Display(Name = "Nombre")]
         [Required(ErrorMessage = "Campo requerido")]
         public string catpro_nombre { get; set; }
@@ -21,6 +26,7 @@ namespace Entidades.Inventario
         {
             catpro_id = 0;
             catpro_activo = true;
+            RubroProducto = new RubroProducto();
         }
     }
 }

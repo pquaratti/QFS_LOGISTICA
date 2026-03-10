@@ -1,6 +1,9 @@
 @{
-    ViewBag.Title = "Productos de Inventario";
+    ViewBag.Title = "Maestro de Productos / Insumos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "InventarioProductos";
 }
-
-<h2>Productos de Inventario</h2>
-<div id="gridProductos"></div>
+<div class="content-header header-title-page ml-0 mr-0"><div class="col-md-8"><h4 class="content-title content-title-xs">Maestro de Productos / Insumos</h4></div><div class="col-md-4 pr-0"><div class="d-flex flex-row-reverse"><button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABM",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Nuevo producto</button></div></div></div>
+<div class="card card-body mb-2"><div class="row"><div class="col-md-3">@Html.DropDownList("filtroRubro",new SelectList(ViewBag.RubrosDDL,"Value","Text"),new { @class="form-control form-control-sm" })</div><div class="col-md-3">@Html.DropDownList("filtroCategoria",new SelectList(ViewBag.CategoriasDDL,"Value","Text"),new { @class="form-control form-control-sm" })</div><div class="col-md-3">@Html.DropDownList("filtroSubcategoria",new SelectList(ViewBag.SubcategoriasDDL,"Value","Text"),new { @class="form-control form-control-sm" })</div><div class="col-md-3"><input type="text" id="filtroTexto" class="form-control form-control-sm" placeholder="Código o descripción" /></div></div><div class="row mt-2"><div class="col-md-12"><a href="@Url.Action("Index","InventarioRubros")" class="btn btn-outline-secondary btn-xs mr-1">ABM Rubros</a><a href="@Url.Action("Index","InventarioCategorias")" class="btn btn-outline-secondary btn-xs mr-1">ABM Categorías</a><a href="@Url.Action("Index","InventarioSubcategorias")" class="btn btn-outline-secondary btn-xs">ABM Subcategorías</a></div></div></div>
+<div class="card card-body"><div id="gridProductos"></div></div>
+@section scripts{<script>$(document).ready(function(){refreshData();$('#filtroRubro,#filtroCategoria,#filtroSubcategoria').change(refreshData);$('#filtroTexto').on('keyup',refreshData);});function refreshData(){APP_LoadPartialView('#gridProductos',{rubroID:$('#filtroRubro').val(),categoriaID:$('#filtroCategoria').val(),subcategoriaID:$('#filtroSubcategoria').val(),texto:$('#filtroTexto').val()},'@Url.Action("PartialGridData",_ControllerName)');}</script>}

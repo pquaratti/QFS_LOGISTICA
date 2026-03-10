@@ -159,6 +159,10 @@
     <Compile Include="Controllers\LocalidadesController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\InventarioProductosController.cs" />
+    <Compile Include="Controllers\InventarioRubrosController.cs" />
+    <Compile Include="Controllers\InventarioCategoriasController.cs" />
+    <Compile Include="Controllers\InventarioSubcategoriasController.cs" />
+
     <Compile Include="Controllers\InventarioMovimientosController.cs" />
     <Compile Include="CustomAttributes\ViewBagData.cs" />
     <Compile Include="Filters\CustomAuthorizeAttribute.cs" />
@@ -2729,6 +2733,16 @@
     <Content Include="Views\InventarioProductos\Index.cshtml" />
     <Content Include="Views\InventarioProductos\_GridData.cshtml" />
     <Content Include="Views\InventarioProductos\_ModalABM.cshtml" />
+    <Content Include="Views\InventarioRubros\Index.cshtml" />
+    <Content Include="Views\InventarioRubros\_GridData.cshtml" />
+    <Content Include="Views\InventarioRubros\_ModalABM.cshtml" />
+    <Content Include="Views\InventarioCategorias\Index.cshtml" />
+    <Content Include="Views\InventarioCategorias\_GridData.cshtml" />
+    <Content Include="Views\InventarioCategorias\_ModalABM.cshtml" />
+    <Content Include="Views\InventarioSubcategorias\Index.cshtml" />
+    <Content Include="Views\InventarioSubcategorias\_GridData.cshtml" />
+    <Content Include="Views\InventarioSubcategorias\_ModalABM.cshtml" />
+
     <Content Include="Views\InventarioMovimientos\Index.cshtml" />
     <Content Include="Views\InventarioMovimientos\_GridData.cshtml" />
     <Content Include="Views\InventarioMovimientos\_ModalABM.cshtml" />

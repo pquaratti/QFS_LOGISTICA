@@ -127,6 +127,9 @@
     <Compile Include="Reportes\datosHeader.cs" />
     <Compile Include="Dashboard.cs" />
     <Compile Include="Inventario\CategoriaProducto.cs" />
+    <Compile Include="Inventario\RubroProducto.cs" />
+    <Compile Include="Inventario\SubcategoriaProducto.cs" />
+
     <Compile Include="Inventario\UnidadMedida.cs" />
     <Compile Include="Inventario\Producto.cs" />
     <Compile Include="Inventario\TipoMovimientoInventario.cs" />

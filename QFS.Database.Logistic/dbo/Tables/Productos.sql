@@ -1,0 +1,42 @@
+CREATE TABLE [dbo].[Productos] (
+    [pro_id]                    INT            IDENTITY (1, 1) NOT NULL,
+    [pro_org_id]                INT            NOT NULL,
+    [pro_rubpro_id]             INT            NOT NULL,
+    [pro_catpro_id]             INT            NOT NULL,
+    [pro_subcatpro_id]          INT            NOT NULL,
+    [pro_unimed_id]             INT            NOT NULL,
+    [pro_codigo_interno]        NVARCHAR (60)  NOT NULL,
+    [pro_codigo_barras]         NVARCHAR (60)  NULL,
+    [pro_descripcion_corta]     NVARCHAR (180) NOT NULL,
+    [pro_descripcion_larga]     NVARCHAR (500) NULL,
+    [pro_presentacion]          NVARCHAR (120) NULL,
+    [pro_marca]                 NVARCHAR (120) NULL,
+    [pro_modelo]                NVARCHAR (120) NULL,
+    [pro_tipo_producto]         NVARCHAR (120) NULL,
+    [pro_requiere_lote]         BIT            CONSTRAINT [DF_Productos_ReqLote] DEFAULT ((0)) NOT NULL,
+    [pro_requiere_vencimiento]  BIT            CONSTRAINT [DF_Productos_ReqVto] DEFAULT ((0)) NOT NULL,
+    [pro_requiere_serie]        BIT            CONSTRAINT [DF_Productos_ReqSerie] DEFAULT ((0)) NOT NULL,
+    [pro_requiere_trazabilidad] BIT            CONSTRAINT [DF_Productos_ReqTrazabilidad] DEFAULT ((0)) NOT NULL,
+    [pro_stock_minimo]          DECIMAL (18, 4) CONSTRAINT [DF_Productos_StockMin] DEFAULT ((0)) NOT NULL,
+    [pro_stock_maximo]          DECIMAL (18, 4) CONSTRAINT [DF_Productos_StockMax] DEFAULT ((0)) NOT NULL,
+    [pro_punto_reposicion]      DECIMAL (18, 4) CONSTRAINT [DF_Productos_PuntoReposicion] DEFAULT ((0)) NOT NULL,
+    [pro_estado]                NVARCHAR (40)  CONSTRAINT [DF_Productos_Estado] DEFAULT (N'ACTIVO') NOT NULL,
+    [pro_observaciones]         NVARCHAR (500) NULL,
+    [pro_activo]                BIT            CONSTRAINT [DF_Productos_Activo] DEFAULT ((1)) NOT NULL,
+    [pro_fec_alta]              DATETIME       CONSTRAINT [DF_Productos_FecAlta] DEFAULT (getdate()) NOT NULL,
+    [pro_fec_mod]               DATETIME       NULL,
+    [pro_fec_baja]              DATETIME       NULL,
+    [pro_usu_id_alta]           INT            NULL,
+    [pro_usu_id_mod]            INT            NULL,
+    [pro_usu_id_baja]           INT            NULL,
+    CONSTRAINT [PK_Productos] PRIMARY KEY CLUSTERED ([pro_id] ASC),
+    CONSTRAINT [FK_Productos_Organizacion] FOREIGN KEY ([pro_org_id]) REFERENCES [dbo].[SIS_Organizaciones] ([org_id]),
+    CONSTRAINT [FK_Productos_Rubro] FOREIGN KEY ([pro_rubpro_id]) REFERENCES [dbo].[Rubros_Productos] ([rubpro_id]),
+    CONSTRAINT [FK_Productos_Categoria] FOREIGN KEY ([pro_catpro_id]) REFERENCES [dbo].[Categorias_Productos] ([catpro_id]),
+    CONSTRAINT [FK_Productos_Subcategoria] FOREIGN KEY ([pro_subcatpro_id]) REFERENCES [dbo].[Subcategorias_Productos] ([subcatpro_id]),
+    CONSTRAINT [FK_Productos_UnidadMedida] FOREIGN KEY ([pro_unimed_id]) REFERENCES [dbo].[Unidades_Medidas] ([unimed_id])
+);
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Productos_Org_CodigoInterno]
+    ON [dbo].[Productos]([pro_org_id] ASC, [pro_codigo_interno] ASC);

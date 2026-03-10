@@ -1,0 +1,4 @@
+@{ ViewBag.Title = "Categorías de productos"; string _ControllerName = "InventarioCategorias"; Layout = "~/Views/Shared/_Layout.cshtml"; }
+<div class="content-header header-title-page ml-0 mr-0"><div class="col-md-9"><h4 class="content-title content-title-xs">Categorías</h4></div><div class="col-md-3 pr-0"><div class="d-flex flex-row-reverse"><button type="button" modal-value-primary="0" modal-value-secondary="0" modal-value-extra="0" modal-url="@Url.Action("PartialModalABM",_ControllerName)" class="btnOpenModal btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Agregar</button></div></div></div>
+<div class="card card-body"><div id="viewGridData"></div></div>
+@section scripts{<script>$(document).ready(function(){refreshData();});function refreshData(){APP_LoadPartialView('#viewGridData',{},'@Url.Action("PartialGridData",_ControllerName)');}</script>}
