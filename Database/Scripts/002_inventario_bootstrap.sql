@@ -36,10 +36,15 @@ INSERT INTO SIS_Acciones(acc_nombre, acc_controller, acc_accion, acc_id_padre, a
 SELECT 'Inventario - Movimientos', 'InventarioMovimientos', 'Index', 0, 'fa fa-exchange', 510, 1, 'Gestión de movimientos y kardex'
 WHERE NOT EXISTS(SELECT 1 FROM SIS_Acciones WHERE acc_controller='InventarioMovimientos' AND acc_accion='Index');
 
+
+INSERT INTO SIS_Acciones(acc_nombre, acc_controller, acc_accion, acc_id_padre, acc_icono, acc_orden, acc_menu, acc_descripcion)
+SELECT 'Inventario - Unidades de medida', 'InventarioUnidadesMedidas', 'Index', 0, 'fa fa-balance-scale', 520, 1, 'ABM de unidades de medida'
+WHERE NOT EXISTS(SELECT 1 FROM SIS_Acciones WHERE acc_controller='InventarioUnidadesMedidas' AND acc_accion='Index');
+
 INSERT INTO SIS_Perfiles_Acciones(pac_prf_id, pac_acc_id)
 SELECT @AdminPerfilID, a.acc_id
 FROM SIS_Acciones a
-WHERE a.acc_controller IN ('InventarioProductos', 'InventarioMovimientos')
+WHERE a.acc_controller IN ('InventarioProductos', 'InventarioMovimientos', 'InventarioUnidadesMedidas')
   AND NOT EXISTS(SELECT 1 FROM SIS_Perfiles_Acciones pa WHERE pa.pac_prf_id=@AdminPerfilID AND pa.pac_acc_id=a.acc_id);
 
 INSERT INTO Unidades_Medidas(unimed_org_id, unimed_nombre, unimed_codigo, unimed_activo, unimed_fec_alta, unimed_usu_id_alta)

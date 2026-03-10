@@ -34,7 +34,8 @@ USING (
         (33, N'Inventario - Productos',   N'Submenú - Maestro de productos / insumos',            N'InventarioProductos',    N'Index',                   29, N'fa fa-cubes',    300, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
         (34, N'Inventario - Rubros',      N'Submenú - ABM de rubros de productos',                N'InventarioRubros',       N'Index',                   29, N'fa fa-tags',     310, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
         (35, N'Inventario - Categorías',  N'Submenú - ABM de categorías de productos',            N'InventarioCategorias',   N'Index',                   29, N'fa fa-folder',   320, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
-        (36, N'Inventario - Subcategorías',N'Submenú - ABM de subcategorías de productos',        N'InventarioSubcategorias',N'Index',                   29, N'fa fa-sitemap',  330, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT))
+        (36, N'Inventario - Subcategorías',N'Submenú - ABM de subcategorías de productos',        N'InventarioSubcategorias',N'Index',                   29, N'fa fa-sitemap',  330, CAST(1 AS BIT), NULL, NULL, NULL, NULL, NULL, NULL, CAST(1 AS BIT)),
+        (37, N'Inventario - Unidades de medida',N'Submenú - ABM de unidades de medida',            N'InventarioUnidadesMedidas',N'Index',                 29, N'fa fa-balance-scale',340,CAST(1 AS BIT),NULL,NULL,NULL,NULL,NULL,NULL,CAST(1 AS BIT))
 ) AS Source (
     NewAccId,
     NewAccNombre,
