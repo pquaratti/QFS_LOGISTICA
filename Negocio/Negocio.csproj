@@ -107,6 +107,12 @@
     <Compile Include="PreguntasFrecuentesCategorias.cs" />
     <Compile Include="PreguntasFrecuentes.cs" />
     <Compile Include="Dashboard.cs" />
+    <Compile Include="Inventario\CategoriasProductos.cs" />
+    <Compile Include="Inventario\UnidadesMedidas.cs" />
+    <Compile Include="Inventario\Productos.cs" />
+    <Compile Include="Inventario\TiposMovimientosInventarios.cs" />
+    <Compile Include="Inventario\Stocks.cs" />
+    <Compile Include="Inventario\MovimientosInventarios.cs" />
     <Compile Include="DDL.cs" />
     <Compile Include="Indicadores.cs" />
     <Compile Include="Informes.cs" />
