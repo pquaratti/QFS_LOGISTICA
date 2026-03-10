@@ -666,6 +666,31 @@ namespace Negocio
             return lst;
         }
 
+
+        public static List<Entidades.App.DLLObject> ListarCategoriasProductos(Entidades.App.Token token, bool agregarDefault = false)
+        {
+            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
+            Negocio.Inventario.CategoriasProductos negocio = new Inventario.CategoriasProductos(token);
+            lst = negocio.ListarDLL(agregarDefault);
+            return lst;
+        }
+
+        public static List<Entidades.App.DLLObject> ListarUnidadesMedida(Entidades.App.Token token, bool agregarDefault = false)
+        {
+            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
+            Negocio.Inventario.UnidadesMedidas negocio = new Inventario.UnidadesMedidas(token);
+            lst = negocio.ListarDLL(agregarDefault);
+            return lst;
+        }
+
+        public static List<Entidades.App.DLLObject> ListarTiposMovimientosInventario(Entidades.App.Token token, bool agregarDefault = false)
+        {
+            List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();
+            Negocio.Inventario.TiposMovimientosInventarios negocio = new Inventario.TiposMovimientosInventarios(token);
+            lst = negocio.ListarDLL(agregarDefault);
+            return lst;
+        }
+
         public static List<Entidades.App.DLLObject> ListarTipoDeContactoClientes(Entidades.App.Token oToken, string textoDefault = "")
         {
             List<Entidades.App.DLLObject> lst = new List<Entidades.App.DLLObject>();

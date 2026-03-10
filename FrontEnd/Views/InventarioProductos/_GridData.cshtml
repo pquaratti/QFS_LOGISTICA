@@ -1,0 +1,24 @@
+@model List<Entidades.Inventario.Producto>
+<table class="table table-bordered table-sm">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Categoría</th>
+            <th>Unidad</th>
+            <th>Activo</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.pro_codigo_interno</td>
+            <td>@item.pro_descripcion_corta</td>
+            <td>@item.CategoriaProducto.catpro_nombre</td>
+            <td>@item.UnidadMedida.unimed_nombre</td>
+            <td>@(item.pro_activo ? "SI" : "NO")</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,26 @@
+@model List<Entidades.Inventario.MovimientoInventario>
+<table class="table table-bordered table-sm">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Producto</th>
+            <th>Depósito</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.movinv_fecha.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@item.TipoMovimientoInventario.timi_nombre</td>
+            <td>@item.Producto.pro_descripcion_corta</td>
+            <td>@item.DepositoOrigen.depo_nombre</td>
+            <td>@item.movinv_cantidad</td>
+            <td>@item.movinv_estado</td>
+        </tr>
+    }
+    </tbody>
+</table>

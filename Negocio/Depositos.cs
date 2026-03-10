@@ -77,7 +77,14 @@ namespace Negocio
 
         public override List<DLLObject> ListarDLL(bool agregaDefault = false)
         {
-            throw new NotImplementedException();
+            List<DLLObject> lst = new List<DLLObject>();
+            if (agregaDefault)
+                lst.Add(new DLLObject() { Value = "0", Text = "Seleccione" });
+
+            foreach (var item in ListarActivos())
+                lst.Add(new DLLObject() { Value = item.depo_id.ToString(), Text = item.depo_nombre });
+
+            return lst;
         }
 
         #endregion
