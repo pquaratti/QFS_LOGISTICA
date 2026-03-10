@@ -30,7 +30,8 @@ USING (
         (29, 33, 2),
         (30, 34, 2),
         (31, 35, 2),
-        (32, 36, 2)
+        (32, 36, 2),
+        (33, 37, 2)
 ) AS Source (NewPacId, NewPacAccId, NewPacPrfId)
 ON Target.[pac_id] = Source.NewPacId
 

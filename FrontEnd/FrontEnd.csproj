@@ -162,6 +162,7 @@
     <Compile Include="Controllers\InventarioRubrosController.cs" />
     <Compile Include="Controllers\InventarioCategoriasController.cs" />
     <Compile Include="Controllers\InventarioSubcategoriasController.cs" />
+    <Compile Include="Controllers\InventarioUnidadesMedidasController.cs" />
 
     <Compile Include="Controllers\InventarioMovimientosController.cs" />
     <Compile Include="CustomAttributes\ViewBagData.cs" />
@@ -2742,6 +2743,9 @@
     <Content Include="Views\InventarioSubcategorias\Index.cshtml" />
     <Content Include="Views\InventarioSubcategorias\_GridData.cshtml" />
     <Content Include="Views\InventarioSubcategorias\_ModalABM.cshtml" />
+    <Content Include="Views\InventarioUnidadesMedidas\Index.cshtml" />
+    <Content Include="Views\InventarioUnidadesMedidas\_GridData.cshtml" />
+    <Content Include="Views\InventarioUnidadesMedidas\_ModalABM.cshtml" />
 
     <Content Include="Views\InventarioMovimientos\Index.cshtml" />
     <Content Include="Views\InventarioMovimientos\_GridData.cshtml" />
