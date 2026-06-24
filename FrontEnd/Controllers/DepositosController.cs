@@ -20,6 +20,11 @@ namespace FrontEnd.Controllers
             return View();
         }
 
+        public ActionResult MapaWmsDemo()
+        {
+            return View();
+        }
+
         [HttpGet]
         public ActionResult PartialGridDataDepositos(string plantaID)
         {
