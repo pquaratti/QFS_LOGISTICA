@@ -2759,7 +2759,11 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="MailFiles\" />
-    <Folder Include="Maquetado\assets\textures\NewFolder1\" />
+    <Folder Include="Maquetado\assets\textures\concrete_floor_01\" />
+    <Folder Include="Maquetado\assets\textures\concrete_floor_02\" />
+    <Folder Include="Maquetado\assets\textures\industrial_plate\" />
+    <Folder Include="Maquetado\assets\textures\industrial_stick\" />
+    <Folder Include="Maquetado\assets\textures\industrial_stick_02\" />
     <Folder Include="plantillasModelo\" />
     <Folder Include="PublicAttachments\" />
     <Folder Include="UploadFiles\" />
