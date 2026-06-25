@@ -93,6 +93,123 @@ namespace FrontEnd.Controllers
 
         #endregion
 
+        #region Gestión Tipos de Estados de Stock
+
+        public ActionResult EstadosStock()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult PartialGridDataTipoEstadoStock()
+        {
+            List<Entidades.TipoEstadoStock> lst = new Negocio.TipoEstadosStock(GetToken()).ListarActivos();
+
+            return lst.Count > 0 ?
+                PartialView("_GridDataTipoEstadoStock", lst) :
+                PartialView("~/Views/Shared/_MensajeSinResultados.cshtml", new ObjectMessage() { Message = "No Hay Tipos de Estados de Stock para mostrar." });
+        }
+
+        [HttpPost]
+        public JsonResult DeleteEstadoStock(string BorrarID)
+        {
+            ObjectMessage oM = new Negocio.TipoEstadosStock(GetToken()).DeleteLogico(BorrarID);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult PartialModalABMTipoEstadoStock(string cabeceraID, string detalleID, string subdetalleID)
+        {
+            return PartialView("_ModalABMTipoEstadoStock", new Negocio.TipoEstadosStock(GetToken()).ObtenerPorID(cabeceraID));
+        }
+
+        [HttpPost]
+        public JsonResult SaveModalTipoEstadoStock(Entidades.TipoEstadoStock obj)
+        {
+            ObjectMessage oM = new Negocio.TipoEstadosStock(GetToken()).Save(obj);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region Gestión Tipos de Estados de Ingreso
+
+        public ActionResult EstadosIngreso()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult PartialGridDataTipoEstadoIngreso()
+        {
+            List<Entidades.TipoEstadoIngreso> lst = new Negocio.TipoEstadosIngreso(GetToken()).ListarActivos();
+
+            return lst.Count > 0 ?
+                PartialView("_GridDataTipoEstadoIngreso", lst) :
+                PartialView("~/Views/Shared/_MensajeSinResultados.cshtml", new ObjectMessage() { Message = "No Hay Tipos de Estados de Ingreso para mostrar." });
+        }
+
+        [HttpPost]
+        public JsonResult DeleteEstadoIngreso(string BorrarID)
+        {
+            ObjectMessage oM = new Negocio.TipoEstadosIngreso(GetToken()).DeleteLogico(BorrarID);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult PartialModalABMTipoEstadoIngreso(string cabeceraID, string detalleID, string subdetalleID)
+        {
+            return PartialView("_ModalABMTipoEstadoIngreso", new Negocio.TipoEstadosIngreso(GetToken()).ObtenerPorID(cabeceraID));
+        }
+
+        [HttpPost]
+        public JsonResult SaveModalTipoEstadoIngreso(Entidades.TipoEstadoIngreso obj)
+        {
+            ObjectMessage oM = new Negocio.TipoEstadosIngreso(GetToken()).Save(obj);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region Gestión Tipos de Estados de Pedido de Salida
+
+        public ActionResult EstadosPedidoSalida()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult PartialGridDataTipoEstadoPedidoSalida()
+        {
+            List<Entidades.TipoEstadoPedidoSalida> lst = new Negocio.TipoEstadosPedidosSalida(GetToken()).ListarActivos();
+
+            return lst.Count > 0 ?
+                PartialView("_GridDataTipoEstadoPedidoSalida", lst) :
+                PartialView("~/Views/Shared/_MensajeSinResultados.cshtml", new ObjectMessage() { Message = "No Hay Tipos de Estados de Pedido de Salida para mostrar." });
+        }
+
+        [HttpPost]
+        public JsonResult DeleteEstadoPedidoSalida(string BorrarID)
+        {
+            ObjectMessage oM = new Negocio.TipoEstadosPedidosSalida(GetToken()).DeleteLogico(BorrarID);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult PartialModalABMTipoEstadoPedidoSalida(string cabeceraID, string detalleID, string subdetalleID)
+        {
+            return PartialView("_ModalABMTipoEstadoPedidoSalida", new Negocio.TipoEstadosPedidosSalida(GetToken()).ObtenerPorID(cabeceraID));
+        }
+
+        [HttpPost]
+        public JsonResult SaveModalTipoEstadoPedidoSalida(Entidades.TipoEstadoPedidoSalida obj)
+        {
+            ObjectMessage oM = new Negocio.TipoEstadosPedidosSalida(GetToken()).Save(obj);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
         #region Gestion de Ubicaciones
 
         public ActionResult Gestion()

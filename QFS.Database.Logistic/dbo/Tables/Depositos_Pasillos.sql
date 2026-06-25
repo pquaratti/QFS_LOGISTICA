@@ -2,6 +2,8 @@
 (
 	[depopas_id]                  INT             IDENTITY (1, 1) NOT NULL,
     [depopas_depo_id]             INT             NULL,
+    [depopas_zonlog_id]           INT             NULL,
+    [depopas_es_transito]         BIT             NULL,
     [depopas_org_id]              INT             NULL,
     [depopas_codigo]              NVARCHAR (30)   NULL,
     [depopas_nombre]              NVARCHAR (100)  NULL,

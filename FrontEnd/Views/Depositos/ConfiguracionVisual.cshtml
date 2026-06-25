@@ -1,0 +1,512 @@
+@model Entidades.Deposito
+
+@{
+    ViewBag.Title = "Configuración visual del depósito";
+    ViewBag.Subtitle = "Diseño WMS 2D";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Depositos";
+}
+
+<style>
+    .wms-cfg-toolbar .form-control { height: 30px; padding: 2px 8px; }
+    .wms-cfg-layout { display: grid; grid-template-columns: 1fr 360px; gap: 15px; }
+    .wms-cfg-canvas-wrap {
+        background: #f8fafc; border: 1px solid #d8e1ea; border-radius: 6px;
+        min-height: 640px; overflow: auto; position: relative;
+    }
+    #canvasConfig {
+        background-image: linear-gradient(#eef2f7 1px, transparent 1px), linear-gradient(90deg, #eef2f7 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+    .wms-cfg-panel { border-left: 4px solid #2563eb; }
+    .wms-cfg-help { font-size: 12px; color: #64748b; }
+    .wms-cfg-section { display: none; }
+    .wms-cfg-section.active { display: block; }
+    .wms-legend span { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 4px; }
+    @@media (max-width: 992px) { .wms-cfg-layout { grid-template-columns: 1fr; } }
+</style>
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-7">
+        <h4 class="content-title content-title-xs">Configuración visual del depósito</h4>
+        <p>Depósito: <strong>@Model.depo_nombre</strong> (@Model.depo_codigo)</p>
+    </div>
+    <div class="col-md-5 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <a href="@Url.Action("Index", _ControllerName)" class="btn btn-xs btn-secondary m-1"><i class="fa fa-arrow-left"></i> Volver</a>
+            <button id="btnNuevaZona" type="button" class="btn btn-xs btn-primary m-1"><i class="fa fa-plus"></i> Zona</button>
+            <button id="btnNuevoPasillo" type="button" class="btn btn-xs btn-secondary m-1"><i class="fa fa-plus"></i> Pasillo</button>
+            <button id="btnNuevoRack" type="button" class="btn btn-xs btn-warning m-1"><i class="fa fa-plus"></i> Rack</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    <div class="alert alert-info mb-2">
+        Agregá <strong>zonas</strong>, dentro de ellas <strong>racks</strong> y <strong>pasillos</strong> de tránsito.
+        Cada rack genera ubicaciones con el formato <strong>DEP-ZA-P01-R01-C03-N02</strong> (una por columna/nivel).
+        Hacé clic en una celda del rack para configurar la ubicación. Arrastrá los elementos para reubicarlos.
+    </div>
+    <div class="wms-legend mb-2 small text-muted">
+        <span style="background:#3b82f6"></span> Zona
+        <span style="background:#f59e0b; margin-left:12px"></span> Rack
+        <span style="background:#cbd5e1; margin-left:12px"></span> Pasillo
+    </div>
+
+    <div class="wms-cfg-layout">
+        <div class="wms-cfg-canvas-wrap">
+            <canvas id="canvasConfig" width="1200" height="640"></canvas>
+        </div>
+
+        <div class="card card-body wms-cfg-panel">
+            <input type="hidden" id="depositoID" value="@Model.depo_id" />
+
+            <h6 class="mb-2">Propiedades</h6>
+            <p id="cfgSinSeleccion" class="wms-cfg-help">Seleccioná o creá un elemento para editar sus propiedades.</p>
+
+            <!-- ZONA -->
+            <div id="seccionZona" class="wms-cfg-section">
+                <input type="hidden" id="zonaDbId" value="0" />
+                <input type="hidden" id="zonaIdEnc" value="" />
+                <div class="row wms-cfg-toolbar">
+                    <div class="col-6"><div class="form-group"><label>Código</label><input id="zonaCodigo" class="form-control form-control-sm" maxlength="20" placeholder="ZA" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Nombre</label><input id="zonaNombre" class="form-control form-control-sm" maxlength="50" placeholder="Zona A" /></div></div>
+                    <div class="col-12"><div class="form-group"><label>Descripción</label><input id="zonaDescripcion" class="form-control form-control-sm" maxlength="200" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>X</label><input id="zonaX" type="number" class="form-control form-control-sm" value="40" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Y</label><input id="zonaY" type="number" class="form-control form-control-sm" value="40" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Largo</label><input id="zonaLargo" type="number" class="form-control form-control-sm" value="400" min="1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Ancho</label><input id="zonaAncho" type="number" class="form-control form-control-sm" value="300" min="1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Color</label><input id="zonaColor" type="color" class="form-control form-control-sm" value="#3b82f6" /></div></div>
+                </div>
+                <div class="btn-group btn-block mb-2">
+                    <button id="btnGuardarZona" type="button" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Guardar</button>
+                    <button id="btnEliminarZona" type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Borrar</button>
+                </div>
+            </div>
+
+            <!-- PASILLO -->
+            <div id="seccionPasillo" class="wms-cfg-section">
+                <input type="hidden" id="pasilloDbId" value="0" />
+                <input type="hidden" id="pasilloIdEnc" value="" />
+                <div class="row wms-cfg-toolbar">
+                    <div class="col-6"><div class="form-group"><label>Código</label><input id="pasilloCodigo" class="form-control form-control-sm" maxlength="30" placeholder="P01" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Nombre</label><input id="pasilloNombre" class="form-control form-control-sm" maxlength="100" placeholder="Pasillo 1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Zona</label><select id="pasilloZona" class="form-control form-control-sm"></select></div></div>
+                    <div class="col-6"><div class="form-group"><label>Orientación</label><select id="pasilloOrientacion" class="form-control form-control-sm"><option value="H">Horizontal</option><option value="V">Vertical</option></select></div></div>
+                    <div class="col-6"><div class="form-group"><label>X</label><input id="pasilloX" type="number" class="form-control form-control-sm" value="60" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Y</label><input id="pasilloY" type="number" class="form-control form-control-sm" value="60" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Largo</label><input id="pasilloLargo" type="number" class="form-control form-control-sm" value="300" min="1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Ancho</label><input id="pasilloAncho" type="number" class="form-control form-control-sm" value="40" min="1" /></div></div>
+                </div>
+                <div class="btn-group btn-block mb-2">
+                    <button id="btnGuardarPasillo" type="button" class="btn btn-secondary btn-sm"><i class="fa fa-save"></i> Guardar</button>
+                    <button id="btnEliminarPasillo" type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Borrar</button>
+                </div>
+                <p class="wms-cfg-help">El pasillo es un espacio de tránsito (sin ubicaciones).</p>
+            </div>
+
+            <!-- RACK -->
+            <div id="seccionRack" class="wms-cfg-section">
+                <input type="hidden" id="rackDbId" value="0" />
+                <input type="hidden" id="rackIdEnc" value="" />
+                <div class="row wms-cfg-toolbar">
+                    <div class="col-6"><div class="form-group"><label>Código</label><input id="rackCodigo" class="form-control form-control-sm" maxlength="30" placeholder="R01" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Nombre</label><input id="rackNombre" class="form-control form-control-sm" maxlength="100" placeholder="Rack 1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Zona</label><select id="rackZona" class="form-control form-control-sm"></select></div></div>
+                    <div class="col-6"><div class="form-group"><label>Pasillo</label><select id="rackPasillo" class="form-control form-control-sm"></select></div></div>
+                    <div class="col-6"><div class="form-group"><label>Orientación</label><select id="rackOrientacion" class="form-control form-control-sm"><option value="H">Horizontal</option><option value="V">Vertical</option></select></div></div>
+                    <div class="col-6"><div class="form-group"><label>Color</label><input id="rackColor" type="color" class="form-control form-control-sm" value="#f59e0b" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>X</label><input id="rackX" type="number" class="form-control form-control-sm" value="80" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Y</label><input id="rackY" type="number" class="form-control form-control-sm" value="80" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Largo</label><input id="rackLargo" type="number" class="form-control form-control-sm" value="200" min="1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Ancho</label><input id="rackAncho" type="number" class="form-control form-control-sm" value="40" min="1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Columnas/Bahías</label><input id="rackColumnas" type="number" class="form-control form-control-sm" value="4" min="1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Niveles (altura)</label><input id="rackNiveles" type="number" class="form-control form-control-sm" value="3" min="1" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Altura nivel</label><input id="rackAlturaNivel" type="number" class="form-control form-control-sm" value="100" min="0" /></div></div>
+                    <div class="col-6"><div class="form-group"><label>Peso máximo</label><input id="rackPesoMaximo" type="number" class="form-control form-control-sm" value="0" min="0" /></div></div>
+                </div>
+                <div class="btn-group btn-block mb-2">
+                    <button id="btnGuardarRack" type="button" class="btn btn-warning btn-sm"><i class="fa fa-save"></i> Guardar y generar ubicaciones</button>
+                    <button id="btnEliminarRack" type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Borrar</button>
+                </div>
+                <p class="wms-cfg-help">Hacé clic en una celda del rack para configurar la ubicación (columna × nivel).</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_ModalUbicacionConfig")
+
+@section scripts{
+    <script>
+    var DEPO_ID = $('#depositoID').val();
+    var zonas = [], pasillos = [], racks = [];
+    var catEstados = [], catTipos = [];
+    var sel = null;            // elemento seleccionado {tipo, ref}
+    var canvas = document.getElementById('canvasConfig');
+    var ctx = canvas.getContext('2d');
+    var drag = null;           // {tipo, ref, offsetX, offsetY}
+
+    var URL = {
+        zonas: '@Url.Action("ListarZonas", _ControllerName)',
+        saveZona: '@Url.Action("SaveZona", _ControllerName)',
+        delZona: '@Url.Action("DeleteZona", _ControllerName)',
+        racks: '@Url.Action("ListarRacks", _ControllerName)',
+        saveRack: '@Url.Action("SaveRack", _ControllerName)',
+        delRack: '@Url.Action("DeleteRack", _ControllerName)',
+        pasillos: '@Url.Action("ListarPasillos", _ControllerName)',
+        savePasillo: '@Url.Action("SavePasilloTransito", _ControllerName)',
+        delPasillo: '@Url.Action("DeletePasillo", _ControllerName)',
+        pos: '@Url.Action("GuardarPosicion", _ControllerName)',
+        ubicRack: '@Url.Action("ListarUbicacionesRack", _ControllerName)',
+        ubic: '@Url.Action("ObtenerUbicacion", _ControllerName)',
+        saveUbic: '@Url.Action("GuardarUbicacion", _ControllerName)',
+        catalogos: '@Url.Action("ListarCatalogosUbicacion", _ControllerName)',
+        depoEnc: '@Model.IdEncriptado'
+    };
+
+    $(document).ready(function () {
+        cargarCatalogos();
+        cargarTodo();
+    });
+
+    function cargarCatalogos() {
+        $.get(URL.catalogos, function (r) {
+            catEstados = r.Estados || [];
+            catTipos = r.Tipos || [];
+            var oe = '<option value="">(Sin estado)</option>';
+            catEstados.forEach(function (e) { oe += '<option value="' + e.id + '">' + e.nombre + '</option>'; });
+            $('#ubicEstado').html(oe);
+            var ot = '<option value="">(Sin tipo)</option>';
+            catTipos.forEach(function (t) { ot += '<option value="' + t.id + '">' + t.nombre + '</option>'; });
+            $('#ubicTipo').html(ot);
+        });
+    }
+
+    function cargarTodo() {
+        $.get(URL.zonas, { depositoID: DEPO_ID }, function (rz) {
+            zonas = rz.Data || [];
+            $.get(URL.pasillos, { depositoID: URL.depoEnc }, function (rp) {
+                pasillos = (rp.Data || []).filter(function (p) { return p.esTransito; });
+                $.get(URL.racks, { depositoID: DEPO_ID }, function (rr) {
+                    racks = rr.Data || [];
+                    refrescarSelectsZonaPasillo();
+                    dibujar();
+                });
+            });
+        });
+    }
+
+    function refrescarSelectsZonaPasillo() {
+        var oz = '<option value="0">(Sin zona)</option>';
+        zonas.forEach(function (z) { oz += '<option value="' + z.dbId + '">' + z.codigo + ' - ' + z.nombre + '</option>'; });
+        $('#pasilloZona, #rackZona').html(oz);
+        var op = '<option value="0">(Sin pasillo)</option>';
+        pasillos.forEach(function (p) { op += '<option value="' + p.dbId + '">' + p.codigo + ' - ' + p.nombre + '</option>'; });
+        $('#rackPasillo').html(op);
+    }
+
+    /* ------------------- Alta de elementos ------------------- */
+    $('#btnNuevaZona').click(function () {
+        var z = { tipo: 'zona', dbId: 0, id: '', codigo: 'Z' + String.fromCharCode(65 + zonas.length), nombre: 'Zona ' + (zonas.length + 1),
+                  descripcion: '', x: 40, y: 40, largo: 400, ancho: 300, color: '#3b82f6' };
+        zonas.push(z); seleccionar('zona', z); dibujar();
+    });
+    $('#btnNuevoPasillo').click(function () {
+        var p = { tipo: 'pasillo', dbId: 0, id: '', codigo: 'P' + String(pasillos.length + 1).padStart(2, '0'), nombre: 'Pasillo ' + (pasillos.length + 1),
+                  x: 60, y: 60, largo: 300, ancho: 40, orientacion: 'H', zonaId: 0, esTransito: true };
+        pasillos.push(p); refrescarSelectsZonaPasillo(); seleccionar('pasillo', p); dibujar();
+    });
+    $('#btnNuevoRack').click(function () {
+        var r = { tipo: 'rack', dbId: 0, id: '', codigo: 'R' + String(racks.length + 1).padStart(2, '0'), nombre: 'Rack ' + (racks.length + 1),
+                  x: 80, y: 80, largo: 200, ancho: 40, orientacion: 'H', columnas: 4, niveles: 3, alturaNivel: 100, pesoMaximo: 0,
+                  color: '#f59e0b', zonaId: 0, pasilloId: 0 };
+        racks.push(r); seleccionar('rack', r); dibujar();
+    });
+
+    /* ------------------- Selección ------------------- */
+    function seleccionar(tipo, ref) {
+        sel = { tipo: tipo, ref: ref };
+        $('#cfgSinSeleccion').hide();
+        $('.wms-cfg-section').removeClass('active');
+        if (tipo === 'zona') { llenarZona(ref); $('#seccionZona').addClass('active'); }
+        if (tipo === 'pasillo') { llenarPasillo(ref); $('#seccionPasillo').addClass('active'); }
+        if (tipo === 'rack') { llenarRack(ref); $('#seccionRack').addClass('active'); }
+        dibujar();
+    }
+
+    function llenarZona(z) {
+        $('#zonaDbId').val(z.dbId); $('#zonaIdEnc').val(z.id);
+        $('#zonaCodigo').val(z.codigo); $('#zonaNombre').val(z.nombre); $('#zonaDescripcion').val(z.descripcion || '');
+        $('#zonaX').val(z.x); $('#zonaY').val(z.y); $('#zonaLargo').val(z.largo); $('#zonaAncho').val(z.ancho);
+        $('#zonaColor').val(z.color || '#3b82f6');
+    }
+    function llenarPasillo(p) {
+        $('#pasilloDbId').val(p.dbId); $('#pasilloIdEnc').val(p.id);
+        $('#pasilloCodigo').val(p.codigo); $('#pasilloNombre').val(p.nombre);
+        $('#pasilloZona').val(p.zonaId || 0); $('#pasilloOrientacion').val(p.orientacion || 'H');
+        $('#pasilloX').val(p.x); $('#pasilloY').val(p.y); $('#pasilloLargo').val(p.largo); $('#pasilloAncho').val(p.ancho);
+    }
+    function llenarRack(r) {
+        $('#rackDbId').val(r.dbId); $('#rackIdEnc').val(r.id);
+        $('#rackCodigo').val(r.codigo); $('#rackNombre').val(r.nombre);
+        $('#rackZona').val(r.zonaId || 0); $('#rackPasillo').val(r.pasilloId || 0);
+        $('#rackOrientacion').val(r.orientacion || 'H'); $('#rackColor').val(r.color || '#f59e0b');
+        $('#rackX').val(r.x); $('#rackY').val(r.y); $('#rackLargo').val(r.largo); $('#rackAncho').val(r.ancho);
+        $('#rackColumnas').val(r.columnas); $('#rackNiveles').val(r.niveles);
+        $('#rackAlturaNivel').val(r.alturaNivel); $('#rackPesoMaximo').val(r.pesoMaximo);
+    }
+
+    /* ------------------- Live edit ------------------- */
+    $('#seccionZona input').on('input change', function () {
+        if (!sel || sel.tipo !== 'zona') return;
+        var z = sel.ref;
+        z.codigo = $('#zonaCodigo').val(); z.nombre = $('#zonaNombre').val(); z.descripcion = $('#zonaDescripcion').val();
+        z.x = num('#zonaX'); z.y = num('#zonaY'); z.largo = num('#zonaLargo'); z.ancho = num('#zonaAncho'); z.color = $('#zonaColor').val();
+        dibujar();
+    });
+    $('#seccionPasillo input, #seccionPasillo select').on('input change', function () {
+        if (!sel || sel.tipo !== 'pasillo') return;
+        var p = sel.ref;
+        p.codigo = $('#pasilloCodigo').val(); p.nombre = $('#pasilloNombre').val();
+        p.zonaId = parseInt($('#pasilloZona').val()) || 0; p.orientacion = $('#pasilloOrientacion').val();
+        p.x = num('#pasilloX'); p.y = num('#pasilloY'); p.largo = num('#pasilloLargo'); p.ancho = num('#pasilloAncho');
+        dibujar();
+    });
+    $('#seccionRack input, #seccionRack select').on('input change', function () {
+        if (!sel || sel.tipo !== 'rack') return;
+        var r = sel.ref;
+        r.codigo = $('#rackCodigo').val(); r.nombre = $('#rackNombre').val();
+        r.zonaId = parseInt($('#rackZona').val()) || 0; r.pasilloId = parseInt($('#rackPasillo').val()) || 0;
+        r.orientacion = $('#rackOrientacion').val(); r.color = $('#rackColor').val();
+        r.x = num('#rackX'); r.y = num('#rackY'); r.largo = num('#rackLargo'); r.ancho = num('#rackAncho');
+        r.columnas = parseInt($('#rackColumnas').val()) || 1; r.niveles = parseInt($('#rackNiveles').val()) || 1;
+        r.alturaNivel = num('#rackAlturaNivel'); r.pesoMaximo = num('#rackPesoMaximo');
+        dibujar();
+    });
+
+    function num(s) { return Number($(s).val() || 0); }
+
+    /* ------------------- Guardado ------------------- */
+    $('#btnGuardarZona').click(function () {
+        var z = sel.ref;
+        $.post(URL.saveZona, {
+            'obj.zonlog_id': z.dbId || 0, 'obj.IdEncriptado': z.id || '',
+            'obj.Deposito.depo_id': DEPO_ID,
+            'obj.zonlog_codigo': z.codigo, 'obj.zonlog_nombre': z.nombre, 'obj.zonlog_descripcion': z.descripcion || '',
+            'obj.zonlog_x': z.x, 'obj.zonlog_y': z.y, 'obj.zonlog_largo': z.largo, 'obj.zonlog_ancho': z.ancho, 'obj.zonlog_color': z.color
+        }, function (resp) {
+            if (resp.Result.Success) { recargar('Zona guardada.'); } else { alert(resp.Result.Message); }
+        });
+    });
+    $('#btnGuardarPasillo').click(function () {
+        var p = sel.ref;
+        $.post(URL.savePasillo, {
+            'obj.depopas_id': p.dbId || 0, 'obj.IdEncriptado': p.id || '',
+            'obj.Deposito.depo_id': DEPO_ID, 'obj.Zona.zonlog_id': p.zonaId || 0,
+            'obj.depopas_codigo': p.codigo, 'obj.depopas_nombre': p.nombre,
+            'obj.depopas_x': p.x, 'obj.depopas_y': p.y, 'obj.depopas_largo': p.largo, 'obj.depopas_ancho': p.ancho,
+            'obj.depopas_orientacion': p.orientacion
+        }, function (resp) {
+            if (resp.Result.Success) { recargar('Pasillo guardado.'); } else { alert(resp.Result.Message); }
+        });
+    });
+    $('#btnGuardarRack').click(function () {
+        var r = sel.ref;
+        if (!r.codigo) { alert('Ingrese el código del rack.'); return; }
+        $.post(URL.saveRack, {
+            'obj.deprack_id': r.dbId || 0, 'obj.IdEncriptado': r.id || '',
+            'obj.Deposito.depo_id': DEPO_ID, 'obj.deprack_zonlog_id': r.zonaId || 0, 'obj.deprack_pasillo_id': r.pasilloId || 0,
+            'obj.deprack_codigo': r.codigo, 'obj.deprack_nombre': r.nombre,
+            'obj.deprack_x': r.x, 'obj.deprack_y': r.y, 'obj.deprack_largo': r.largo, 'obj.deprack_ancho': r.ancho,
+            'obj.deprack_orientacion': r.orientacion, 'obj.deprack_cantidad_columnas': r.columnas, 'obj.deprack_cantidad_niveles': r.niveles,
+            'obj.deprack_altura_nivel': r.alturaNivel, 'obj.deprack_peso_maximo': r.pesoMaximo, 'obj.deprack_color': r.color,
+            generarUbicaciones: true
+        }, function (resp) {
+            if (resp.Result.Success) { recargar('Rack y ubicaciones generadas.'); } else { alert(resp.Result.Message); }
+        });
+    });
+
+    $('#btnEliminarZona').click(function () { borrar(URL.delZona, sel.ref.id, 'zona'); });
+    $('#btnEliminarPasillo').click(function () { borrar(URL.delPasillo, sel.ref.id, 'pasillo'); });
+    $('#btnEliminarRack').click(function () { borrar(URL.delRack, sel.ref.id, 'rack'); });
+
+    function borrar(url, idEnc, tipo) {
+        if (!idEnc) { // elemento no persistido: solo quitar del array
+            quitarLocal(tipo, sel.ref); sel = null; limpiarPanel(); dibujar(); return;
+        }
+        if (!confirm('¿Desea borrar el elemento seleccionado?')) return;
+        $.post(url, { BorrarID: idEnc }, function (resp) {
+            if (resp.Result.Success) { sel = null; limpiarPanel(); recargar('Elemento borrado.'); }
+            else { alert(resp.Result.Message); }
+        });
+    }
+    function quitarLocal(tipo, ref) {
+        var arr = tipo === 'zona' ? zonas : (tipo === 'pasillo' ? pasillos : racks);
+        var i = arr.indexOf(ref); if (i >= 0) arr.splice(i, 1);
+    }
+
+    function limpiarPanel() { $('.wms-cfg-section').removeClass('active'); $('#cfgSinSeleccion').show(); }
+    function recargar(msg) { if (msg) { try { toastr.success(msg); } catch (e) {} } cargarTodo(); }
+
+    /* ------------------- Canvas: dibujo ------------------- */
+    function dims(el) {
+        var w = el.orientacion === 'V' ? Number(el.ancho) : Number(el.largo);
+        var h = el.orientacion === 'V' ? Number(el.largo) : Number(el.ancho);
+        if (el.tipo === 'zona') { w = Number(el.largo); h = Number(el.ancho); }
+        return { w: w, h: h };
+    }
+
+    function dibujar() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        zonas.forEach(function (z) { dibujarZona(z); });
+        pasillos.forEach(function (p) { dibujarPasillo(p); });
+        racks.forEach(function (r) { dibujarRack(r); });
+    }
+
+    function esSel(el) { return sel && sel.ref === el; }
+
+    function dibujarZona(z) {
+        var w = Number(z.largo), h = Number(z.ancho);
+        ctx.globalAlpha = 0.15; ctx.fillStyle = z.color || '#3b82f6';
+        ctx.fillRect(z.x, z.y, w, h); ctx.globalAlpha = 1;
+        ctx.strokeStyle = esSel(z) ? '#1d4ed8' : (z.color || '#3b82f6');
+        ctx.lineWidth = esSel(z) ? 3 : 1.5; ctx.setLineDash([6, 4]);
+        ctx.strokeRect(z.x, z.y, w, h); ctx.setLineDash([]);
+        ctx.fillStyle = '#1e3a8a'; ctx.font = 'bold 13px Arial';
+        ctx.fillText((z.codigo || '') + ' · ' + (z.nombre || ''), z.x + 6, z.y + 18);
+    }
+
+    function dibujarPasillo(p) {
+        var d = dims(p);
+        ctx.fillStyle = esSel(p) ? '#94a3b8' : '#cbd5e1';
+        ctx.strokeStyle = esSel(p) ? '#475569' : '#94a3b8';
+        ctx.lineWidth = esSel(p) ? 3 : 1;
+        ctx.fillRect(p.x, p.y, d.w, d.h); ctx.strokeRect(p.x, p.y, d.w, d.h);
+        ctx.fillStyle = '#334155'; ctx.font = '11px Arial';
+        ctx.fillText(p.codigo || '', p.x + 4, p.y + 14);
+    }
+
+    function dibujarRack(r) {
+        var d = dims(r);
+        ctx.fillStyle = r.color || '#f59e0b';
+        ctx.globalAlpha = 0.85; ctx.fillRect(r.x, r.y, d.w, d.h); ctx.globalAlpha = 1;
+        ctx.strokeStyle = esSel(r) ? '#b45309' : '#d97706';
+        ctx.lineWidth = esSel(r) ? 3 : 1; ctx.strokeRect(r.x, r.y, d.w, d.h);
+        // grilla columnas (x) x niveles (y)
+        var cols = Math.max(1, Number(r.columnas)), nivs = Math.max(1, Number(r.niveles));
+        ctx.strokeStyle = 'rgba(15,23,42,0.35)';
+        for (var c = 1; c < cols; c++) { var px = r.x + (d.w / cols) * c; line(px, r.y, px, r.y + d.h); }
+        for (var n = 1; n < nivs; n++) { var py = r.y + (d.h / nivs) * n; line(r.x, py, r.x + d.w, py); }
+        ctx.fillStyle = '#7c2d12'; ctx.font = 'bold 11px Arial';
+        ctx.fillText(r.codigo + ' (' + cols + 'x' + nivs + ')', r.x + 4, r.y - 4 < 8 ? r.y + 12 : r.y - 4);
+    }
+    function line(x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+
+    /* ------------------- Canvas: interacción ------------------- */
+    function pos(e) {
+        var rect = canvas.getBoundingClientRect();
+        return { x: Math.round(e.clientX - rect.left), y: Math.round(e.clientY - rect.top) };
+    }
+    function dentro(el, x, y) {
+        var d = dims(el);
+        return x >= el.x && x <= el.x + d.w && y >= el.y && y <= el.y + d.h;
+    }
+    function hit(x, y) {
+        for (var i = racks.length - 1; i >= 0; i--) if (dentro(racks[i], x, y)) return { tipo: 'rack', ref: racks[i] };
+        for (var j = pasillos.length - 1; j >= 0; j--) if (dentro(pasillos[j], x, y)) return { tipo: 'pasillo', ref: pasillos[j] };
+        for (var k = zonas.length - 1; k >= 0; k--) if (dentro(zonas[k], x, y)) return { tipo: 'zona', ref: zonas[k] };
+        return null;
+    }
+
+    canvas.addEventListener('mousedown', function (e) {
+        var p = pos(e); var h = hit(p.x, p.y);
+        if (!h) { sel = null; limpiarPanel(); dibujar(); return; }
+        seleccionar(h.tipo, h.ref);
+        drag = { tipo: h.tipo, ref: h.ref, ox: p.x - h.ref.x, oy: p.y - h.ref.y, moved: false, downX: p.x, downY: p.y };
+    });
+    canvas.addEventListener('mousemove', function (e) {
+        if (!drag) return;
+        var p = pos(e);
+        drag.ref.x = p.x - drag.ox; drag.ref.y = p.y - drag.oy;
+        if (Math.abs(p.x - drag.downX) > 3 || Math.abs(p.y - drag.downY) > 3) drag.moved = true;
+        sincronizarPanel(drag.tipo, drag.ref);
+        dibujar();
+    });
+    canvas.addEventListener('mouseup', function (e) {
+        if (!drag) return;
+        var d = drag; drag = null;
+        if (d.moved) {
+            if (d.ref.dbId) {
+                $.post(URL.pos, { tipo: d.tipo, id: d.ref.dbId, x: d.ref.x, y: d.ref.y, largo: d.ref.largo, ancho: d.ref.ancho });
+            }
+        } else if (d.tipo === 'rack') {
+            var p = pos(e); abrirCeldaRack(d.ref, p.x, p.y);
+        }
+    });
+
+    function sincronizarPanel(tipo, ref) {
+        if (tipo === 'zona') { $('#zonaX').val(ref.x); $('#zonaY').val(ref.y); }
+        if (tipo === 'pasillo') { $('#pasilloX').val(ref.x); $('#pasilloY').val(ref.y); }
+        if (tipo === 'rack') { $('#rackX').val(ref.x); $('#rackY').val(ref.y); }
+    }
+
+    /* ------------------- Ubicaciones (celda de rack) ------------------- */
+    function abrirCeldaRack(r, px, py) {
+        if (!r.dbId) { alert('Guardá el rack antes de configurar ubicaciones.'); return; }
+        var d = dims(r);
+        var cols = Math.max(1, Number(r.columnas)), nivs = Math.max(1, Number(r.niveles));
+        var col = Math.min(cols, Math.floor((px - r.x) / (d.w / cols)) + 1);
+        var niv = Math.min(nivs, Math.floor((py - r.y) / (d.h / nivs)) + 1);
+        $.get(URL.ubicRack, { rackID: r.dbId }, function (resp) {
+            var lst = resp.Data || [];
+            var u = lst.find(function (x) { return x.columna === col && String(x.nivel) === String(niv); });
+            if (!u) { alert('No se encontró la ubicación C' + col + '-N' + niv + '. Regenerá el rack.'); return; }
+            $.get(URL.ubic, { ubicacionID: u.dbId }, function (r2) { abrirModalUbicacion(r2.Data); });
+        });
+    }
+
+    function abrirModalUbicacion(u) {
+        $('#ubicDbId').val(u.dbId);
+        $('#ubicCodigo').text(u.codigo);
+        $('#ubicPosicion').val(u.posicion);
+        $('#ubicColumna').val(u.columna);
+        $('#ubicNivel').val(u.nivel);
+        $('#ubicCoordX').val(u.coordX); $('#ubicCoordY').val(u.coordY); $('#ubicCoordZ').val(u.coordZ);
+        $('#ubicAlto').val(u.alto); $('#ubicAncho').val(u.ancho); $('#ubicProfundidad').val(u.profundidad);
+        $('#ubicCapacidad').val(u.capacidadMaxima); $('#ubicPeso').val(u.pesoMaximo); $('#ubicVolumen').val(u.volumenMaximo);
+        $('#ubicEstado').val(u.estadoId || ''); $('#ubicTipo').val(u.tipoUbicacionId || '');
+        $('#ubicMezclarProductos').prop('checked', !!u.multiplesArticulos);
+        $('#ubicMezclarLotes').prop('checked', !!u.multiplesLotes);
+        $('#ubicTipoProducto').val(u.tipoProductoPermitido || '');
+        $('#modalUbicacionConfig').modal('show');
+    }
+
+    $('#btnGuardarUbicacion').click(function () {
+        var data = {
+            'obj.ubilog_id': $('#ubicDbId').val(),
+            'obj.ubilog_posicion': $('#ubicPosicion').val(),
+            'obj.ubilog_columna': $('#ubicColumna').val(),
+            'obj.ubilog_nivel': $('#ubicNivel').val(),
+            'obj.ubilog_coord_x': $('#ubicCoordX').val(),
+            'obj.ubilog_coord_y': $('#ubicCoordY').val(),
+            'obj.ubilog_coord_z': $('#ubicCoordZ').val(),
+            'obj.ubilog_altura': $('#ubicAlto').val(),
+            'obj.ubilog_anchura': $('#ubicAncho').val(),
+            'obj.ubilog_longitud': $('#ubicProfundidad').val(),
+            'obj.ubilog_capacidad_maxima': $('#ubicCapacidad').val(),
+            'obj.ubilog_peso_maximo': $('#ubicPeso').val(),
+            'obj.ubilog_volumen_maximo': $('#ubicVolumen').val(),
+            'obj.ubilog_teubilog_id': $('#ubicEstado').val(),
+            'obj.ubilog_tubilog_id': $('#ubicTipo').val(),
+            'obj.ubilog_multiples_articulos': $('#ubicMezclarProductos').is(':checked'),
+            'obj.ubilog_multiples_lotes': $('#ubicMezclarLotes').is(':checked'),
+            'obj.ubilog_tipo_producto_permitido': $('#ubicTipoProducto').val()
+        };
+        $.post(URL.saveUbic, data, function (resp) {
+            if (resp.Result.Success) { $('#modalUbicacionConfig').modal('hide'); try { toastr.success('Ubicación actualizada.'); } catch (e) {} }
+            else { alert(resp.Result.Message); }
+        });
+    });
+    </script>
+}

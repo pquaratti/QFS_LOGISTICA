@@ -99,6 +99,20 @@ namespace Negocio
             return DeleteLogico(valorId);
         }
 
+        public void ActualizarGeometria(int id, decimal x, decimal y, decimal largo, decimal ancho)
+        {
+            string query = "UPDATE Depositos_Pasillos SET depopas_x=@x, depopas_y=@y, depopas_largo=@largo, depopas_ancho=@ancho, depopas_fec_mod=@fecha, depopas_usu_id_mod=@usuario WHERE depopas_id=@id";
+            List<SqlParameter> p = new List<SqlParameter>();
+            p.Add(new SqlParameter("x", x));
+            p.Add(new SqlParameter("y", y));
+            p.Add(new SqlParameter("largo", largo));
+            p.Add(new SqlParameter("ancho", ancho));
+            p.Add(new SqlParameter("fecha", DateTime.Now));
+            p.Add(new SqlParameter("usuario", Token.UserID));
+            p.Add(new SqlParameter("id", id));
+            db.SQLExecuteNonQuery(query, p);
+        }
+
         public List<DepositoPasillo> ListarPorDeposito(string depositoID)
         {
             int depoID = ObtenerID(depositoID);
