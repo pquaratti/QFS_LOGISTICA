@@ -932,6 +932,7 @@
                 var ubicaciones = layoutPasillos.length
                     ? generarWmsDesdePasillos(layoutPasillos)
                     : generarDemoWms();
+                var limitesDeposito3d = calcularLimitesDeposito3d();
 
                 var contenedor = document.getElementById('wms3d');
                 var map2d = document.getElementById('wmsMap2d');
@@ -1090,6 +1091,70 @@
                     });
 
                     return datos;
+                }
+
+                function calcularLimitesDeposito3d() {
+                    var padding = layoutPasillos.length ? 2.6 : 1.8;
+                    var minX = Infinity;
+                    var maxX = -Infinity;
+                    var minZ = Infinity;
+                    var maxZ = -Infinity;
+
+                    if (layoutPasillos.length) {
+                        layoutPasillos.forEach(function (p) {
+                            if (!p.layout3d) return;
+
+                            var medioLargo = p.layout3d.largo / 2;
+                            var medioAncho = Math.max(1.2, p.layout3d.ancho, 1.95) / 2;
+
+                            if (p.layout3d.esVertical) {
+                                minX = Math.min(minX, p.layout3d.x - medioAncho);
+                                maxX = Math.max(maxX, p.layout3d.x + medioAncho);
+                                minZ = Math.min(minZ, p.layout3d.z - medioLargo);
+                                maxZ = Math.max(maxZ, p.layout3d.z + medioLargo);
+                            } else {
+                                minX = Math.min(minX, p.layout3d.x - medioLargo);
+                                maxX = Math.max(maxX, p.layout3d.x + medioLargo);
+                                minZ = Math.min(minZ, p.layout3d.z - medioAncho);
+                                maxZ = Math.max(maxZ, p.layout3d.z + medioAncho);
+                            }
+                        });
+                    }
+
+                    if (!isFinite(minX)) {
+                        ubicaciones.forEach(function (u) {
+                            minX = Math.min(minX, u.x - u.ancho / 2);
+                            maxX = Math.max(maxX, u.x + u.ancho / 2);
+                            minZ = Math.min(minZ, u.z - u.profundidad / 2);
+                            maxZ = Math.max(maxZ, u.z + u.profundidad / 2);
+                        });
+                    }
+
+                    if (!isFinite(minX)) {
+                        minX = -5.8; maxX = 16.2; minZ = -6; maxZ = 6;
+                    }
+
+                    minX -= padding;
+                    maxX += padding;
+                    minZ -= padding;
+                    maxZ += padding;
+
+                    var ancho = Math.max(22, maxX - minX);
+                    var profundidad = Math.max(12, maxZ - minZ);
+                    var centroX = (minX + maxX) / 2;
+                    var centroZ = (minZ + maxZ) / 2;
+
+                    return {
+                        minX: centroX - ancho / 2,
+                        maxX: centroX + ancho / 2,
+                        minZ: centroZ - profundidad / 2,
+                        maxZ: centroZ + profundidad / 2,
+                        ancho: ancho,
+                        profundidad: profundidad,
+                        centroX: centroX,
+                        centroZ: centroZ,
+                        dockZ: centroZ + profundidad / 2 - 1.1
+                    };
                 }
 
                 function generarDemoWms() {
@@ -1392,11 +1457,11 @@
                     var materialPisoDeposito = crearMaterialPisoDeposito(6, 4);
 
                     var piso = new THREE.Mesh(
-                        prepararUv2(new THREE.BoxGeometry(22, .08, 12)),
+                        prepararUv2(new THREE.BoxGeometry(limitesDeposito3d.ancho, .08, limitesDeposito3d.profundidad)),
                         materialPisoDeposito
                     );
 
-                    piso.position.set(5.2, -.08, 0);
+                    piso.position.set(limitesDeposito3d.centroX, -.08, limitesDeposito3d.centroZ);
                     piso.receiveShadow = true;
                     escena.add(piso);
 
@@ -1408,23 +1473,23 @@
                         metalness: 0
                     });
 
-                    var paredFondo = new THREE.Mesh(new THREE.BoxGeometry(22, 2.4, .12), materialPared);
-                    paredFondo.position.set(5.2, 1.15, -6.05);
+                    var paredFondo = new THREE.Mesh(new THREE.BoxGeometry(limitesDeposito3d.ancho, 2.4, .12), materialPared);
+                    paredFondo.position.set(limitesDeposito3d.centroX, 1.15, limitesDeposito3d.minZ - .05);;
                     escena.add(paredFondo);
 
-                    var paredIzq = new THREE.Mesh(new THREE.BoxGeometry(.12, 2.4, 12), materialPared);
-                    paredIzq.position.set(-5.82, 1.15, 0);
+                    var paredIzq = new THREE.Mesh(new THREE.BoxGeometry(.12, 2.4, limitesDeposito3d.profundidad), materialPared);
+                    paredIzq.position.set(limitesDeposito3d.minX - .05, 1.15, limitesDeposito3d.centroZ);
                     escena.add(paredIzq);
 
-                    var paredDer = new THREE.Mesh(new THREE.BoxGeometry(.12, 2.4, 12), materialPared);
-                    paredDer.position.set(16.22, 1.15, 0);
+                    var paredDer = new THREE.Mesh(new THREE.BoxGeometry(.12, 2.4, limitesDeposito3d.profundidad), materialPared);
+                    paredDer.position.set(limitesDeposito3d.maxX + .05, 1.15, limitesDeposito3d.centroZ);
                     escena.add(paredDer);
 
                     var zonaDock = new THREE.Mesh(
-                        prepararUv2(new THREE.BoxGeometry(20, .05, 1.25)),
-                        crearMaterialPisoDeposito(5, 1)
+                        prepararUv2(new THREE.BoxGeometry(Math.max(6, limitesDeposito3d.ancho - 2), .05, 1.25)),
+                        crearMaterialPisoDeposito(Math.max(2, limitesDeposito3d.ancho / 4), 1)
                     );
-                    zonaDock.position.set(5.2, .02, 4.95);
+                    zonaDock.position.set(limitesDeposito3d.centroX, .02, limitesDeposito3d.dockZ);
                     escena.add(zonaDock);
                 }
 
@@ -1634,10 +1699,18 @@
                 }
 
                 function crearCarteles3d() {
-                    crearTextoSprite('PASILLO 01', -1.0, 4.4, -4.85);
-                    crearTextoSprite('PASILLO 02', 4.65, 4.4, -4.85);
-                    crearTextoSprite('PASILLO 03', 10.25, 4.4, -4.85);
-                    crearTextoSprite('RECEPCIÓN / DESPACHO', 5.2, .35, 5.05);
+                    if (layoutPasillos.length) {
+                        layoutPasillos.forEach(function (p) {
+                            if (!p.layout3d) return;
+                            crearTextoSprite(p.codigo, p.layout3d.x, 4.4, limitesDeposito3d.minZ + .9);
+                        });
+                    } else {
+                        crearTextoSprite('PASILLO 01', -1.0, 4.4, -4.85);
+                        crearTextoSprite('PASILLO 02', 4.65, 4.4, -4.85);
+                        crearTextoSprite('PASILLO 03', 10.25, 4.4, -4.85);
+                    }
+
+                    crearTextoSprite('RECEPCIN / DESPACHO', limitesDeposito3d.centroX, .35, limitesDeposito3d.dockZ + .1);
                 }
 
                 function crearTextoSprite(texto, x, y, z) {
@@ -2572,7 +2645,7 @@
                 function entrarModoSupervisor() {
                     if (!camara) return;
 
-                    camara.position.set(5.2, 1.75, 4.7);
+                    camara.position.set(limitesDeposito3d.centroX, 1.75, limitesDeposito3d.maxZ - 1.3);
                     supervisorYaw = Math.PI;
                     supervisorPitch = 0;
                     aplicarRotacionSupervisor();
@@ -2617,8 +2690,8 @@
                 function limitarCamaraSupervisor() {
                     if (!camara) return;
 
-                    camara.position.x = Math.max(-4.8, Math.min(15.2, camara.position.x));
-                    camara.position.z = Math.max(-5.25, Math.min(5.35, camara.position.z));
+                    camara.position.x = Math.max(limitesDeposito3d.minX + .8, Math.min(limitesDeposito3d.maxX - .8, camara.position.x));
+                    camara.position.z = Math.max(limitesDeposito3d.minZ + .8, Math.min(limitesDeposito3d.maxZ - .8, camara.position.z));
                     camara.position.y = 1.75;
                 }
 
@@ -2629,8 +2702,8 @@
                     $('#supPasillo').text(layoutPasillos.length ? pasillo : 'P0' + pasillo);
                     $('#supVisibles').text(meshes.filter(function (m) { return m.visible; }).length);
 
-                    var mapaX = ((camara.position.x + 5.5) / 22) * 230;
-                    var mapaY = ((camara.position.z + 5.5) / 11) * 108;
+                    var mapaX = ((camara.position.x - limitesDeposito3d.minX) / limitesDeposito3d.ancho) * 230;
+                    var mapaY = ((camara.position.z - limitesDeposito3d.minZ) / limitesDeposito3d.profundidad) * 108;
 
                     mapaX = Math.max(8, Math.min(238, mapaX));
                     mapaY = Math.max(8, Math.min(110, mapaY));
@@ -2762,11 +2835,12 @@
                         return;
                     }
 
-                    camara.position.set(12, 9, 12);
-                    camara.lookAt(5.2, 1.6, 0);
+                    var distanciaCamara = Math.max(limitesDeposito3d.ancho, limitesDeposito3d.profundidad) * .62;
+                    camara.position.set(limitesDeposito3d.centroX + distanciaCamara, 9, limitesDeposito3d.centroZ + distanciaCamara);
+                    camara.lookAt(limitesDeposito3d.centroX, 1.6, limitesDeposito3d.centroZ);
 
                     if (controles) {
-                        controles.target.set(5.2, 1.6, 0);
+                        controles.target.set(limitesDeposito3d.centroX, 1.6, limitesDeposito3d.centroZ);
                         controles.update();
                     }
                 }

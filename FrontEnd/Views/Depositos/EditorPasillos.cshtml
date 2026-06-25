@@ -331,7 +331,10 @@
 
     function dibujar() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        pasillos.forEach(function (p) { dibujarPasillo(p, pasilloSeleccionado && p.id === pasilloSeleccionado.id); });
+        pasillos.forEach(function (p) {
+            var estaSeleccionado = pasilloSeleccionado && p.id === pasilloSeleccionado.id;
+            dibujarPasillo(estaSeleccionado ? leerFormularioComoPasillo() : p, estaSeleccionado);
+        });
 
         if (!pasilloSeleccionado && $('#pasilloCodigo').val()) {
             dibujarPasillo(leerFormularioComoPasillo(), true, true);

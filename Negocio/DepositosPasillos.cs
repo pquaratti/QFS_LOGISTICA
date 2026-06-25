@@ -75,7 +75,16 @@ namespace Negocio
 
             if (oM.Success)
             {
-                obj.depopas_id = Convert.ToInt32(App.Security.DesencriptarID(Convert.ToString(oM.ObjectRelation)));
+                if (obj.depopas_id <= 0 && oM.ObjectRelation != null && !string.IsNullOrWhiteSpace(Convert.ToString(oM.ObjectRelation)))
+                    obj.depopas_id = Convert.ToInt32(App.Security.DesencriptarID(Convert.ToString(oM.ObjectRelation)));
+
+                if (obj.depopas_id <= 0)
+                {
+                    oM.Success = false;
+                    oM.Message = "No se pudo obtener el identificador del pasillo guardado.";
+                    return oM;
+                }
+
                 oM = new UbicacionesLogisticas(Token).RegenerarDesdePasillo(obj);
             }
 
