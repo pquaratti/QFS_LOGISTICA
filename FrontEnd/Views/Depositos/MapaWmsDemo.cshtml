@@ -1,7 +1,11 @@
+@model Entidades.Deposito
+
 @{
     ViewBag.Title = "Demo WMS 3D/2D";
     ViewBag.Subtitle = "Mapa interactivo de depósito";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Depositos";
+    var _pasillosWms = ViewBag.WmsPasillos ?? new object[0];
 }
 
 <style>
@@ -245,6 +249,7 @@
         font-weight: 900;
         transition: transform .15s, box-shadow .15s, outline .15s;
         user-select: none;
+        z-index: 2;
     }
 
         .wms-bin2d:hover,
@@ -281,6 +286,25 @@
         letter-spacing: .05em;
         transform: rotate(-90deg);
         transform-origin: left top;
+    }
+
+
+    .wms-rack-label-horizontal {
+        transform: none;
+        width: 84px;
+        text-align: center;
+        padding: 3px 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        background: rgba(255,255,255,.86);
+    }
+
+    .wms-aisle {
+        position: absolute;
+        border: 2px solid rgba(37, 99, 235, .45);
+        border-radius: 8px;
+        background: rgba(147, 197, 253, .16);
+        z-index: 1;
     }
 
     .wms-dock {
@@ -903,11 +927,10 @@
                 var colorPicking = 0xfb923c;
                 var colorRecepcion = 0x06b6d4;
 
-                // En una vista .cshtml futura, el controlador puede inyectar datos en:
-                // window.WMS_LAYOUT_DATA = { ubicaciones: [...], pedidosPicking: [...] };
-                // Si no existe, se usa la demo local.
-                var ubicaciones = (window.WMS_LAYOUT_DATA && window.WMS_LAYOUT_DATA.ubicaciones)
-                    ? window.WMS_LAYOUT_DATA.ubicaciones
+                var pasillosDeposito = @Html.Raw(Json.Encode(_pasillosWms));
+                var layoutPasillos = normalizarPasillosDeposito(pasillosDeposito);
+                var ubicaciones = layoutPasillos.length
+                    ? generarWmsDesdePasillos(layoutPasillos)
                     : generarDemoWms();
 
                 var contenedor = document.getElementById('wms3d');
@@ -959,7 +982,7 @@
                 dibujar2d();
                 actualizarKpis();
                 renderOperacionActiva();
-                seleccionar(ubicaciones[12], true);
+                seleccionar(ubicaciones[Math.min(12, ubicaciones.length - 1)], true);
                 animar();
 
                 $('#btnVista3d').on('click', function () {
@@ -989,6 +1012,85 @@
                 $('#btnGenerarPicking').on('click', generarPedidoPickingDemo);
                 $('#btnGenerarRecepcion').on('click', generarRecepcionDemo);
                 $('#btnSimularIngreso').on('click', simularIngreso);
+
+                function normalizarPasillosDeposito(pasillos) {
+                    pasillos = pasillos || [];
+                    return pasillos.map(function (p, index) {
+                        var posiciones = Math.max(1, parseInt(p.posiciones || 1, 10));
+                        var alturas = Math.max(1, parseInt(p.alturas || 1, 10));
+                        var x = Number(p.x || 0);
+                        var y = Number(p.y || 0);
+                        var largo = Math.max(1, Number(p.largo || 240));
+                        var ancho = Math.max(1, Number(p.ancho || 60));
+                        var orientacion = (p.orientacion || 'H').toUpperCase();
+
+                        return {
+                            id: p.id || p.dbId || index + 1,
+                            codigo: p.codigo || ('P' + pad(index + 1)),
+                            nombre: p.nombre || p.codigo || ('Pasillo ' + (index + 1)),
+                            x: x,
+                            y: y,
+                            largo: largo,
+                            ancho: ancho,
+                            orientacion: orientacion === 'V' ? 'V' : 'H',
+                            posiciones: posiciones,
+                            alturas: alturas,
+                            alturaNivel: Number(p.alturaNivel || 100),
+                            pesoMaximo: Number(p.pesoMaximo || 800)
+                        };
+                    });
+                }
+
+                function generarWmsDesdePasillos(pasillos) {
+                    var productos = ['Guantes nitrilo M', 'Barbijos KN95', 'Alcohol gel 500ml', 'Cajas ecommerce', 'Repuestos crticos', 'Insumos bloqueados', 'Cinta embalaje', 'Etiquetas trmicas'];
+                    var escala = .045;
+                    var minX = Math.min.apply(null, pasillos.map(function (p) { return p.x; }));
+                    var minY = Math.min.apply(null, pasillos.map(function (p) { return p.y; }));
+                    var maxX = Math.max.apply(null, pasillos.map(function (p) { return p.x + (p.orientacion === 'V' ? p.ancho : p.largo); }));
+                    var maxY = Math.max.apply(null, pasillos.map(function (p) { return p.y + (p.orientacion === 'V' ? p.largo : p.ancho); }));
+                    var centroX = (minX + maxX) / 2;
+                    var centroY = (minY + maxY) / 2;
+                    var datos = [];
+                    var id = 1;
+
+                    pasillos.forEach(function (pasillo, indicePasillo) {
+                        var esVertical = pasillo.orientacion === 'V';
+                        var largo3d = pasillo.largo * escala;
+                        var ancho3d = Math.max(1.2, pasillo.ancho * escala);
+                        var centroPasilloX = (pasillo.x + (esVertical ? pasillo.ancho : pasillo.largo) / 2 - centroX) * escala;
+                        var centroPasilloZ = (pasillo.y + (esVertical ? pasillo.largo : pasillo.ancho) / 2 - centroY) * escala;
+                        var paso = largo3d / pasillo.posiciones;
+                        pasillo.layout3d = { x: centroPasilloX, z: centroPasilloZ, largo: largo3d, ancho: ancho3d, esVertical: esVertical, paso: paso };
+
+                        for (var columna = 1; columna <= pasillo.posiciones; columna++) {
+                            for (var nivel = 1; nivel <= pasillo.alturas; nivel++) {
+                                var indice = id + indicePasillo + columna + nivel;
+                                var estado = indice % 13 === 0 ? 'Bloqueada' : indice % 7 === 0 ? 'Reservada' : indice % 5 === 0 ? 'Libre' : indice % 3 === 0 ? 'Parcial' : 'Ocupada';
+                                var cantidad = estado === 'Libre' ? 0 : 18 + indice * 3;
+                                var reservado = estado === 'Reservada' ? Math.floor(cantidad * .45) : indice % 8;
+                                var avance = -largo3d / 2 + paso * (columna - .5);
+                                var x = esVertical ? centroPasilloX : centroPasilloX + avance;
+                                var z = esVertical ? centroPasilloZ + avance : centroPasilloZ;
+                                var codigo = '@(Model != null && !string.IsNullOrWhiteSpace(Model.depo_codigo) ? Model.depo_codigo : "DEP")-' + pasillo.codigo + '-P' + pad(columna) + '-N' + pad(nivel);
+
+                                datos.push({
+                                    id: id++, codigo: codigo, pasillo: pasillo.codigo, pasilloNombre: pasillo.nombre, rack: 1, columna: columna, nivel: nivel,
+                                    x: x, y: .62 + (nivel - 1) * 1.18, z: z,
+                                    ancho: esVertical ? .92 : Math.max(.55, paso * .72), alto: .92, profundidad: esVertical ? Math.max(.55, paso * .72) : .92,
+                                    estado: estado, porcentajeOcupacion: estado === 'Libre' ? 0 : (estado === 'Parcial' ? 35 + (indice % 45) : 72 + (indice % 27)),
+                                    producto: estado === 'Libre' ? 'Sin stock' : productos[indice % productos.length], sku: estado === 'Libre' ? '-' : 'SKU-' + (1000 + indice),
+                                    cantidad: cantidad, disponible: estado === 'Libre' ? 0 : Math.max(0, cantidad - reservado), reservado: reservado,
+                                    lote: estado === 'Libre' ? '-' : 'LT-2026-' + pad(indice), vencimiento: estado === 'Libre' ? '-' : '2027-03-' + pad((indice % 27) + 1),
+                                    ultimoMovimiento: '2026-06-' + pad((indice % 23) + 1) + ' 10:' + pad(indice % 60),
+                                    capacidadMaxima: '1 pallet / ' + (pasillo.pesoMaximo || 800) + ' kg', zona: pasillo.nombre,
+                                    movimientos: crearMovimientos(estado, codigo, cantidad, reservado, indice)
+                                });
+                            }
+                        }
+                    });
+
+                    return datos;
+                }
 
                 function generarDemoWms() {
                     var productos = [
@@ -1327,6 +1429,17 @@
                 }
 
                 function crearRacks3d() {
+                    if (layoutPasillos.length) {
+                        layoutPasillos.forEach(function (pasillo) {
+                            var grupo = new THREE.Group();
+                            crearRackFrameDesdePasillo(grupo, pasillo);
+                            grupo.userData = { pasillo: pasillo.codigo, rack: 1 };
+                            escena.add(grupo);
+                            rackFrames.push(grupo);
+                        });
+                        return;
+                    }
+
                     for (var pasillo = 1; pasillo <= 3; pasillo++) {
                         for (var rack = 1; rack <= 2; rack++) {
                             var grupo = new THREE.Group();
@@ -1347,26 +1460,50 @@
                     }
                 }
 
-                function crearRackFrame(grupo, x, z) {
+                function crearRackFrameDesdePasillo(grupo, pasillo) {
+                    var info = pasillo.layout3d;
+
+                    crearRackFrame(grupo, info.x, info.z, {
+                        columnas: pasillo.posiciones,
+                        niveles: pasillo.alturas,
+                        largo: info.largo,
+                        esVertical: info.esVertical
+                    });
+                }
+
+                function crearRackFrame(grupo, x, z, opciones) {
+                    opciones = opciones || {};
                     var matMetal = crearMaterialPalosEstanteria(1, 4);
                     var matBase = crearMaterialPlacasEstanteria(1, 4);
+                    var columnas = Math.max(1, opciones.columnas || 6);
+                    var niveles = Math.max(1, opciones.niveles || 3);
+                    var largo = Math.max(1.28, opciones.largo || 8.95);
+                    var esVertical = !!opciones.esVertical;
+                    var altoRack = .62 + (niveles - 1) * 1.18 + .72;
 
-                    for (var c = 0; c <= 6; c++) {
-                        var zPoste = (c - 3) * 1.28 - .64;
+                    for (var c = 0; c <= columnas; c++) {
+                        var avance = -largo / 2 + (largo / columnas) * c;
+                        var px = esVertical ? x - .6 : x + avance;
+                        var pz = esVertical ? z + avance : z - .6;
 
-                        var poste1 = new THREE.Mesh(prepararUv2(new THREE.BoxGeometry(.08, 3.8, .08)), matMetal);
-                        poste1.position.set(x - .6, 1.8, zPoste);
+                        var poste1 = new THREE.Mesh(prepararUv2(new THREE.BoxGeometry(.08, altoRack, .08)), matMetal);
+                        poste1.position.set(px, altoRack / 2, pz);
                         grupo.add(poste1);
 
-                        var poste2 = new THREE.Mesh(prepararUv2(new THREE.BoxGeometry(.08, 3.8, .08)), matMetal);
-                        poste2.position.set(x + .6, 1.8, zPoste);
+                        px = esVertical ? x + .6 : x + avance;
+                        pz = esVertical ? z + avance : z + .6;
+
+                        var poste2 = new THREE.Mesh(prepararUv2(new THREE.BoxGeometry(.08, altoRack, .08)), matMetal);
+                        poste2.position.set(px, altoRack / 2, pz);
                         grupo.add(poste2);
                     }
 
-                    for (var n = 0; n <= 3; n++) {
+                    for (var n = 0; n <= niveles; n++) {
                         var y = .14 + n * 1.18;
-
-                        var larguero = new THREE.Mesh(prepararUv2(new THREE.BoxGeometry(1.95, .08, 8.95)), matBase);
+                        var geometria = esVertical
+                            ? new THREE.BoxGeometry(1.95, .08, largo)
+                            : new THREE.BoxGeometry(largo, .08, 1.95);
+                        var larguero = new THREE.Mesh(prepararUv2(geometria), matBase);
                         larguero.position.set(x, y, z);
                         grupo.add(larguero);
                     }
@@ -1532,6 +1669,11 @@
                 }
 
                 function dibujar2d() {
+                    if (layoutPasillos.length) {
+                        dibujar2dDesdePasillos();
+                        return;
+                    }
+
                     for (var pasillo = 1; pasillo <= 3; pasillo++) {
                         for (var rack = 1; rack <= 2; rack++) {
                             var label = document.createElement('div');
@@ -1562,6 +1704,67 @@
                             seleccionar(u, false);
                         };
 
+                        map2d.appendChild(div);
+                    });
+                }
+
+                function dibujar2dDesdePasillos() {
+                    var anchoMapa = map2d.clientWidth || 1100;
+                    var altoMapa = map2d.clientHeight || 620;
+                    var minX = Math.min.apply(null, layoutPasillos.map(function (p) { return p.x; }));
+                    var minY = Math.min.apply(null, layoutPasillos.map(function (p) { return p.y; }));
+                    var maxX = Math.max.apply(null, layoutPasillos.map(function (p) { return p.x + (p.orientacion === 'V' ? p.ancho : p.largo); }));
+                    var maxY = Math.max.apply(null, layoutPasillos.map(function (p) { return p.y + (p.orientacion === 'V' ? p.largo : p.ancho); }));
+                    var escala = Math.min((anchoMapa - 180) / Math.max(1, maxX - minX), (altoMapa - 160) / Math.max(1, maxY - minY));
+                    var offsetX = (anchoMapa - (maxX - minX) * escala) / 2;
+                    var offsetY = 70;
+
+                    layoutPasillos.forEach(function (p) {
+                        var esVertical = p.orientacion === 'V';
+                        var left = offsetX + (p.x - minX) * escala;
+                        var top = offsetY + (p.y - minY) * escala;
+                        var width = (esVertical ? p.ancho : p.largo) * escala;
+                        var height = (esVertical ? p.largo : p.ancho) * escala;
+
+                        var label = document.createElement('div');
+                        label.className = 'wms-rack-label wms-rack-label-horizontal';
+                        label.style.left = (left + width / 2 - 42) + 'px';
+                        label.style.top = Math.max(8, top - 28) + 'px';
+                        label.innerHTML = p.codigo;
+                        map2d.appendChild(label);
+
+                        var fondo = document.createElement('div');
+                        fondo.className = 'wms-aisle';
+                        fondo.style.left = left + 'px';
+                        fondo.style.top = top + 'px';
+                        fondo.style.width = width + 'px';
+                        fondo.style.height = height + 'px';
+                        map2d.insertBefore(fondo, map2d.firstChild);
+                    });
+
+                    ubicaciones.forEach(function (u) {
+                        var p = layoutPasillos.find(function (item) { return item.codigo === u.pasillo; });
+                        if (!p) return;
+
+                        var esVertical = p.orientacion === 'V';
+                        var left = offsetX + (p.x - minX) * escala;
+                        var top = offsetY + (p.y - minY) * escala;
+                        var width = (esVertical ? p.ancho : p.largo) * escala;
+                        var height = (esVertical ? p.largo : p.ancho) * escala;
+                        var slot = (esVertical ? height : width) / p.posiciones;
+                        var nivelOffset = (u.nivel - 1) * 16;
+
+                        var div = document.createElement('div');
+                        div.className = 'wms-bin2d';
+                        div.dataset.id = u.id;
+                        div.style.background = estadoHex[u.estado];
+                        div.style.width = esVertical ? '44px' : Math.max(32, slot - 8) + 'px';
+                        div.style.height = '15px';
+                        div.style.left = (esVertical ? left + width / 2 - 22 : left + slot * (u.columna - 1) + 4) + 'px';
+                        div.style.top = (esVertical ? top + slot * (u.columna - 1) + nivelOffset : top + height / 2 - 16 + nivelOffset) + 'px';
+                        div.title = u.codigo;
+                        div.innerHTML = 'P' + pad(u.columna) + ' N' + u.nivel;
+                        div.onclick = function () { seleccionar(u, false); };
                         map2d.appendChild(div);
                     });
                 }
@@ -2423,7 +2626,7 @@
                     if (!modoSupervisor || !camara) return;
 
                     var pasillo = obtenerPasilloCercano(camara.position.x);
-                    $('#supPasillo').text('P0' + pasillo);
+                    $('#supPasillo').text(layoutPasillos.length ? pasillo : 'P0' + pasillo);
                     $('#supVisibles').text(meshes.filter(function (m) { return m.visible; }).length);
 
                     var mapaX = ((camara.position.x + 5.5) / 22) * 230;
@@ -2437,6 +2640,16 @@
                 }
 
                 function obtenerPasilloCercano(x) {
+                    if (layoutPasillos.length) {
+                        var cercano = layoutPasillos[0];
+                        var distancia = Math.abs((cercano.layout3d ? cercano.layout3d.x : 0) - x);
+                        layoutPasillos.forEach(function (p) {
+                            var d = Math.abs((p.layout3d ? p.layout3d.x : 0) - x);
+                            if (d < distancia) { cercano = p; distancia = d; }
+                        });
+                        return cercano.codigo;
+                    }
+
                     if (x < 2.3) return 1;
                     if (x < 7.9) return 2;
                     return 3;

@@ -20,9 +20,35 @@ namespace FrontEnd.Controllers
             return View();
         }
 
-        public ActionResult MapaWmsDemo()
+        public ActionResult MapaWmsDemo(string depositoID)
         {
-            return View();
+            Entidades.Deposito deposito = string.IsNullOrWhiteSpace(depositoID)
+                ? new Entidades.Deposito()
+                : new Negocio.Depositos(GetToken()).ObtenerPorID(depositoID);
+
+            List<Entidades.DepositoPasillo> pasillos = string.IsNullOrWhiteSpace(depositoID)
+                ? new List<Entidades.DepositoPasillo>()
+                : new Negocio.DepositosPasillos(GetToken()).ListarPorDeposito(depositoID);
+
+            ViewBag.WmsPasillos = pasillos.Select(x => new
+            {
+                id = x.IdEncriptado,
+                dbId = x.depopas_id,
+                codigo = x.depopas_codigo,
+                nombre = x.depopas_nombre,
+                descripcion = x.depopas_descripcion,
+                x = x.depopas_x,
+                y = x.depopas_y,
+                largo = x.depopas_largo,
+                ancho = x.depopas_ancho,
+                orientacion = x.depopas_orientacion,
+                posiciones = x.depopas_cantidad_posiciones,
+                alturas = x.depopas_cantidad_alturas,
+                alturaNivel = x.depopas_altura_nivel,
+                pesoMaximo = x.depopas_peso_maximo
+            }).ToList();
+
+            return View(deposito);
         }
 
         public ActionResult EditorPasillos(string depositoID)
