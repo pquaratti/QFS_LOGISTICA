@@ -1,0 +1,397 @@
+@model Entidades.Deposito
+
+@{
+    ViewBag.Title = "Editor de pasillos";
+    ViewBag.Subtitle = "Diseño 2D de depósito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string _ControllerName = "Depositos";
+}
+
+<style>
+    .wms-editor-toolbar .form-control {
+        height: 30px;
+        padding: 2px 8px;
+    }
+
+    .wms-editor-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 15px;
+    }
+
+    .wms-editor-canvas-wrap {
+        background: #f8fafc;
+        border: 1px solid #d8e1ea;
+        border-radius: 6px;
+        min-height: 620px;
+        overflow: auto;
+        position: relative;
+    }
+
+    #canvasPasillos {
+        background-image: linear-gradient(#eef2f7 1px, transparent 1px), linear-gradient(90deg, #eef2f7 1px, transparent 1px);
+        background-size: 20px 20px;
+        cursor: crosshair;
+    }
+
+    .wms-panel {
+        border-left: 4px solid #10b981;
+    }
+
+    .wms-help {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .wms-pasillo-item {
+        cursor: pointer;
+    }
+
+        .wms-pasillo-item.active {
+            background: #e8fff5;
+        }
+
+    @@media (max-width: 992px) {
+        .wms-editor-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="content-header header-title-page ml-0 mr-0">
+    <div class="col-md-8">
+        <h4 class="content-title content-title-xs">Editor 2D de pasillos</h4>
+        <p>Depósito: <strong>@Model.depo_nombre</strong> (@Model.depo_codigo)</p>
+    </div>
+    <div class="col-md-4 pr-0">
+        <div class="d-flex flex-row-reverse">
+            <a href="@Url.Action("Index", _ControllerName)" class="btn btn-xs btn-secondary m-1"><i class="fa fa-arrow-left"></i> Volver</a>
+            <button id="btnNuevoPasillo" type="button" class="btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Pasillo</button>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body">
+    <div class="alert alert-info mb-3">
+        Dibujá o seleccioná un pasillo para configurar posiciones y alturas. Al guardar se generan ubicaciones del tipo <strong>P01-P001-N01</strong>, una por cada posición/nivel.
+    </div>
+
+    <div class="wms-editor-layout">
+        <div class="wms-editor-canvas-wrap">
+            <canvas id="canvasPasillos" width="1200" height="620"></canvas>
+        </div>
+
+        <div class="card card-body wms-panel">
+            <h6 class="mb-3">Configuración del pasillo</h6>
+            <input type="hidden" id="pasilloID" value="0" />
+            <input type="hidden" id="depositoID" value="@Model.depo_id" />
+
+            <div class="row wms-editor-toolbar">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Código</label>
+                        <input id="pasilloCodigo" class="form-control form-control-sm" maxlength="30" placeholder="P01" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input id="pasilloNombre" class="form-control form-control-sm" maxlength="100" placeholder="Pasillo 1" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>X</label>
+                        <input id="pasilloX" type="number" class="form-control form-control-sm" value="40" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Y</label>
+                        <input id="pasilloY" type="number" class="form-control form-control-sm" value="40" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Largo</label>
+                        <input id="pasilloLargo" type="number" class="form-control form-control-sm" value="240" min="1" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Ancho</label>
+                        <input id="pasilloAncho" type="number" class="form-control form-control-sm" value="60" min="1" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Orientación</label>
+                        <select id="pasilloOrientacion" class="form-control form-control-sm">
+                            <option value="H">Horizontal</option>
+                            <option value="V">Vertical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Posiciones</label>
+                        <input id="pasilloPosiciones" type="number" class="form-control form-control-sm" value="10" min="1" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Alturas</label>
+                        <input id="pasilloAlturas" type="number" class="form-control form-control-sm" value="3" min="1" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Altura nivel</label>
+                        <input id="pasilloAlturaNivel" type="number" class="form-control form-control-sm" value="100" min="0" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Peso máximo</label>
+                        <input id="pasilloPesoMaximo" type="number" class="form-control form-control-sm" value="0" min="0" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group btn-block mb-2" role="group">
+                <button id="btnGuardarPasillo" type="button" class="btn btn-success btn-sm"><i class="fa fa-save"></i> Guardar y generar</button>
+                <button id="btnEliminarPasillo" type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Borrar</button>
+            </div>
+
+            <p class="wms-help">Tip: hacé click en el plano para posicionar el pasillo. Las divisiones internas representan posiciones; las alturas se guardan como niveles operativos.</p>
+
+            <hr />
+            <h6>Pasillos creados</h6>
+            <div id="listaPasillos" class="list-group small"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+    var pasillos = [];
+    var pasilloSeleccionado = null;
+    var canvas = document.getElementById('canvasPasillos');
+    var ctx = canvas.getContext('2d');
+
+    $(document).ready(function () {
+        cargarPasillos();
+    });
+
+    $('#btnNuevoPasillo').click(function () {
+        limpiarFormulario();
+        $('#pasilloCodigo').val('P' + String(pasillos.length + 1).padStart(2, '0'));
+        $('#pasilloNombre').val('Pasillo ' + (pasillos.length + 1));
+    });
+
+    $('#canvasPasillos').click(function (e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = Math.round(e.clientX - rect.left);
+        var y = Math.round(e.clientY - rect.top);
+        var encontrado = buscarPasilloEnPunto(x, y);
+
+        if (encontrado) {
+            seleccionarPasillo(encontrado);
+        } else {
+            $('#pasilloX').val(x);
+            $('#pasilloY').val(y);
+            dibujar();
+        }
+    });
+
+    $('#btnGuardarPasillo').click(function () {
+        guardarPasillo();
+    });
+
+    $('#btnEliminarPasillo').click(function () {
+        if (!pasilloSeleccionado || pasilloSeleccionado.id === '0') {
+            alert('Seleccione un pasillo para borrar.');
+            return;
+        }
+
+        if (!confirm('¿Desea borrar el pasillo seleccionado?')) return;
+
+        $.post('@Url.Action("DeletePasillo", _ControllerName)', { BorrarID: pasilloSeleccionado.id }, function (response) {
+            if (response.Result.Success) {
+                limpiarFormulario();
+                cargarPasillos();
+            } else {
+                alert(response.Result.Message || 'No se pudo borrar el pasillo.');
+            }
+        });
+    });
+
+    $('.wms-editor-toolbar input, .wms-editor-toolbar select').on('input change', function () {
+        actualizarPreview();
+    });
+
+    function cargarPasillos() {
+        $.get('@Url.Action("ListarPasillos", _ControllerName)', { depositoID: '@Model.IdEncriptado' }, function (response) {
+            pasillos = response.Data || [];
+            renderLista();
+            dibujar();
+        });
+    }
+
+    function guardarPasillo() {
+        if (!$('#pasilloCodigo').val()) {
+            alert('Ingrese el código del pasillo.');
+            return;
+        }
+
+        var data = {
+            'obj.depopas_id': $('#pasilloID').val() || 0,
+            'obj.Deposito.depo_id': $('#depositoID').val(),
+            'obj.depopas_codigo': $('#pasilloCodigo').val(),
+            'obj.depopas_nombre': $('#pasilloNombre').val(),
+            'obj.depopas_x': $('#pasilloX').val(),
+            'obj.depopas_y': $('#pasilloY').val(),
+            'obj.depopas_largo': $('#pasilloLargo').val(),
+            'obj.depopas_ancho': $('#pasilloAncho').val(),
+            'obj.depopas_orientacion': $('#pasilloOrientacion').val(),
+            'obj.depopas_cantidad_posiciones': $('#pasilloPosiciones').val(),
+            'obj.depopas_cantidad_alturas': $('#pasilloAlturas').val(),
+            'obj.depopas_altura_nivel': $('#pasilloAlturaNivel').val(),
+            'obj.depopas_peso_maximo': $('#pasilloPesoMaximo').val(),
+            generarUbicaciones: true
+        };
+
+        $.post('@Url.Action("SavePasillo", _ControllerName)', data, function (response) {
+            if (response.Result.Success) {
+                cargarPasillos();
+                alert(response.Result.Message || 'Pasillo guardado.');
+            } else {
+                alert(response.Result.Message || 'No se pudo guardar el pasillo.');
+            }
+        });
+    }
+
+    function renderLista() {
+        var html = '';
+        pasillos.forEach(function (p) {
+            html += '<button type="button" class="list-group-item list-group-item-action wms-pasillo-item" data-id="' + p.id + '">' +
+                '<strong>' + p.codigo + '</strong> - ' + p.nombre + '<br />' +
+                '<span class="text-muted">' + p.posiciones + ' posiciones x ' + p.alturas + ' alturas</span>' +
+                '</button>';
+        });
+        $('#listaPasillos').html(html || '<div class="text-muted">Todavía no hay pasillos.</div>');
+
+        $('.wms-pasillo-item').click(function () {
+            var id = $(this).data('id');
+            var pasillo = pasillos.find(function (x) { return x.id === id; });
+            seleccionarPasillo(pasillo);
+        });
+    }
+
+    function seleccionarPasillo(p) {
+        pasilloSeleccionado = p;
+        $('#pasilloID').val(p.dbId);
+        $('#pasilloCodigo').val(p.codigo);
+        $('#pasilloNombre').val(p.nombre);
+        $('#pasilloX').val(p.x);
+        $('#pasilloY').val(p.y);
+        $('#pasilloLargo').val(p.largo);
+        $('#pasilloAncho').val(p.ancho);
+        $('#pasilloOrientacion').val(p.orientacion || 'H');
+        $('#pasilloPosiciones').val(p.posiciones);
+        $('#pasilloAlturas').val(p.alturas);
+        $('#pasilloAlturaNivel').val(p.alturaNivel);
+        $('#pasilloPesoMaximo').val(p.pesoMaximo);
+        $('.wms-pasillo-item').removeClass('active');
+        $('.wms-pasillo-item[data-id="' + p.id + '"]').addClass('active');
+        dibujar();
+    }
+
+    function limpiarFormulario() {
+        pasilloSeleccionado = null;
+        $('#pasilloID').val('0');
+        $('#pasilloCodigo').val('');
+        $('#pasilloNombre').val('');
+        $('#pasilloX').val('40');
+        $('#pasilloY').val('40');
+        $('#pasilloLargo').val('240');
+        $('#pasilloAncho').val('60');
+        $('#pasilloOrientacion').val('H');
+        $('#pasilloPosiciones').val('10');
+        $('#pasilloAlturas').val('3');
+        $('#pasilloAlturaNivel').val('100');
+        $('#pasilloPesoMaximo').val('0');
+        $('.wms-pasillo-item').removeClass('active');
+        dibujar();
+    }
+
+    function actualizarPreview() {
+        dibujar();
+    }
+
+    function dibujar() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pasillos.forEach(function (p) { dibujarPasillo(p, pasilloSeleccionado && p.id === pasilloSeleccionado.id); });
+
+        if (!pasilloSeleccionado && $('#pasilloCodigo').val()) {
+            dibujarPasillo(leerFormularioComoPasillo(), true, true);
+        }
+    }
+
+    function dibujarPasillo(p, seleccionado, preview) {
+        var x = Number(p.x || 0);
+        var y = Number(p.y || 0);
+        var largo = Number(p.largo || 1);
+        var ancho = Number(p.ancho || 1);
+        var w = p.orientacion === 'V' ? ancho : largo;
+        var h = p.orientacion === 'V' ? largo : ancho;
+        var posiciones = Number(p.posiciones || 1);
+
+        ctx.fillStyle = preview ? 'rgba(16,185,129,0.25)' : (seleccionado ? '#34d399' : '#93c5fd');
+        ctx.strokeStyle = seleccionado ? '#047857' : '#2563eb';
+        ctx.lineWidth = seleccionado ? 3 : 1;
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeRect(x, y, w, h);
+
+        ctx.strokeStyle = 'rgba(15,23,42,0.35)';
+        for (var i = 1; i < posiciones; i++) {
+            if (p.orientacion === 'V') {
+                var py = y + (h / posiciones) * i;
+                ctx.beginPath(); ctx.moveTo(x, py); ctx.lineTo(x + w, py); ctx.stroke();
+            } else {
+                var px = x + (w / posiciones) * i;
+                ctx.beginPath(); ctx.moveTo(px, y); ctx.lineTo(px, y + h); ctx.stroke();
+            }
+        }
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '12px Arial';
+        ctx.fillText((p.codigo || '') + ' (' + posiciones + 'x' + (p.alturas || 1) + ')', x + 6, y + 18);
+    }
+
+    function buscarPasilloEnPunto(x, y) {
+        for (var i = pasillos.length - 1; i >= 0; i--) {
+            var p = pasillos[i];
+            var w = p.orientacion === 'V' ? Number(p.ancho) : Number(p.largo);
+            var h = p.orientacion === 'V' ? Number(p.largo) : Number(p.ancho);
+            if (x >= Number(p.x) && x <= Number(p.x) + w && y >= Number(p.y) && y <= Number(p.y) + h) return p;
+        }
+        return null;
+    }
+
+    function leerFormularioComoPasillo() {
+        return {
+            id: '0',
+            codigo: $('#pasilloCodigo').val(),
+            nombre: $('#pasilloNombre').val(),
+            x: $('#pasilloX').val(),
+            y: $('#pasilloY').val(),
+            largo: $('#pasilloLargo').val(),
+            ancho: $('#pasilloAncho').val(),
+            orientacion: $('#pasilloOrientacion').val(),
+            posiciones: $('#pasilloPosiciones').val(),
+            alturas: $('#pasilloAlturas').val()
+        };
+    }
+    </script>
+}

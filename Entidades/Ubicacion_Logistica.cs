@@ -37,6 +37,11 @@ namespace Entidades
         [KeyRelation]
         public Entidades.Deposito Deposito { get; set; }
 
+        [KeyRelation]
+        public Entidades.DepositoPasillo Pasillo { get; set; }
+
+        public int ubilog_posicion { get; set; }
+
         public string ubilog_nivel { get; set; }
 
         public decimal ubilog_altura { get; set; }
@@ -54,6 +59,9 @@ namespace Entidades
         public UbicacionLogistica()
         {
             this.ubilog_id = 0;
+            this.Planta = new Planta();
+            this.Deposito = new Deposito();
+            this.Pasillo = new DepositoPasillo();
         }
     }
 }

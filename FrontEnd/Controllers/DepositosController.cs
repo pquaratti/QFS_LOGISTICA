@@ -25,6 +25,54 @@ namespace FrontEnd.Controllers
             return View();
         }
 
+        public ActionResult EditorPasillos(string depositoID)
+        {
+            Entidades.Deposito deposito = new Negocio.Depositos(GetToken()).ObtenerPorID(depositoID);
+            return View(deposito);
+        }
+
+        [HttpGet]
+        public JsonResult ListarPasillos(string depositoID)
+        {
+            List<Entidades.DepositoPasillo> lst = new Negocio.DepositosPasillos(GetToken()).ListarPorDeposito(depositoID);
+            var data = lst.Select(x => new
+            {
+                id = x.IdEncriptado,
+                dbId = x.depopas_id,
+                codigo = x.depopas_codigo,
+                nombre = x.depopas_nombre,
+                descripcion = x.depopas_descripcion,
+                x = x.depopas_x,
+                y = x.depopas_y,
+                largo = x.depopas_largo,
+                ancho = x.depopas_ancho,
+                orientacion = x.depopas_orientacion,
+                posiciones = x.depopas_cantidad_posiciones,
+                alturas = x.depopas_cantidad_alturas,
+                alturaNivel = x.depopas_altura_nivel,
+                pesoMaximo = x.depopas_peso_maximo
+            });
+
+            return Json(new { Result = true, Data = data }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult SavePasillo(Entidades.DepositoPasillo obj, bool generarUbicaciones = true)
+        {
+            ObjectMessage oM = generarUbicaciones ?
+                new Negocio.DepositosPasillos(GetToken()).SaveYGenerarUbicaciones(obj) :
+                new Negocio.DepositosPasillos(GetToken()).Save(obj);
+
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult DeletePasillo(string BorrarID)
+        {
+            ObjectMessage oM = new Negocio.DepositosPasillos(GetToken()).DeleteLogicoConUbicaciones(BorrarID);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpGet]
         public ActionResult PartialGridDataDepositos(string plantaID)
         {

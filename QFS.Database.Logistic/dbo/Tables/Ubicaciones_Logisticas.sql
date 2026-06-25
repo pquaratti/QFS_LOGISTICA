@@ -9,6 +9,8 @@
     [ubilog_secuencia_ruta]      NVARCHAR (50)   NULL,
     [ubilog_planta_id]           INT             NULL,
     [ubilog_depo_id]             INT             NULL,
+    [ubilog_pasillo_id]          INT             NULL,
+    [ubilog_posicion]            INT             NULL,
     [ubilog_nivel]               NVARCHAR (10)   NULL,
     [ubilog_altura]              DECIMAL (18, 2) NULL,
     [ubilog_longitud]            DECIMAL (18, 2) NULL,
@@ -22,6 +24,8 @@
     [ubilog_usu_id_mod]          INT             NULL,
     [ubilog_fec_mod]             DATETIME        NULL,
     [ubilog_activo]              BIT             NULL,
-    CONSTRAINT [PK_Ubicaciones_Logisticas] PRIMARY KEY CLUSTERED ([ubilog_id] ASC)
+    CONSTRAINT [PK_Ubicaciones_Logisticas] PRIMARY KEY CLUSTERED ([ubilog_id] ASC),
+    CONSTRAINT [FK_Ubicaciones_Logisticas_Depositos] FOREIGN KEY ([ubilog_depo_id]) REFERENCES [dbo].[Depositos] ([depo_id]),
+    CONSTRAINT [FK_Ubicaciones_Logisticas_Depositos_Pasillos] FOREIGN KEY ([ubilog_pasillo_id]) REFERENCES [dbo].[Depositos_Pasillos] ([depopas_id])
 );
 

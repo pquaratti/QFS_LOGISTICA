@@ -53,7 +53,8 @@ namespace Entidades
         {
             this.planta_activo = true;
             this.planta_id = 0;
-
+            this.Provincia = new App.SIS_Provincia();
+            this.Localidad = new App.SIS_Localidad();
         }
 
     }

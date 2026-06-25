@@ -23,6 +23,11 @@
                 <td>@renglon.depo_codigo</td>
                 <td style="text-align: center; vertical-align: middle;">
 
+                    <a href="@Url.Action("EditorPasillos", _ControllerName, new { depositoID = renglon.IdEncriptado })"
+                       class="btn btn-success btn-sm btn-grid" title="Diseñar pasillos">
+                        <i class="fa fa-map"></i>
+                    </a>
+
                     <button type="button"
                             modal-value-primary="@renglon.IdEncriptado"
                             modal-value-secondary="0"

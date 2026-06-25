@@ -4,6 +4,7 @@
     string _ControllerName = "Plantas";
 
     Entidades.App.Token oToken = Filters.VerificarToken.ConsultarToken();
+    int provinciaID = Model.Provincia != null ? Model.Provincia.prv_id : 0;
 }
 
 <div id="modalFormDefault" class="modal fade modalFormABM" tabindex="-1" role="dialog" aria-labelledby="formModalABM" aria-hidden="true" data-backdrop="static">
@@ -59,13 +60,13 @@
             <div class="row mt-2">
                 <div class="col-md-12">
                     @Html.LabelFor(m => m.Provincia, new { @class = "control-label" })
-                    @Html.DropDownListFor(m => m.Provincia.prv_id, new SelectList(Negocio.DDL.ListarProvincias(Filters.VerificarToken.ConsultarToken(), true), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", @id = "provinciaModal", required = "required" })
+                    @Html.DropDownListFor(m => m.Provincia.prv_id, new SelectList(Negocio.DDL.ListarProvincias(oToken, true), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", @id = "provinciaModal", required = "required" })
                 </div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-12">
                     @Html.LabelFor(m => m.Localidad, new { @class = "control-label" })
-                    @Html.DropDownListFor(m => m.Localidad.loc_id, new SelectList(Negocio.DDL.ListarLocalidadesPorProvincias(Filters.VerificarToken.ConsultarToken(), true, Model.Provincia.prv_id), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", @id = "localidadModal", required = "required" })
+                    @Html.DropDownListFor(m => m.Localidad.loc_id, new SelectList(Negocio.DDL.ListarLocalidadesPorProvincias(oToken, true, provinciaID), "Value", "Text"), new { @class = "form-control camporequerido input-sm select2Modal", @id = "localidadModal", required = "required" })
                 </div>
             </div>
 

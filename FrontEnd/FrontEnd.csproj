@@ -2944,6 +2944,7 @@
     <Content Include="Views\Clientes\_ModalABMClientesContactos.cshtml" />
     <Content Include="Views\Clientes\_ModalClientesContactosVista.cshtml" />
     <Content Include="Views\Depositos\MapaWmsDemo.cshtml" />
+    <Content Include="Views\Depositos\EditorPasillos.cshtml" />
     <None Include="Views\Maquetados\SeguimientoProyecto.cshtml" />
     <Content Include="Views\Shared\_Controls_FullCalendar.cshtml" />
     <Content Include="Views\Proyectos\_GridDataAsignacionTareas.cshtml" />
