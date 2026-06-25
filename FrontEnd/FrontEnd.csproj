@@ -2945,6 +2945,17 @@
     <Content Include="Views\Clientes\_ModalClientesContactosVista.cshtml" />
     <Content Include="Views\Depositos\MapaWmsDemo.cshtml" />
     <Content Include="Views\Depositos\EditorPasillos.cshtml" />
+    <Content Include="Views\Depositos\ConfiguracionVisual.cshtml" />
+    <Content Include="Views\Depositos\_ModalUbicacionConfig.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\EstadosStock.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_GridDataTipoEstadoStock.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_ModalABMTipoEstadoStock.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\EstadosIngreso.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_GridDataTipoEstadoIngreso.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_ModalABMTipoEstadoIngreso.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\EstadosPedidoSalida.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_GridDataTipoEstadoPedidoSalida.cshtml" />
+    <Content Include="Views\UbicacionesLogisticas\_ModalABMTipoEstadoPedidoSalida.cshtml" />
     <None Include="Views\Maquetados\SeguimientoProyecto.cshtml" />
     <Content Include="Views\Shared\_Controls_FullCalendar.cshtml" />
     <Content Include="Views\Proyectos\_GridDataAsignacionTareas.cshtml" />

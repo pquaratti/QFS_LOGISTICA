@@ -1,0 +1,64 @@
+<div id="modalUbicacionConfig" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Configuración de ubicación: <span id="ubicCodigo" class="text-primary"></span></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="ubicDbId" value="0" />
+
+                <div class="row">
+                    <div class="col-md-3"><div class="form-group"><label>Posición</label><input id="ubicPosicion" type="number" class="form-control form-control-sm" /></div></div>
+                    <div class="col-md-3"><div class="form-group"><label>Columna</label><input id="ubicColumna" type="number" class="form-control form-control-sm" readonly /></div></div>
+                    <div class="col-md-3"><div class="form-group"><label>Nivel</label><input id="ubicNivel" class="form-control form-control-sm" readonly /></div></div>
+                    <div class="col-md-3"><div class="form-group"><label>Tipo de ubicación</label><select id="ubicTipo" class="form-control form-control-sm"></select></div></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4"><div class="form-group"><label>Coordenada X</label><input id="ubicCoordX" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                    <div class="col-md-4"><div class="form-group"><label>Coordenada Y</label><input id="ubicCoordY" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                    <div class="col-md-4"><div class="form-group"><label>Coordenada Z</label><input id="ubicCoordZ" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4"><div class="form-group"><label>Alto</label><input id="ubicAlto" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                    <div class="col-md-4"><div class="form-group"><label>Ancho</label><input id="ubicAncho" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                    <div class="col-md-4"><div class="form-group"><label>Profundidad</label><input id="ubicProfundidad" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4"><div class="form-group"><label>Capacidad máxima</label><input id="ubicCapacidad" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                    <div class="col-md-4"><div class="form-group"><label>Peso máximo</label><input id="ubicPeso" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                    <div class="col-md-4"><div class="form-group"><label>Volumen máximo</label><input id="ubicVolumen" type="number" step="any" class="form-control form-control-sm" /></div></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6"><div class="form-group"><label>Estado</label><select id="ubicEstado" class="form-control form-control-sm"></select></div></div>
+                    <div class="col-md-6"><div class="form-group"><label>Tipo de producto permitido</label><input id="ubicTipoProducto" class="form-control form-control-sm" maxlength="100" /></div></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="custom-control custom-checkbox mt-2">
+                            <input type="checkbox" class="custom-control-input" id="ubicMezclarProductos" />
+                            <label class="custom-control-label" for="ubicMezclarProductos">Permite mezclar productos</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="custom-control custom-checkbox mt-2">
+                            <input type="checkbox" class="custom-control-input" id="ubicMezclarLotes" />
+                            <label class="custom-control-label" for="ubicMezclarLotes">Permite mezclar lotes</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-app" data-dismiss="modal">Cerrar</button>
+                <button type="button" id="btnGuardarUbicacion" class="btn btn-success btn-app"><i class="fa fa-save"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>

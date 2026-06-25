@@ -1,0 +1,56 @@
+@model IEnumerable<Entidades.TipoEstadoPedidoSalida>
+
+@{
+    string _ControllerName = "UbicacionesLogisticas";
+}
+
+<table class="table table-sm table-header-app datatablePartial-scrollbar">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th width="80px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Entidades.TipoEstadoPedidoSalida renglon in Model)
+        {
+            <tr>
+
+                <td>@renglon.tepsa_nombre</td>
+
+                <td style="text-align: center; vertical-align: middle;">
+
+                    <button type="button"
+                            modal-value-primary="@renglon.IdEncriptado"
+                            modal-value-secondary="0"
+                            modal-value-aux="0"
+                            modal-url="@Url.Action("PartialModalABMTipoEstadoPedidoSalida",_ControllerName)"
+                            class="btn btn-info btn-sm btn-grid btnOpenModal" title="Editar">
+                        <i class="fa fa-edit"></i>
+                    </button>
+
+
+                    <button type="button"
+                            data-id-rel="@renglon.IdEncriptado"
+                            url-delete="@Url.Action("DeleteEstadoPedidoSalida",_ControllerName)"
+                            class="btn btn-danger btn-sm btn-grid btn-borrar-detalle" title="Borrar">
+                        <i class="fa fa-trash"></i>
+                    </button>
+
+
+
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    function functionAccionCustom(pClave) {
+        refreshData();
+    }
+
+</script>

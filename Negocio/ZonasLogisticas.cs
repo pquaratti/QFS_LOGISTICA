@@ -62,6 +62,28 @@ namespace Negocio
             throw new NotImplementedException();
         }
 
+        public List<ZonaLogistica> ListarPorDeposito(int depoID)
+        {
+            List<ObjectParameter> filtros = new List<ObjectParameter>();
+            filtros.Add(new ObjectParameter() { Name = "zonlog_depo_id", Value = depoID });
+            filtros.Add(new ObjectParameter() { Name = "zonlog_activo", Value = 1 });
+            return ListarConFiltros(filtros);
+        }
+
+        public void ActualizarGeometria(int id, decimal x, decimal y, decimal largo, decimal ancho)
+        {
+            string query = "UPDATE Zonas_Logisticas SET zonlog_x=@x, zonlog_y=@y, zonlog_largo=@largo, zonlog_ancho=@ancho, zonlog_fec_mod=@fecha, zonlog_usu_id_mod=@usuario WHERE zonlog_id=@id";
+            List<System.Data.SqlClient.SqlParameter> p = new List<System.Data.SqlClient.SqlParameter>();
+            p.Add(new System.Data.SqlClient.SqlParameter("x", x));
+            p.Add(new System.Data.SqlClient.SqlParameter("y", y));
+            p.Add(new System.Data.SqlClient.SqlParameter("largo", largo));
+            p.Add(new System.Data.SqlClient.SqlParameter("ancho", ancho));
+            p.Add(new System.Data.SqlClient.SqlParameter("fecha", DateTime.Now));
+            p.Add(new System.Data.SqlClient.SqlParameter("usuario", Token.UserID));
+            p.Add(new System.Data.SqlClient.SqlParameter("id", id));
+            db.SQLExecuteNonQuery(query, p);
+        }
+
         #endregion
 
         #region Mappers
