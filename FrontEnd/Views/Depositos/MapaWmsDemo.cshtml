@@ -1172,11 +1172,11 @@
                 }
 
                 function crearMaterialPlacasEstanteria(repeatX, repeatY) {
-                    var colorMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/painted_metal_shutter_diff_1k.jpg")', repeatX, repeatY, true);
-                    var normalMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/painted_metal_shutter_nor_gl_1k.jpg")', repeatX, repeatY, false);
-                    var roughnessMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/painted_metal_shutter_rough_1k.jpg")', repeatX, repeatY, false);
-                    var aoMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/painted_metal_shutter_ao_1k.jpg")', repeatX, repeatY, false);
-                    var metalnessMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/painted_metal_shutter_arm_1k.jpg")', repeatX, repeatY, false);
+                    var colorMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/color.jpg")', repeatX, repeatY, true);
+                    var normalMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/normal.jpg")', repeatX, repeatY, false);
+                    var roughnessMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/roughness.jpg")', repeatX, repeatY, false);
+                    var aoMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/ao.jpg")', repeatX, repeatY, false);
+                    var metalnessMap = cargarTexturaRepetida('@Url.Content("~/assets/textures/industrial_plate/arm.jpg")', repeatX, repeatY, false);
 
                     return new THREE.MeshStandardMaterial({
                         map: colorMap,
