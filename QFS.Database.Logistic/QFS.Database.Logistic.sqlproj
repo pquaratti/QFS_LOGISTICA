@@ -113,6 +113,7 @@
     <Build Include="dbo\Stored Procedures\sp_inv_subcategoria_producto_gestion.sql" />
     <Build Include="dbo\Stored Procedures\sp_inv_producto_gestion.sql" />
     <Build Include="dbo\Tables\Depositos_Pasillos.sql" />
+    <None Include="dbo\Catalogs\DataLocalidades.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Catalogs\DataAcciones.sql" />

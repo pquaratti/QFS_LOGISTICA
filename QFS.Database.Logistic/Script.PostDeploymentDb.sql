@@ -24,6 +24,7 @@ BEGIN
     :r .\dbo\Catalogs\DataUsuarios.sql
     :r .\dbo\Catalogs\DataUsuariosModulos.sql
     :r .\dbo\Catalogs\DataProvincias.sql
+    :r .\dbo\Catalogs\DataLocalidades.sql
     :r .\dbo\Catalogs\DataAreas.sql
 
     PRINT 'Datos maestros completados.'
