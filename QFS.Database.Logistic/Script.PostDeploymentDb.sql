@@ -12,6 +12,9 @@ Post-Deployment Script Template
 
 PRINT 'Iniciando Post-Deployment...'
 
+    :r .\dbo\Catalogs\DataProvincias.sql
+    :r .\dbo\Catalogs\DataLocalidades.sql
+
 IF '$(IsFirstDeploy)' = 'true'
 BEGIN
     PRINT 'Insertando datos maestros...'
