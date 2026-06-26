@@ -59,6 +59,11 @@ namespace Entidades
         public UbicacionLogistica()
         {
             this.ubilog_id = 0;
+            this.TipoUbicacion = new TipoUbicacionLogistica();
+            this.TipoManipulacion = new TipoManipulacionLogistica();
+            this.TipoRotacion = new TipoRotacionLogistica();
+            this.TipoEstado = new TipoEstadoUbicacionLogistica();
+            this.Zona = new ZonaLogistica();
             this.Planta = new Planta();
             this.Deposito = new Deposito();
             this.Pasillo = new DepositoPasillo();
