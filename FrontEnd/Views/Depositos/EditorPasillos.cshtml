@@ -32,6 +32,12 @@
         background-image: linear-gradient(#eef2f7 1px, transparent 1px), linear-gradient(90deg, #eef2f7 1px, transparent 1px);
         background-size: 20px 20px;
         cursor: crosshair;
+        touch-action: none;
+        user-select: none;
+    }
+
+    #canvasPasillos.dragging {
+        cursor: grabbing;
     }
 
     .wms-panel {
@@ -163,7 +169,7 @@
                 <button id="btnEliminarPasillo" type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Borrar</button>
             </div>
 
-            <p class="wms-help">Tip: hacé click en el plano para posicionar el pasillo. Las divisiones internas representan posiciones; las alturas se guardan como niveles operativos.</p>
+            <p class="wms-help">Tip: hacé click o arrastrá sobre el plano para posicionar el pasillo. Para mover uno existente, seleccion el pasillo y arrastralo; luego guardá los cambios.</p>
 
             <hr />
             <h6>Pasillos creados</h6>
@@ -178,6 +184,11 @@
     var pasilloSeleccionado = null;
     var canvas = document.getElementById('canvasPasillos');
     var ctx = canvas.getContext('2d');
+    var dragPasillo = null;
+    var dragOffsetX = 0;
+    var dragOffsetY = 0;
+    var dragMovido = false;
+    var dragActivo = false;
 
     $(document).ready(function () {
         cargarPasillos();
@@ -189,17 +200,23 @@
         $('#pasilloNombre').val('Pasillo ' + (pasillos.length + 1));
     });
 
+    $('#canvasPasillos').on('mousedown touchstart', iniciarArrastrePasillo);
+    $(document).on('mousemove touchmove', moverPasilloArrastrado);
+    $(document).on('mouseup touchend touchcancel', finalizarArrastrePasillo);
+
     $('#canvasPasillos').click(function (e) {
-        var rect = canvas.getBoundingClientRect();
-        var x = Math.round(e.clientX - rect.left);
-        var y = Math.round(e.clientY - rect.top);
-        var encontrado = buscarPasilloEnPunto(x, y);
+        if (dragMovido) {
+            dragMovido = false;
+            return;
+        }
+
+        var punto = obtenerPuntoCanvas(e);
+        var encontrado = buscarPasilloEnPunto(punto.x, punto.y);
 
         if (encontrado) {
             seleccionarPasillo(encontrado);
         } else {
-            $('#pasilloX').val(x);
-            $('#pasilloY').val(y);
+            posicionarFormularioEnCanvas(punto.x, punto.y);
             dibujar();
         }
     });
@@ -329,6 +346,82 @@
         dibujar();
     }
 
+        function obtenerPuntoCanvas(e) {
+            var evento = e.originalEvent || e;
+            var touch = evento.touches && evento.touches.length ? evento.touches[0] : (evento.changedTouches && evento.changedTouches.length ? evento.changedTouches[0] : evento);
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: Math.round(touch.clientX - rect.left),
+                y: Math.round(touch.clientY - rect.top)
+            };
+        }
+
+        function obtenerMedidasPasillo(p) {
+            var largo = Number(p.largo || 1);
+            var ancho = Number(p.ancho || 1);
+            return {
+                w: p.orientacion === 'V' ? ancho : largo,
+                h: p.orientacion === 'V' ? largo : ancho
+            };
+        }
+
+        function posicionarFormularioEnCanvas(x, y) {
+            var preview = leerFormularioComoPasillo();
+            var medidas = obtenerMedidasPasillo(preview);
+            $('#pasilloX').val(Math.max(0, Math.min(x, canvas.width - medidas.w)));
+            $('#pasilloY').val(Math.max(0, Math.min(y, canvas.height - medidas.h)));
+        }
+
+        function iniciarArrastrePasillo(e) {
+            var punto = obtenerPuntoCanvas(e);
+            var encontrado = buscarPasilloEnPunto(punto.x, punto.y);
+            dragMovido = false;
+            dragActivo = true;
+
+            if (encontrado) {
+                seleccionarPasillo(encontrado);
+                dragPasillo = encontrado;
+            } else if ($('#pasilloCodigo').val()) {
+                dragPasillo = leerFormularioComoPasillo();
+                posicionarFormularioEnCanvas(punto.x, punto.y);
+            } else {
+                dragActivo = false;
+                dragPasillo = null;
+                return;
+            }
+
+            dragOffsetX = punto.x - Number($('#pasilloX').val() || 0);
+            dragOffsetY = punto.y - Number($('#pasilloY').val() || 0);
+            $('#canvasPasillos').addClass('dragging');
+            e.preventDefault();
+        }
+
+        function moverPasilloArrastrado(e) {
+            if (!dragActivo || !dragPasillo) return;
+
+            var punto = obtenerPuntoCanvas(e);
+            var preview = leerFormularioComoPasillo();
+            var medidas = obtenerMedidasPasillo(preview);
+            var nuevoX = Math.max(0, Math.min(punto.x - dragOffsetX, canvas.width - medidas.w));
+            var nuevoY = Math.max(0, Math.min(punto.y - dragOffsetY, canvas.height - medidas.h));
+
+            if (Math.abs(Number($('#pasilloX').val() || 0) - nuevoX) > 1 || Math.abs(Number($('#pasilloY').val() || 0) - nuevoY) > 1) {
+                dragMovido = true;
+            }
+
+            $('#pasilloX').val(Math.round(nuevoX));
+            $('#pasilloY').val(Math.round(nuevoY));
+            dibujar();
+            e.preventDefault();
+        }
+
+        function finalizarArrastrePasillo() {
+            if (!dragActivo) return;
+            dragActivo = false;
+            dragPasillo = null;
+            $('#canvasPasillos').removeClass('dragging');
+        }
+
     function dibujar() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         pasillos.forEach(function (p) {
@@ -344,10 +437,9 @@
     function dibujarPasillo(p, seleccionado, preview) {
         var x = Number(p.x || 0);
         var y = Number(p.y || 0);
-        var largo = Number(p.largo || 1);
-        var ancho = Number(p.ancho || 1);
-        var w = p.orientacion === 'V' ? ancho : largo;
-        var h = p.orientacion === 'V' ? largo : ancho;
+        var medidas = obtenerMedidasPasillo(p);
+        var w = medidas.w;
+        var h = medidas.h;
         var posiciones = Number(p.posiciones || 1);
 
         ctx.fillStyle = preview ? 'rgba(16,185,129,0.25)' : (seleccionado ? '#34d399' : '#93c5fd');
@@ -375,8 +467,9 @@
     function buscarPasilloEnPunto(x, y) {
         for (var i = pasillos.length - 1; i >= 0; i--) {
             var p = pasillos[i];
-            var w = p.orientacion === 'V' ? Number(p.ancho) : Number(p.largo);
-            var h = p.orientacion === 'V' ? Number(p.largo) : Number(p.ancho);
+            var medidas = obtenerMedidasPasillo(p);
+            var w = medidas.w;
+            var h = medidas.h;
             if (x >= Number(p.x) && x <= Number(p.x) + w && y >= Number(p.y) && y <= Number(p.y) + h) return p;
         }
         return null;
