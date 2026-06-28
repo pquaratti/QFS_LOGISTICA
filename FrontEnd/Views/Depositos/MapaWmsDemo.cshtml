@@ -217,9 +217,37 @@
         margin: 0 auto;
         border: 2px solid #1f2937;
         border-radius: 14px;
-        background: linear-gradient(90deg, rgba(59, 130, 246, .08) 0 21%, transparent 21% 26%, rgba(59, 130, 246, .08) 26% 47%, transparent 47% 53%, rgba(59, 130, 246, .08) 53% 74%, transparent 74% 100%), repeating-linear-gradient(0deg, #f8fafc 0, #f8fafc 23px, #edf2f7 24px), repeating-linear-gradient(90deg, transparent 0, transparent 23px, rgba(148,163,184,.35) 24px);
+        background: #e5e7eb;
         overflow: hidden;
     }
+
+    .wms-zone2d {
+        position: absolute;
+        border: 3px solid #1f2937;
+        border-radius: 16px;
+        background: repeating-linear-gradient(0deg, #f8fafc 0, #f8fafc 23px, #edf2f7 24px), repeating-linear-gradient(90deg, transparent 0, transparent 23px, rgba(148,163,184,.35) 24px);
+        box-shadow: 0 14px 30px rgba(15, 23, 42, .18);
+        z-index: 0;
+    }
+
+        .wms-zone2d::before,
+        .wms-zone2d::after {
+            content: "";
+            position: absolute;
+            top: 12px;
+            bottom: 12px;
+            width: 8px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, .16);
+        }
+
+        .wms-zone2d::before {
+            left: 10px;
+        }
+
+        .wms-zone2d::after {
+            right: 10px;
+        }
 
     .wms-zone-title {
         position: absolute;
@@ -935,6 +963,7 @@
                 var filtroZonaActual = "Todas";
                 inicializarFiltroZonas();
                 var layoutPasillos = normalizarPasillosDeposito(pasillosDeposito);
+                var layoutZonas = normalizarZonasDeposito(zonasDeposito, layoutPasillos);
                 var ubicaciones = layoutPasillos.length
                     ? generarWmsDesdePasillos(layoutPasillos)
                     : generarDemoWms();
@@ -984,6 +1013,8 @@
                 var velocidadMovimiento = 0.16;
                 var meshes = [];
                 var rackFrames = [];
+                var depositoMeshes = [];
+                var carteles3d = [];
 
                 iniciar3d();
                 dibujar2d();
@@ -1029,13 +1060,20 @@
 
                 function reconstruirWmsPorZona() {
                     var origen = filtroZonaActual === 'Todas' ? pasillosDeposito : (pasillosDeposito || []).filter(function (p) { return String(p.zonaDbId || 0) === String(filtroZonaActual); });
+                    var zonasOrigen = filtroZonaActual === 'Todas' ? zonasDeposito : (zonasDeposito || []).filter(function (z) { return String(z.dbId || z.id || 0) === String(filtroZonaActual); });
                     layoutPasillos = normalizarPasillosDeposito(origen);
+                    layoutZonas = normalizarZonasDeposito(zonasOrigen, layoutPasillos);
                     ubicaciones = layoutPasillos.length ? generarWmsDesdePasillos(layoutPasillos) : [];
                     limitesDeposito3d = calcularLimitesDeposito3d();
                     meshes.forEach(function (m) { escena.remove(m); });
                     meshes = [];
                     rackFrames.forEach(function (m) { escena.remove(m); });
                     rackFrames = [];
+                    depositoMeshes.forEach(function (m) { escena.remove(m); });
+                    depositoMeshes = [];
+                    carteles3d.forEach(function (m) { escena.remove(m); });
+                    carteles3d = [];
+                    crearDeposito3d();
                     crearRacks3d();
                     crearUbicaciones3d();
                     crearCarteles3d();
@@ -1044,7 +1082,52 @@
                     actualizarKpis();
                     if (ubicaciones.length) seleccionar(ubicaciones[0], true);
                 }
+                
+                function normalizarZonasDeposito(zonas, pasillos) {
+                    zonas = zonas || [];
+                    pasillos = pasillos || [];
 
+                    var zonasNormalizadas = zonas.map(function (z, index) {
+                        var x = Number(z.x || z.depzon_x || 0);
+                        var y = Number(z.y || z.depzon_y || 0);
+                        var largo = Math.max(180, Number(z.largo || z.depzon_largo || 520));
+                        var ancho = Math.max(160, Number(z.ancho || z.depzon_ancho || 360));
+
+                        return {
+                            id: z.dbId || z.id || index + 1,
+                            codigo: z.codigo || z.depzon_codigo || ('Z' + pad(index + 1)),
+                            nombre: z.nombre || z.depzon_nombre || ('Zona ' + (index + 1)),
+                            x: x,
+                            y: y,
+                            largo: largo,
+                            ancho: ancho
+                        };
+                    });
+
+                    if (zonasNormalizadas.length) return zonasNormalizadas;
+
+                    var grupos = {};
+                    pasillos.forEach(function (p) {
+                        var key = p.zonaDbId || p.zonaCodigo || '0';
+                        if (!grupos[key]) {
+                            grupos[key] = { id: p.zonaDbId || key, codigo: p.zonaCodigo || 'Z' + key, nombre: p.zonaNombre || 'Zona ' + key, minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+                        }
+
+                        var anchoReal = p.orientacion === 'V' ? p.ancho : p.largo;
+                        var altoReal = p.orientacion === 'V' ? p.largo : p.ancho;
+                        grupos[key].minX = Math.min(grupos[key].minX, p.x);
+                        grupos[key].minY = Math.min(grupos[key].minY, p.y);
+                        grupos[key].maxX = Math.max(grupos[key].maxX, p.x + anchoReal);
+                        grupos[key].maxY = Math.max(grupos[key].maxY, p.y + altoReal);
+                    });
+
+                    return Object.keys(grupos).map(function (key, index) {
+                        var g = grupos[key];
+                        var margen = 55;
+                        return { id: g.id, codigo: g.codigo || ('Z' + pad(index + 1)), nombre: g.nombre || ('Zona ' + (index + 1)), x: g.minX - margen, y: g.minY - margen, largo: Math.max(180, g.maxX - g.minX + margen * 2), ancho: Math.max(160, g.maxY - g.minY + margen * 2) };
+                    });
+                }
+                    
                 function normalizarPasillosDeposito(pasillos) {
                     pasillos = pasillos || [];
                     return pasillos.map(function (p, index) {
@@ -1076,15 +1159,28 @@
                     });
                 }
 
-                function generarWmsDesdePasillos(pasillos) {
-                    var productos = ['Guantes nitrilo M', 'Barbijos KN95', 'Alcohol gel 500ml', 'Cajas ecommerce', 'Repuestos crticos', 'Insumos bloqueados', 'Cinta embalaje', 'Etiquetas trmicas'];
-                    var escala = .045;
+                function obtenerCentroPlanoLayout(pasillos) {
+                    if (layoutZonas.length) {
+                        var minZonaX = Math.min.apply(null, layoutZonas.map(function (z) { return z.x; }));
+                        var minZonaY = Math.min.apply(null, layoutZonas.map(function (z) { return z.y; }));
+                        var maxZonaX = Math.max.apply(null, layoutZonas.map(function (z) { return z.x + z.largo; }));
+                        var maxZonaY = Math.max.apply(null, layoutZonas.map(function (z) { return z.y + z.ancho; }));
+                        return { x: (minZonaX + maxZonaX) / 2, y: (minZonaY + maxZonaY) / 2 };
+                    }
+
                     var minX = Math.min.apply(null, pasillos.map(function (p) { return p.x; }));
                     var minY = Math.min.apply(null, pasillos.map(function (p) { return p.y; }));
                     var maxX = Math.max.apply(null, pasillos.map(function (p) { return p.x + (p.orientacion === 'V' ? p.ancho : p.largo); }));
                     var maxY = Math.max.apply(null, pasillos.map(function (p) { return p.y + (p.orientacion === 'V' ? p.largo : p.ancho); }));
-                    var centroX = (minX + maxX) / 2;
-                    var centroY = (minY + maxY) / 2;
+                    return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+                }
+
+                function generarWmsDesdePasillos(pasillos) {
+                    var productos = ['Guantes nitrilo M', 'Barbijos KN95', 'Alcohol gel 500ml', 'Cajas ecommerce', 'Repuestos crticos', 'Insumos bloqueados', 'Cinta embalaje', 'Etiquetas trmicas'];
+                    var escala = .045;
+                    var centroPlano = obtenerCentroPlanoLayout(pasillos);
+                    var centroX = centroPlano.x;
+                    var centroY = centroPlano.y;
                     var datos = [];
                     var id = 1;
 
@@ -1134,7 +1230,23 @@
                     var minZ = Infinity;
                     var maxZ = -Infinity;
 
-                    if (layoutPasillos.length) {
+                    if (layoutZonas.length) {
+                        var escalaZonas = .045;
+                        var minZonaX = Math.min.apply(null, layoutZonas.map(function (z) { return z.x; }));
+                        var minZonaY = Math.min.apply(null, layoutZonas.map(function (z) { return z.y; }));
+                        var maxZonaX = Math.max.apply(null, layoutZonas.map(function (z) { return z.x + z.largo; }));
+                        var maxZonaY = Math.max.apply(null, layoutZonas.map(function (z) { return z.y + z.ancho; }));
+                        var centroZonaX = (minZonaX + maxZonaX) / 2;
+                        var centroZonaY = (minZonaY + maxZonaY) / 2;
+
+                        layoutZonas.forEach(function (z) {
+                            z.layout3d = { x: (z.x + z.largo / 2 - centroZonaX) * escalaZonas, z: (z.y + z.ancho / 2 - centroZonaY) * escalaZonas, largo: z.largo * escalaZonas, ancho: z.ancho * escalaZonas };
+                            minX = Math.min(minX, z.layout3d.x - z.layout3d.largo / 2);
+                            maxX = Math.max(maxX, z.layout3d.x + z.layout3d.largo / 2);
+                            minZ = Math.min(minZ, z.layout3d.z - z.layout3d.ancho / 2);
+                            maxZ = Math.max(maxZ, z.layout3d.z + z.layout3d.ancho / 2);
+                        });
+                    } else if (layoutPasillos.length) {
                         layoutPasillos.forEach(function (p) {
                             if (!p.layout3d) return;
 
@@ -1486,8 +1598,29 @@
                     window.addEventListener('keyup', keyupMovimiento, false);
                     window.addEventListener('resize', resize3d, false);
                 }
+                
+                function agregarElementoDeposito3d(elemento) {
+                    escena.add(elemento);
+                    depositoMeshes.push(elemento);
+                    return elemento;
+                }
 
                 function crearDeposito3d() {
+                    var materialPared = new THREE.MeshStandardMaterial({
+                        color: 0x1e293b,
+                        transparent: true,
+                        opacity: .42,
+                        roughness: .9,
+                        metalness: 0
+                    });
+
+                    if (layoutZonas.length) {
+                        layoutZonas.forEach(function (zona, index) {
+                            crearZonaDeposito3d(zona, materialPared, index);
+                        });
+                        return;
+                    }
+
                     var materialPisoDeposito = crearMaterialPisoDeposito(6, 4);
 
                     var piso = new THREE.Mesh(
@@ -1497,23 +1630,15 @@
 
                     piso.position.set(limitesDeposito3d.centroX, -.08, limitesDeposito3d.centroZ);
                     piso.receiveShadow = true;
-                    escena.add(piso);
-
-                    var materialPared = new THREE.MeshStandardMaterial({
-                        color: 0x1e293b,
-                        transparent: true,
-                        opacity: .42,
-                        roughness: .9,
-                        metalness: 0
-                    });
+                    agregarElementoDeposito3d(piso);
 
                     var paredFondo = new THREE.Mesh(new THREE.BoxGeometry(limitesDeposito3d.ancho, 2.4, .12), materialPared);
                     paredFondo.position.set(limitesDeposito3d.centroX, 1.15, limitesDeposito3d.minZ - .05);;
-                    escena.add(paredFondo);
+                    agregarElementoDeposito3d(paredFondo);
 
                     var paredIzq = new THREE.Mesh(new THREE.BoxGeometry(.12, 2.4, limitesDeposito3d.profundidad), materialPared);
                     paredIzq.position.set(limitesDeposito3d.minX - .05, 1.15, limitesDeposito3d.centroZ);
-                    escena.add(paredIzq);
+                    agregarElementoDeposito3d(paredIzq);
 
                     var paredDer = new THREE.Mesh(new THREE.BoxGeometry(.12, 2.4, limitesDeposito3d.profundidad), materialPared);
                     paredDer.position.set(limitesDeposito3d.maxX + .05, 1.15, limitesDeposito3d.centroZ);
@@ -1524,7 +1649,42 @@
                         crearMaterialPisoDeposito(Math.max(2, limitesDeposito3d.ancho / 4), 1)
                     );
                     zonaDock.position.set(limitesDeposito3d.centroX, .02, limitesDeposito3d.dockZ);
-                    escena.add(zonaDock);
+                    agregarElementoDeposito3d(zonaDock);
+                }
+
+                function crearZonaDeposito3d(zona, materialPared, index) {
+                    if (!zona.layout3d) return;
+
+                    var info = zona.layout3d;
+                    var piso = new THREE.Mesh(prepararUv2(new THREE.BoxGeometry(info.largo, .08, info.ancho)), crearMaterialPisoDeposito(Math.max(2, info.largo / 3), Math.max(2, info.ancho / 3)));
+                    piso.position.set(info.x, -.08, info.z);
+                    piso.receiveShadow = true;
+                    agregarElementoDeposito3d(piso);
+
+                    var alturaPared = 2.4;
+                    var yPared = 1.15;
+                    var espesor = .12;
+                    var paredFondo = new THREE.Mesh(new THREE.BoxGeometry(info.largo, alturaPared, espesor), materialPared);
+                    paredFondo.position.set(info.x, yPared, info.z - info.ancho / 2 - espesor / 2);
+                    agregarElementoDeposito3d(paredFondo);
+
+                    var paredFrente = new THREE.Mesh(new THREE.BoxGeometry(Math.max(.1, info.largo * .34), alturaPared, espesor), materialPared);
+                    paredFrente.position.set(info.x - info.largo * .22, yPared, info.z + info.ancho / 2 + espesor / 2);
+                    agregarElementoDeposito3d(paredFrente);
+
+                    var paredFrenteDer = paredFrente.clone();
+                    paredFrenteDer.position.x = info.x + info.largo * .22;
+                    agregarElementoDeposito3d(paredFrenteDer);
+
+                    var paredIzq = new THREE.Mesh(new THREE.BoxGeometry(espesor, alturaPared, info.ancho), materialPared);
+                    paredIzq.position.set(info.x - info.largo / 2 - espesor / 2, yPared, info.z);
+                    agregarElementoDeposito3d(paredIzq);
+
+                    var paredDer = new THREE.Mesh(new THREE.BoxGeometry(espesor, alturaPared, info.ancho), materialPared);
+                    paredDer.position.set(info.x + info.largo / 2 + espesor / 2, yPared, info.z);
+                    agregarElementoDeposito3d(paredDer);
+
+                    crearTextoSprite(zona.codigo + ' - ' + zona.nombre, info.x, 3.15, info.z - info.ancho / 2 + .55);
                 }
 
                 function crearRacks3d() {
@@ -1773,10 +1933,18 @@
                     sprite.position.set(x, y, z);
                     sprite.scale.set(2.8, .7, 1);
                     escena.add(sprite);
+                    carteles3d.push(sprite);
+                }
+
+                function limpiarMapa2dDinamico() {
+                    $(map2d).find('.wms-zone2d, .wms-aisle, .wms-bin2d, .wms-rack-label').remove();
                 }
 
                 function dibujar2d() {
+                    limpiarMapa2dDinamico();
+
                     if (layoutPasillos.length) {
+                        $(map2d).find('.wms-zone-title, .wms-dock, .wms-gate').remove();
                         dibujar2dDesdePasillos();
                         return;
                     }
@@ -1818,13 +1986,25 @@
                 function dibujar2dDesdePasillos() {
                     var anchoMapa = map2d.clientWidth || 1100;
                     var altoMapa = map2d.clientHeight || 620;
-                    var minX = Math.min.apply(null, layoutPasillos.map(function (p) { return p.x; }));
-                    var minY = Math.min.apply(null, layoutPasillos.map(function (p) { return p.y; }));
-                    var maxX = Math.max.apply(null, layoutPasillos.map(function (p) { return p.x + (p.orientacion === 'V' ? p.ancho : p.largo); }));
-                    var maxY = Math.max.apply(null, layoutPasillos.map(function (p) { return p.y + (p.orientacion === 'V' ? p.largo : p.ancho); }));
+                    var elementosEscala = layoutZonas.length ? layoutZonas : layoutPasillos;
+                    var minX = Math.min.apply(null, elementosEscala.map(function (p) { return p.x; }));
+                    var minY = Math.min.apply(null, elementosEscala.map(function (p) { return p.y; }));
+                    var maxX = Math.max.apply(null, elementosEscala.map(function (p) { return p.x + (p.orientacion === 'V' ? p.ancho : p.largo); }));
+                    var maxY = Math.max.apply(null, elementosEscala.map(function (p) { return p.y + (p.orientacion === 'V' ? p.largo : p.ancho); }));
                     var escala = Math.min((anchoMapa - 180) / Math.max(1, maxX - minX), (altoMapa - 160) / Math.max(1, maxY - minY));
                     var offsetX = (anchoMapa - (maxX - minX) * escala) / 2;
                     var offsetY = 70;
+
+                    layoutZonas.forEach(function (z) {
+                        var zone = document.createElement('div');
+                        zone.className = 'wms-zone2d';
+                        zone.style.left = (offsetX + (z.x - minX) * escala) + 'px';
+                        zone.style.top = (offsetY + (z.y - minY) * escala) + 'px';
+                        zone.style.width = (z.largo * escala) + 'px';
+                        zone.style.height = (z.ancho * escala) + 'px';
+                        zone.title = z.codigo + ' - ' + z.nombre;
+                        map2d.insertBefore(zone, map2d.firstChild);
+                    });
 
                     layoutPasillos.forEach(function (p) {
                         var esVertical = p.orientacion === 'V';
