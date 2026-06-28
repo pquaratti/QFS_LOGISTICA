@@ -6,6 +6,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     string _ControllerName = "Depositos";
     var _pasillosWms = ViewBag.WmsPasillos ?? new object[0];
+    var _zonasWms = ViewBag.WmsZonas ?? new object[0];
 }
 
 <style>
@@ -774,6 +775,8 @@
                     <button id="btnVistaSupervisor" type="button" class="wms-tab">Visión supervisor</button>
                 </div>
 
+                <select id="filtroZona" class="form-control"></select>
+
                 <select id="filtroEstado" class="form-control">
                     <option value="Todos">Todos los estados</option>
                     <option value="Libre">Libre</option>
@@ -927,7 +930,10 @@
                 var colorPicking = 0xfb923c;
                 var colorRecepcion = 0x06b6d4;
 
+                var zonasDeposito = @Html.Raw(Json.Encode(_zonasWms));
                 var pasillosDeposito = @Html.Raw(Json.Encode(_pasillosWms));
+                var filtroZonaActual = "Todas";
+                inicializarFiltroZonas();
                 var layoutPasillos = normalizarPasillosDeposito(pasillosDeposito);
                 var ubicaciones = layoutPasillos.length
                     ? generarWmsDesdePasillos(layoutPasillos)
@@ -999,6 +1005,7 @@
                 });
 
                 $('#filtroEstado').on('change', aplicarFiltros);
+                $('#filtroZona').on('change', function () { filtroZonaActual = $(this).val(); reconstruirWmsPorZona(); });
                 $('#buscarProducto').on('keyup', function (e) {
                     aplicarFiltros();
 
@@ -1013,6 +1020,30 @@
                 $('#btnGenerarPicking').on('click', generarPedidoPickingDemo);
                 $('#btnGenerarRecepcion').on('click', generarRecepcionDemo);
                 $('#btnSimularIngreso').on('click', simularIngreso);
+
+                function inicializarFiltroZonas() {
+                    var html = '<option value="Todas">Todas las zonas</option>';
+                    (zonasDeposito || []).forEach(function (z) { html += '<option value="' + z.dbId + '">' + z.codigo + ' - ' + z.nombre + '</option>'; });
+                    $('#filtroZona').html(html);
+                }
+
+                function reconstruirWmsPorZona() {
+                    var origen = filtroZonaActual === 'Todas' ? pasillosDeposito : (pasillosDeposito || []).filter(function (p) { return String(p.zonaDbId || 0) === String(filtroZonaActual); });
+                    layoutPasillos = normalizarPasillosDeposito(origen);
+                    ubicaciones = layoutPasillos.length ? generarWmsDesdePasillos(layoutPasillos) : [];
+                    limitesDeposito3d = calcularLimitesDeposito3d();
+                    meshes.forEach(function (m) { escena.remove(m); });
+                    meshes = [];
+                    rackFrames.forEach(function (m) { escena.remove(m); });
+                    rackFrames = [];
+                    crearRacks3d();
+                    crearUbicaciones3d();
+                    crearCarteles3d();
+                    dibujar2d();
+                    aplicarFiltros();
+                    actualizarKpis();
+                    if (ubicaciones.length) seleccionar(ubicaciones[0], true);
+                }
 
                 function normalizarPasillosDeposito(pasillos) {
                     pasillos = pasillos || [];
@@ -1037,7 +1068,10 @@
                             posiciones: posiciones,
                             alturas: alturas,
                             alturaNivel: Number(p.alturaNivel || 100),
-                            pesoMaximo: Number(p.pesoMaximo || 800)
+                            pesoMaximo: Number(p.pesoMaximo || 800),
+                            zonaDbId: p.zonaDbId || 0,
+                            zonaCodigo: p.zonaCodigo || '',
+                            zonaNombre: p.zonaNombre || 'Sin zona'
                         };
                     });
                 }
@@ -1083,7 +1117,7 @@
                                     cantidad: cantidad, disponible: estado === 'Libre' ? 0 : Math.max(0, cantidad - reservado), reservado: reservado,
                                     lote: estado === 'Libre' ? '-' : 'LT-2026-' + pad(indice), vencimiento: estado === 'Libre' ? '-' : '2027-03-' + pad((indice % 27) + 1),
                                     ultimoMovimiento: '2026-06-' + pad((indice % 23) + 1) + ' 10:' + pad(indice % 60),
-                                    capacidadMaxima: '1 pallet / ' + (pasillo.pesoMaximo || 800) + ' kg', zona: pasillo.nombre,
+                                    capacidadMaxima: '1 pallet / ' + (pasillo.pesoMaximo || 800) + ' kg', zona: pasillo.zonaNombre || pasillo.nombre,
                                     movimientos: crearMovimientos(estado, codigo, cantidad, reservado, indice)
                                 });
                             }

@@ -30,6 +30,23 @@ namespace FrontEnd.Controllers
                 ? new List<Entidades.DepositoPasillo>()
                 : new Negocio.DepositosPasillos(GetToken()).ListarPorDeposito(depositoID);
 
+            List<Entidades.DepositoZona> zonas = string.IsNullOrWhiteSpace(depositoID)
+                ? new List<Entidades.DepositoZona>()
+                : new Negocio.DepositosZonas(GetToken()).ListarPorDeposito(depositoID);
+
+            ViewBag.WmsZonas = zonas.Select(x => new
+            {
+                id = x.IdEncriptado,
+                dbId = x.depzon_id,
+                codigo = x.depzon_codigo,
+                nombre = x.depzon_nombre,
+                descripcion = x.depzon_descripcion,
+                x = x.depzon_x,
+                y = x.depzon_y,
+                largo = x.depzon_largo,
+                ancho = x.depzon_ancho
+            }).ToList();
+
             ViewBag.WmsPasillos = pasillos.Select(x => new
             {
                 id = x.IdEncriptado,
@@ -45,7 +62,11 @@ namespace FrontEnd.Controllers
                 posiciones = x.depopas_cantidad_posiciones,
                 alturas = x.depopas_cantidad_alturas,
                 alturaNivel = x.depopas_altura_nivel,
-                pesoMaximo = x.depopas_peso_maximo
+                pesoMaximo = x.depopas_peso_maximo,
+                zonaId = x.Zona != null ? x.Zona.IdEncriptado : "",
+                zonaDbId = x.Zona != null ? x.Zona.depzon_id : 0,
+                zonaCodigo = x.Zona != null ? x.Zona.depzon_codigo : "",
+                zonaNombre = x.Zona != null ? x.Zona.depzon_nombre : ""
             }).ToList();
 
             return View(deposito);
@@ -54,6 +75,18 @@ namespace FrontEnd.Controllers
         public ActionResult EditorPasillos(string depositoID)
         {
             Entidades.Deposito deposito = new Negocio.Depositos(GetToken()).ObtenerPorID(depositoID);
+            ViewBag.EditorZonas = new Negocio.DepositosZonas(GetToken()).ListarPorDeposito(depositoID).Select(x => new
+            {
+                id = x.IdEncriptado,
+                dbId = x.depzon_id,
+                codigo = x.depzon_codigo,
+                nombre = x.depzon_nombre,
+                descripcion = x.depzon_descripcion,
+                x = x.depzon_x,
+                y = x.depzon_y,
+                largo = x.depzon_largo,
+                ancho = x.depzon_ancho
+            }).ToList();
             return View(deposito);
         }
 
@@ -76,10 +109,29 @@ namespace FrontEnd.Controllers
                 posiciones = x.depopas_cantidad_posiciones,
                 alturas = x.depopas_cantidad_alturas,
                 alturaNivel = x.depopas_altura_nivel,
-                pesoMaximo = x.depopas_peso_maximo
+                pesoMaximo = x.depopas_peso_maximo,
+                zonaId = x.Zona != null ? x.Zona.IdEncriptado : "",
+                zonaDbId = x.Zona != null ? x.Zona.depzon_id : 0,
+                zonaCodigo = x.Zona != null ? x.Zona.depzon_codigo : "",
+                zonaNombre = x.Zona != null ? x.Zona.depzon_nombre : ""
             });
 
             return Json(new { Result = true, Data = data }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult ListarZonas(string depositoID)
+        {
+            var lst = new Negocio.DepositosZonas(GetToken()).ListarPorDeposito(depositoID);
+            var data = lst.Select(x => new { id = x.IdEncriptado, dbId = x.depzon_id, codigo = x.depzon_codigo, nombre = x.depzon_nombre, descripcion = x.depzon_descripcion, x = x.depzon_x, y = x.depzon_y, largo = x.depzon_largo, ancho = x.depzon_ancho });
+            return Json(new { Result = true, Data = data }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult SaveZona(Entidades.DepositoZona obj)
+        {
+            ObjectMessage oM = new Negocio.DepositosZonas(GetToken()).Save(obj);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

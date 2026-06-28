@@ -2,6 +2,7 @@
 (
 	[depopas_id]                  INT             IDENTITY (1, 1) NOT NULL,
     [depopas_depo_id]             INT             NULL,
+    [depopas_depzon_id]           INT             NULL,
     [depopas_org_id]              INT             NULL,
     [depopas_codigo]              NVARCHAR (30)   NULL,
     [depopas_nombre]              NVARCHAR (100)  NULL,
@@ -23,8 +24,13 @@
     [depopas_usu_id_baja]         INT             NULL,
     [depopas_activo]              BIT             NULL,
     CONSTRAINT [PK_Depositos_Pasillos] PRIMARY KEY CLUSTERED ([depopas_id] ASC),
-    CONSTRAINT [FK_Depositos_Pasillos_Depositos] FOREIGN KEY ([depopas_depo_id]) REFERENCES [dbo].[Depositos] ([depo_id])
+    CONSTRAINT [FK_Depositos_Pasillos_Depositos] FOREIGN KEY ([depopas_depo_id]) REFERENCES [dbo].[Depositos] ([depo_id]),
+    CONSTRAINT [FK_Depositos_Pasillos_Zonas] FOREIGN KEY ([depopas_depzon_id]) REFERENCES [dbo].[Depositos_Zonas] ([depzon_id])
 );
 GO
 
 CREATE INDEX [IX_Depositos_Pasillos_Deposito] ON [dbo].[Depositos_Pasillos] ([depopas_depo_id], [depopas_activo]);
+
+GO
+
+CREATE INDEX [IX_Depositos_Pasillos_Zona] ON [dbo].[Depositos_Pasillos] ([depopas_depzon_id], [depopas_activo]);

@@ -31,6 +31,9 @@ namespace Negocio
             if (string.IsNullOrWhiteSpace(obj.depopas_codigo))
                 throw new Exception("Debe ingresar el código del pasillo.");
 
+            if (obj.Zona == null || obj.Zona.depzon_id <= 0)
+                throw new Exception("Debe seleccionar una zona para el pasillo.");
+
             if (string.IsNullOrWhiteSpace(obj.depopas_nombre))
                 obj.depopas_nombre = obj.depopas_codigo;
 
@@ -165,6 +168,7 @@ namespace Negocio
         {
             DepositoPasillo obj = MapearSimple(dr);
             obj.Deposito = Depositos.MapearStatic(dr);
+            obj.Zona = DepositosZonas.MapearStatic(dr);
             return obj;
         }
 
@@ -189,6 +193,7 @@ namespace Negocio
         {
             sQuery = "  SELECT " + sTOP + " * FROM Depositos_Pasillos ";
             sQuery += " LEFT JOIN Depositos ON depo_id = depopas_depo_id ";
+            sQuery += " LEFT JOIN Depositos_Zonas ON depzon_id = depopas_depzon_id ";
 
             if ((sWHERE != ""))
                 sQuery += " WHERE " + sWHERE;

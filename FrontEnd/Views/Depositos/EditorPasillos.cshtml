@@ -5,6 +5,7 @@
     ViewBag.Subtitle = "Diseño 2D de depósito";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string _ControllerName = "Depositos";
+    var _zonasEditor = ViewBag.EditorZonas ?? new object[0];
 }
 
 <style>
@@ -72,6 +73,7 @@
     <div class="col-md-4 pr-0">
         <div class="d-flex flex-row-reverse">
             <a href="@Url.Action("Index", _ControllerName)" class="btn btn-xs btn-secondary m-1"><i class="fa fa-arrow-left"></i> Volver</a>
+            <button id="btnNuevaZona" type="button" class="btn btn-xs btn-primary m-1"><i class="fa fa-object-group"></i> Zona</button>
             <button id="btnNuevoPasillo" type="button" class="btn btn-xs btn-success m-1"><i class="fa fa-plus"></i> Pasillo</button>
         </div>
     </div>
@@ -79,7 +81,7 @@
 
 <div class="card card-body">
     <div class="alert alert-info mb-3">
-        Dibujá o seleccioná un pasillo para configurar posiciones y alturas. Al guardar se generan ubicaciones del tipo <strong>P01-P001-N01</strong>, una por cada posición/nivel.
+        Creá zonas visuales separadas y luego dibujá o seleccioná un pasillo para configurar posiciones y alturas. Al guardar se generan ubicaciones del tipo <strong>P01-P001-N01</strong>, una por cada posición/nivel.
     </div>
 
     <div class="wms-editor-layout">
@@ -89,6 +91,7 @@
 
         <div class="card card-body wms-panel">
             <h6 class="mb-3">Configuración del pasillo</h6>
+            <div class="form-group"><label>Zona</label><select id="pasilloZona" class="form-control form-control-sm"></select></div>
             <input type="hidden" id="pasilloID" value="0" />
             <input type="hidden" id="depositoID" value="@Model.depo_id" />
 
@@ -172,6 +175,9 @@
             <p class="wms-help">Tip: hacé click o arrastrá sobre el plano para posicionar el pasillo. Para mover uno existente, seleccion el pasillo y arrastralo; luego guardá los cambios.</p>
 
             <hr />
+            <h6>Zonas</h6>
+            <div id="listaZonas" class="list-group small mb-3"></div>
+            <hr />
             <h6>Pasillos creados</h6>
             <div id="listaPasillos" class="list-group small"></div>
         </div>
@@ -180,6 +186,8 @@
 
 @section scripts{
     <script>
+    var zonas = @Html.Raw(Json.Encode(_zonasEditor));
+    var zonaSeleccionada = null;
     var pasillos = [];
     var pasilloSeleccionado = null;
     var canvas = document.getElementById('canvasPasillos');
@@ -191,8 +199,17 @@
     var dragActivo = false;
 
     $(document).ready(function () {
+        renderZonas();
         cargarPasillos();
     });
+
+    $('#btnNuevaZona').click(function () {
+        var n = zonas.length + 1;
+        var data = { 'obj.Deposito.depo_id': $('#depositoID').val(), 'obj.depzon_codigo': 'Z' + String(n).padStart(2, '0'), 'obj.depzon_nombre': 'Zona ' + n, 'obj.depzon_x': n === 1 ? 30 : 640, 'obj.depzon_y': 30, 'obj.depzon_largo': 520, 'obj.depzon_ancho': 540 };
+        $.post('@Url.Action("SaveZona", _ControllerName)', data, function (response) { if (response.Result.Success) cargarZonas(); else alert(response.Result.Message || 'No se pudo guardar la zona.'); });
+    });
+
+    $('#pasilloZona').change(function () { zonaSeleccionada = zonas.find(function (z) { return String(z.dbId) === String($('#pasilloZona').val()); }) || null; dibujar(); });
 
     $('#btnNuevoPasillo').click(function () {
         limpiarFormulario();
@@ -247,6 +264,10 @@
         actualizarPreview();
     });
 
+    function cargarZonas() {
+        $.get('@Url.Action("ListarZonas", _ControllerName)', { depositoID: '@Model.IdEncriptado' }, function (response) { zonas = response.Data || []; renderZonas(); dibujar(); });
+    }
+
     function cargarPasillos() {
         $.get('@Url.Action("ListarPasillos", _ControllerName)', { depositoID: '@Model.IdEncriptado' }, function (response) {
             pasillos = response.Data || [];
@@ -266,6 +287,7 @@
             'obj.Deposito.depo_id': $('#depositoID').val(),
             'obj.depopas_codigo': $('#pasilloCodigo').val(),
             'obj.depopas_nombre': $('#pasilloNombre').val(),
+            'obj.Zona.depzon_id': $('#pasilloZona').val() || 0,
             'obj.depopas_x': $('#pasilloX').val(),
             'obj.depopas_y': $('#pasilloY').val(),
             'obj.depopas_largo': $('#pasilloLargo').val(),
@@ -286,6 +308,18 @@
                 alert(response.Result.Message || 'No se pudo guardar el pasillo.');
             }
         });
+    }
+
+    function renderZonas() {
+        var options = '<option value="0">Seleccione zona</option>';
+        var html = '';
+        zonas.forEach(function (z) {
+            options += '<option value="' + z.dbId + '">' + z.codigo + ' - ' + z.nombre + '</option>';
+            html += '<button type="button" class="list-group-item list-group-item-action wms-zona-item" data-id="' + z.dbId + '"><strong>' + z.codigo + '</strong> - ' + z.nombre + '</button>';
+        });
+        $('#pasilloZona').html(options);
+        $('#listaZonas').html(html || '<div class="text-muted">Todava no hay zonas. Us + Zona para crear dos reas separadas.</div>');
+        $('.wms-zona-item').click(function () { var zonaId = $(this).data('id'); zonaSeleccionada = zonas.find(function (z) { return String(z.dbId) === String(zonaId); }); if (zonaSeleccionada) $('#pasilloZona').val(zonaSeleccionada.dbId); dibujar(); });
     }
 
     function renderLista() {
@@ -319,6 +353,8 @@
         $('#pasilloAlturas').val(p.alturas);
         $('#pasilloAlturaNivel').val(p.alturaNivel);
         $('#pasilloPesoMaximo').val(p.pesoMaximo);
+        $('#pasilloZona').val(p.zonaDbId || 0);
+        zonaSeleccionada = zonas.find(function (z) { return String(z.dbId) === String(p.zonaDbId || 0); }) || null;
         $('.wms-pasillo-item').removeClass('active');
         $('.wms-pasillo-item[data-id="' + p.id + '"]').addClass('active');
         dibujar();
@@ -338,6 +374,7 @@
         $('#pasilloAlturas').val('3');
         $('#pasilloAlturaNivel').val('100');
         $('#pasilloPesoMaximo').val('0');
+        if (zonaSeleccionada) $('#pasilloZona').val(zonaSeleccionada.dbId);
         $('.wms-pasillo-item').removeClass('active');
         dibujar();
     }
@@ -424,6 +461,7 @@
 
     function dibujar() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        zonas.forEach(dibujarZona);
         pasillos.forEach(function (p) {
             var estaSeleccionado = pasilloSeleccionado && p.id === pasilloSeleccionado.id;
             dibujarPasillo(estaSeleccionado ? leerFormularioComoPasillo() : p, estaSeleccionado);
@@ -432,6 +470,14 @@
         if (!pasilloSeleccionado && $('#pasilloCodigo').val()) {
             dibujarPasillo(leerFormularioComoPasillo(), true, true);
         }
+    }
+
+    function dibujarZona(z) {
+        var x = Number(z.x || 0), y = Number(z.y || 0), w = Number(z.largo || 520), h = Number(z.ancho || 260);
+        ctx.fillStyle = zonaSeleccionada && String(zonaSeleccionada.dbId) === String(z.dbId) ? 'rgba(59,130,246,0.12)' : 'rgba(148,163,184,0.10)';
+        ctx.strokeStyle = zonaSeleccionada && String(zonaSeleccionada.dbId) === String(z.dbId) ? '#2563eb' : '#94a3b8';
+        ctx.setLineDash([8, 6]); ctx.lineWidth = 2; ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h); ctx.setLineDash([]);
+        ctx.fillStyle = '#334155'; ctx.font = 'bold 13px Arial'; ctx.fillText((z.codigo || 'Z') + ' - ' + (z.nombre || 'Zona'), x + 10, y + 20);
     }
 
     function dibujarPasillo(p, seleccionado, preview) {
@@ -486,7 +532,8 @@
             ancho: $('#pasilloAncho').val(),
             orientacion: $('#pasilloOrientacion').val(),
             posiciones: $('#pasilloPosiciones').val(),
-            alturas: $('#pasilloAlturas').val()
+            alturas: $('#pasilloAlturas').val(),
+            zonaDbId: $('#pasilloZona').val() || 0
         };
     }
     </script>

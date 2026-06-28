@@ -13,6 +13,10 @@ namespace Entidades
         [Required(ErrorMessage = "Campo requerido")]
         public Deposito Deposito { get; set; }
 
+        [KeyRelation]
+        [Display(Name = "Zona")]
+        public DepositoZona Zona { get; set; }
+
         [Display(Name = "Código")]
         [Required(ErrorMessage = "Campo requerido")]
         public string depopas_codigo { get; set; }
@@ -58,6 +62,7 @@ namespace Entidades
         {
             depopas_id = 0;
             Deposito = new Deposito();
+            Zona = new DepositoZona();
             depopas_orientacion = "H";
             depopas_cantidad_posiciones = 1;
             depopas_cantidad_alturas = 1;
