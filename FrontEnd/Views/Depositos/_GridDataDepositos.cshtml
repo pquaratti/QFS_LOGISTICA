@@ -28,6 +28,11 @@
                         <i class="fa fa-cubes"></i>
                     </a>
 
+                    <a href="@Url.Action("Inventario", _ControllerName, new { depositoID = renglon.IdEncriptado })"
+                       class="btn btn-warning btn-sm btn-grid" title="Ver ocupación por posiciones">
+                        <i class="fa fa-th"></i>
+                    </a>
+
                     <a href="@Url.Action("EditorPasillos", _ControllerName, new { depositoID = renglon.IdEncriptado })"
                        class="btn btn-success btn-sm btn-grid" title="Diseñar pasillos">
                         <i class="fa fa-map"></i>

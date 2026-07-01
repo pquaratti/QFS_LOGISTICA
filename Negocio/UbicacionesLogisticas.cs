@@ -107,6 +107,7 @@ namespace Negocio
             UbicacionLogistica obj = MapearSimple(dr);
             obj.Deposito = Depositos.MapearStatic(dr);
             obj.Pasillo = DepositosPasillos.MapearStatic(dr);
+            obj.TipoEstado = TipoEstadosUbicacionesLogisticas.MapearStatic(dr);
             return obj;
         }
 
@@ -132,6 +133,7 @@ namespace Negocio
             sQuery = "  SELECT " + sTOP + " * FROM Ubicaciones_Logisticas ";
             sQuery += " LEFT JOIN Depositos ON depo_id = ubilog_depo_id ";
             sQuery += " LEFT JOIN Depositos_Pasillos ON depopas_id = ubilog_pasillo_id ";
+            sQuery += " LEFT JOIN Tipo_Estado_Ubicacion_Logistica ON teubilog_id = ubilog_teubilog_id ";
 
             if ((sWHERE != ""))
                 sQuery += " WHERE " + sWHERE;
@@ -150,6 +152,48 @@ namespace Negocio
             parametros.Add(new SqlParameter("usuario", Token.UserID));
             parametros.Add(new SqlParameter("pasilloID", pasilloID));
             db.SQLExecuteNonQuery(query, parametros);
+        }
+
+        public ObjectMessage GuardarEstadoWms(int ubicacionID, string estado)
+        {
+            ObjectMessage oM = new ObjectMessage();
+
+            try
+            {
+                int tipoEstadoID = ObtenerTipoEstadoID(estado);
+
+                string query = "UPDATE Ubicaciones_Logisticas SET ubilog_teubilog_id = @tipoEstadoID, ubilog_fec_mod = @fecha, ubilog_usu_id_mod = @usuario WHERE ubilog_id = @ubicacionID";
+                List<SqlParameter> parametros = new List<SqlParameter>();
+                parametros.Add(new SqlParameter("tipoEstadoID", tipoEstadoID > 0 ? (object)tipoEstadoID : DBNull.Value));
+                parametros.Add(new SqlParameter("fecha", DateTime.Now));
+                parametros.Add(new SqlParameter("usuario", Token.UserID));
+                parametros.Add(new SqlParameter("ubicacionID", ubicacionID));
+                db.SQLExecuteNonQuery(query, parametros);
+
+                oM.Success = true;
+                oM.Message = "Estado guardado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                oM.Success = false;
+                oM.Message = ex.Message;
+            }
+
+            return oM;
+        }
+
+        private int ObtenerTipoEstadoID(string estado)
+        {
+            if (string.IsNullOrWhiteSpace(estado))
+                return 0;
+
+            string query = "SELECT TOP 1 teubilog_id FROM Tipo_Estado_Ubicacion_Logistica WHERE teubilog_nombre = @estado AND ISNULL(teubilog_activo, 1) = 1";
+            DataTable dt = db.SQLSelect(query, new List<SqlParameter>() { new SqlParameter("estado", estado) });
+
+            if (dt.Rows.Count == 0)
+                return 0;
+
+            return Convert.ToInt32(dt.Rows[0]["teubilog_id"]);
         }
 
         private string CrearCodigoUbicacion(string codigoPasillo, int posicion, int nivel)

@@ -172,6 +172,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DepositoOcupacionViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2945,6 +2946,7 @@
     <Content Include="Views\Clientes\_ModalClientesContactosVista.cshtml" />
     <Content Include="Views\Depositos\MapaWmsDemo.cshtml" />
     <Content Include="Views\Depositos\EditorPasillos.cshtml" />
+    <Content Include="Views\Depositos\Inventario.cshtml" />
     <None Include="Views\Maquetados\SeguimientoProyecto.cshtml" />
     <Content Include="Views\Shared\_Controls_FullCalendar.cshtml" />
     <Content Include="Views\Proyectos\_GridDataAsignacionTareas.cshtml" />

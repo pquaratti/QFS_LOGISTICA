@@ -7,6 +7,7 @@
     string _ControllerName = "Depositos";
     var _pasillosWms = ViewBag.WmsPasillos ?? new object[0];
     var _zonasWms = ViewBag.WmsZonas ?? new object[0];
+    var _ubicacionesWms = ViewBag.WmsUbicaciones ?? new object[0];
 }
 
 <style>
@@ -960,6 +961,8 @@
 
                 var zonasDeposito = @Html.Raw(Json.Encode(_zonasWms));
                 var pasillosDeposito = @Html.Raw(Json.Encode(_pasillosWms));
+                var ubicacionesDeposito = @Html.Raw(Json.Encode(_ubicacionesWms));
+                var urlGuardarEstado = '@Url.Action("GuardarEstadoUbicacionWms", _ControllerName)';
                 var filtroZonaActual = "Todas";
                 inicializarFiltroZonas();
                 var layoutPasillos = normalizarPasillosDeposito(pasillosDeposito);
@@ -1082,7 +1085,7 @@
                     actualizarKpis();
                     if (ubicaciones.length) seleccionar(ubicaciones[0], true);
                 }
-                
+
                 function normalizarZonasDeposito(zonas, pasillos) {
                     zonas = zonas || [];
                     pasillos = pasillos || [];
@@ -1127,7 +1130,7 @@
                         return { id: g.id, codigo: g.codigo || ('Z' + pad(index + 1)), nombre: g.nombre || ('Zona ' + (index + 1)), x: g.minX - margen, y: g.minY - margen, largo: Math.max(180, g.maxX - g.minX + margen * 2), ancho: Math.max(160, g.maxY - g.minY + margen * 2) };
                     });
                 }
-                    
+
                 function normalizarPasillosDeposito(pasillos) {
                     pasillos = pasillos || [];
                     return pasillos.map(function (p, index) {
@@ -1141,6 +1144,7 @@
 
                         return {
                             id: p.id || p.dbId || index + 1,
+                            dbId: p.dbId || p.id || index + 1,
                             codigo: p.codigo || ('P' + pad(index + 1)),
                             nombre: p.nombre || p.codigo || ('Pasillo ' + (index + 1)),
                             x: x,
@@ -1175,8 +1179,34 @@
                     return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
                 }
 
+                function obtenerUbicacionDeposito(pasillo, posicion, nivel) {
+                    var pasilloId = String(pasillo.dbId || pasillo.id || 0);
+                    return (ubicacionesDeposito || []).filter(function (u) {
+                        return String(u.pasilloDbId || 0) === pasilloId &&
+                            Number(u.posicion || 0) === Number(posicion) &&
+                            String(u.nivel || '') === String(nivel);
+                    })[0] || null;
+                }
+
+                function normalizarEstadoUbicacion(estado) {
+                    estado = estado || 'Libre';
+                    var estadoLower = estado.toLowerCase();
+
+                    if (estadoLower.indexOf('bloq') >= 0) return 'Bloqueada';
+                    if (estadoLower.indexOf('reserv') >= 0) return 'Reservada';
+                    if (estadoLower.indexOf('parcial') >= 0) return 'Parcial';
+                    if (estadoLower.indexOf('ocup') >= 0) return 'Ocupada';
+
+                    return 'Libre';
+                }
+
+                function porcentajeDesdeEstado(estado) {
+                    if (estado === 'Parcial') return 50;
+                    if (estado === 'Ocupada' || estado === 'Reservada') return 100;
+                    return 0;
+                }
+
                 function generarWmsDesdePasillos(pasillos) {
-                    var productos = ['Guantes nitrilo M', 'Barbijos KN95', 'Alcohol gel 500ml', 'Cajas ecommerce', 'Repuestos crticos', 'Insumos bloqueados', 'Cinta embalaje', 'Etiquetas trmicas'];
                     var escala = .045;
                     var centroPlano = obtenerCentroPlanoLayout(pasillos);
                     var centroX = centroPlano.x;
@@ -1195,26 +1225,28 @@
 
                         for (var columna = 1; columna <= pasillo.posiciones; columna++) {
                             for (var nivel = 1; nivel <= pasillo.alturas; nivel++) {
-                                var indice = id + indicePasillo + columna + nivel;
-                                var estado = indice % 13 === 0 ? 'Bloqueada' : indice % 7 === 0 ? 'Reservada' : indice % 5 === 0 ? 'Libre' : indice % 3 === 0 ? 'Parcial' : 'Ocupada';
-                                var cantidad = estado === 'Libre' ? 0 : 18 + indice * 3;
-                                var reservado = estado === 'Reservada' ? Math.floor(cantidad * .45) : indice % 8;
+                                var ubicacionReal = obtenerUbicacionDeposito(pasillo, columna, nivel);
+                                var estado = normalizarEstadoUbicacion(ubicacionReal ? ubicacionReal.estado : 'Libre');
+                                var cantidad = 0;
+                                var reservado = estado === 'Reservada' ? 1 : 0;
+                                var disponible = cantidad;
                                 var avance = -largo3d / 2 + paso * (columna - .5);
                                 var x = esVertical ? centroPasilloX : centroPasilloX + avance;
                                 var z = esVertical ? centroPasilloZ + avance : centroPasilloZ;
-                                var codigo = '@(Model != null && !string.IsNullOrWhiteSpace(Model.depo_codigo) ? Model.depo_codigo : "DEP")-' + pasillo.codigo + '-P' + pad(columna) + '-N' + pad(nivel);
+                                var codigo = ubicacionReal && ubicacionReal.codigo ? ubicacionReal.codigo : '@(Model != null && !string.IsNullOrWhiteSpace(Model.depo_codigo) ? Model.depo_codigo : "DEP")-' + pasillo.codigo + '-P' + pad(columna) + '-N' + pad(nivel);
+                                var capacidadMaxima = (ubicacionReal && ubicacionReal.pesoMaximo ? ubicacionReal.pesoMaximo : pasillo.pesoMaximo || 800) + ' kg';
 
                                 datos.push({
-                                    id: id++, codigo: codigo, pasillo: pasillo.codigo, pasilloNombre: pasillo.nombre, rack: 1, columna: columna, nivel: nivel,
+                                    id: id++, ubicacionDbId: ubicacionReal ? Number(ubicacionReal.dbId || 0) : 0, codigo: codigo, pasillo: pasillo.codigo, pasilloNombre: pasillo.nombre, rack: 1, columna: columna, nivel: nivel,
                                     x: x, y: .62 + (nivel - 1) * 1.18, z: z,
                                     ancho: esVertical ? .92 : Math.max(.55, paso * .72), alto: .92, profundidad: esVertical ? Math.max(.55, paso * .72) : .92,
-                                    estado: estado, porcentajeOcupacion: estado === 'Libre' ? 0 : (estado === 'Parcial' ? 35 + (indice % 45) : 72 + (indice % 27)),
-                                    producto: estado === 'Libre' ? 'Sin stock' : productos[indice % productos.length], sku: estado === 'Libre' ? '-' : 'SKU-' + (1000 + indice),
-                                    cantidad: cantidad, disponible: estado === 'Libre' ? 0 : Math.max(0, cantidad - reservado), reservado: reservado,
-                                    lote: estado === 'Libre' ? '-' : 'LT-2026-' + pad(indice), vencimiento: estado === 'Libre' ? '-' : '2027-03-' + pad((indice % 27) + 1),
-                                    ultimoMovimiento: '2026-06-' + pad((indice % 23) + 1) + ' 10:' + pad(indice % 60),
-                                    capacidadMaxima: '1 pallet / ' + (pasillo.pesoMaximo || 800) + ' kg', zona: pasillo.zonaNombre || pasillo.nombre,
-                                    movimientos: crearMovimientos(estado, codigo, cantidad, reservado, indice)
+                                    estado: estado, porcentajeOcupacion: porcentajeDesdeEstado(estado),
+                                    producto: 'Sin stock por ubicacion', sku: '-',
+                                    cantidad: cantidad, disponible: disponible, reservado: reservado,
+                                    lote: '-', vencimiento: '-',
+                                    ultimoMovimiento: '-',
+                                    capacidadMaxima: capacidadMaxima, zona: pasillo.zonaNombre || pasillo.nombre,
+                                    movimientos: []
                                 });
                             }
                         }
@@ -1598,7 +1630,7 @@
                     window.addEventListener('keyup', keyupMovimiento, false);
                     window.addEventListener('resize', resize3d, false);
                 }
-                
+
                 function agregarElementoDeposito3d(elemento) {
                     escena.add(elemento);
                     depositoMeshes.push(elemento);
@@ -2267,6 +2299,19 @@
                     $('#movimientosUbicacion').html(html);
                 }
 
+                function guardarEstadoUbicacion(u) {
+                    if (!u || !u.ubicacionDbId) return;
+
+                    $.post(urlGuardarEstado, {
+                        UbicacionID: u.ubicacionDbId,
+                        Estado: u.estado
+                    }, function (response) {
+                        if (!response || !response.Result || !response.Result.Success) {
+                            alert((response && response.Result && response.Result.Message) || 'No se pudo guardar el estado de la ubicacion.');
+                        }
+                    });
+                }
+
                 function ejecutarAccion(accion) {
                     if (!seleccionActual) return;
 
@@ -2347,6 +2392,7 @@
                         agregarMovimiento(u, 'Consulta', 'Motivo: control de calidad / inventario pendiente', 'Auditoría');
                     }
 
+                    guardarEstadoUbicacion(u);
                     refrescarVisuales();
                     actualizarKpis();
                     seleccionar(u, false);
@@ -2516,6 +2562,7 @@
 
                     pickingActivo.estado = 'Completado';
 
+                    guardarEstadoUbicacion(u);
                     limpiarPickingVisual();
                     refrescarVisuales();
                     actualizarKpis();
@@ -2646,6 +2693,7 @@
 
                     recepcionActiva.estado = 'Completado';
 
+                    guardarEstadoUbicacion(u);
                     limpiarRecepcionVisual();
                     refrescarVisuales();
                     actualizarKpis();
