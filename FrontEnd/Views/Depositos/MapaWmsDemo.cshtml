@@ -1237,7 +1237,7 @@
                                 var capacidadMaxima = (ubicacionReal && ubicacionReal.pesoMaximo ? ubicacionReal.pesoMaximo : pasillo.pesoMaximo || 800) + ' kg';
 
                                 datos.push({
-                                    id: id++, ubicacionDbId: ubicacionReal ? Number(ubicacionReal.dbId || 0) : 0, codigo: codigo, pasillo: pasillo.codigo, pasilloNombre: pasillo.nombre, rack: 1, columna: columna, nivel: nivel,
+                                    id: id++, ubicacionDbId: ubicacionReal ? Number(ubicacionReal.dbId || 0) : 0, pasilloDbId: Number(pasillo.dbId || 0), codigo: codigo, pasillo: pasillo.codigo, pasilloNombre: pasillo.nombre, rack: 1, columna: columna, nivel: nivel,
                                     x: x, y: .62 + (nivel - 1) * 1.18, z: z,
                                     ancho: esVertical ? .92 : Math.max(.55, paso * .72), alto: .92, profundidad: esVertical ? Math.max(.55, paso * .72) : .92,
                                     estado: estado, porcentajeOcupacion: porcentajeDesdeEstado(estado),
@@ -2300,14 +2300,22 @@
                 }
 
                 function guardarEstadoUbicacion(u) {
-                    if (!u || !u.ubicacionDbId) return;
+                    if (!u) return;
 
                     $.post(urlGuardarEstado, {
-                        UbicacionID: u.ubicacionDbId,
+                        UbicacionID: u.ubicacionDbId || 0,
+                        PasilloID: u.pasilloDbId || 0,
+                        Posicion: u.columna || 0,
+                        Nivel: String(u.nivel || ''),
                         Estado: u.estado
                     }, function (response) {
                         if (!response || !response.Result || !response.Result.Success) {
                             alert((response && response.Result && response.Result.Message) || 'No se pudo guardar el estado de la ubicacion.');
+                            return;
+                        }
+
+                        if (response.Result.ObjectRelation) {
+                            u.ubicacionDbId = Number(response.Result.ObjectRelation);
                         }
                     });
                 }

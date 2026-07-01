@@ -80,6 +80,9 @@ namespace FrontEnd.Models
     public class WmsEstadoUbicacionRequest
     {
         public int UbicacionID { get; set; }
+        public int PasilloID { get; set; }
+        public int Posicion { get; set; }
+        public string Nivel { get; set; }
         public string Estado { get; set; }
     }
 

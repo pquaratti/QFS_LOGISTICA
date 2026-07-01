@@ -95,7 +95,7 @@ namespace FrontEnd.Controllers
         [HttpPost]
         public JsonResult GuardarEstadoUbicacionWms(FrontEnd.Models.WmsEstadoUbicacionRequest obj)
         {
-            ObjectMessage oM = new Negocio.UbicacionesLogisticas(GetToken()).GuardarEstadoWms(obj.UbicacionID, obj.Estado);
+            ObjectMessage oM = new Negocio.UbicacionesLogisticas(GetToken()).GuardarEstadoWms(obj.UbicacionID, obj.Estado, obj.PasilloID, obj.Posicion, obj.Nivel);
             return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
         }
 
