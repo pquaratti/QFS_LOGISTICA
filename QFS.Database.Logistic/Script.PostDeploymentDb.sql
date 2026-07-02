@@ -14,6 +14,7 @@ PRINT 'Iniciando Post-Deployment...'
 
     :r .\dbo\Catalogs\DataProvincias.sql
     :r .\dbo\Catalogs\DataLocalidades.sql
+    :r .\dbo\Catalogs\DataTipo_Estado_Ubicacion_Logistica.sql
 
 IF '$(IsFirstDeploy)' = 'true'
 BEGIN
@@ -29,6 +30,7 @@ BEGIN
     :r .\dbo\Catalogs\DataProvincias.sql
     :r .\dbo\Catalogs\DataLocalidades.sql
     :r .\dbo\Catalogs\DataAreas.sql
+    :r .\dbo\Catalogs\DataTipo_Estado_Ubicacion_Logistica.sql
 
     PRINT 'Datos maestros completados.'
 END

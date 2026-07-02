@@ -115,6 +115,7 @@
     <Build Include="dbo\Tables\Depositos_Pasillos.sql" />
     <None Include="dbo\Catalogs\DataLocalidades.sql" />
     <Build Include="dbo\Tables\Depositos_Zonas.sql" />
+    <None Include="dbo\Catalogs\DataTipo_Estado_Ubicacion_Logistica.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Catalogs\DataAcciones.sql" />
