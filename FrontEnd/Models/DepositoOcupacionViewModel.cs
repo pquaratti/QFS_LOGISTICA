@@ -12,11 +12,13 @@ namespace FrontEnd.Models
         public int LugaresBloqueados { get; set; }
         public decimal PorcentajeOcupacion { get; set; }
         public bool TieneSaldosPorUbicacion { get; set; }
+        public List<Entidades.App.DLLObject> ProductosDisponibles { get; set; }
 
         public DepositoOcupacionViewModel()
         {
             Deposito = new Entidades.Deposito();
             Zonas = new List<ZonaOcupacionViewModel>();
+            ProductosDisponibles = new List<Entidades.App.DLLObject>();
         }
     }
 
@@ -71,10 +73,23 @@ namespace FrontEnd.Models
         public decimal CapacidadCubica { get; set; }
         public decimal PesoMaximo { get; set; }
         public string Estado { get; set; }
+        public int ProductoID { get; set; }
+        public string ProductoCodigo { get; set; }
+        public string ProductoDescripcion { get; set; }
+        public decimal CantidadActual { get; set; }
+        public int CantidadMaxima { get; set; }
         public int PorcentajeOcupacion { get; set; }
         public bool EsOcupada { get; set; }
         public bool EsBloqueada { get; set; }
         public bool EsUbicacionReal { get; set; }
+    }
+
+    public class UbicacionProductoRequest
+    {
+        public int UbicacionID { get; set; }
+        public int ProductoID { get; set; }
+        public decimal Cantidad { get; set; }
+        public int CantidadMaxima { get; set; }
     }
 
     public class WmsEstadoUbicacionRequest

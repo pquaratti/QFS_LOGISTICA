@@ -1,6 +1,7 @@
 @model FrontEnd.Models.DepositoOcupacionViewModel
 @{
     ViewBag.Title = "Inventario depósito";
+    var productosDisponiblesJson = Json.Encode(Model.ProductosDisponibles);
     ViewBag.Subtitle = "Grilla de ocupación";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -65,8 +66,10 @@
         }
 
     .ubicacion-cell {
+        border: 0;
         border-radius: 8px;
         color: #fff;
+        cursor: pointer;
         min-width: 92px;
         padding: 8px;
         text-align: center;
@@ -116,12 +119,9 @@
     </div>
 </div>
 
-@if (!Model.TieneSaldosPorUbicacion)
-{
-    <div class="alert alert-warning">
-        Esta grilla muestra la capacidad física y la ocupación según el estado de cada ubicación logística. Para ver productos, lotes y cantidades reales por celda falta persistir saldos por ubicación.
-    </div>
-}
+<div class="alert alert-info">
+    Hac click en una posicin real para ver el producto asignado, definir la capacidad mxima de ese producto y cargar unidades sin superar el mximo.
+</div>
 
 <div class="row mb-3">
     <div class="col-md-3"><div class="ocupacion-kpi"><span>Lugares totales</span><strong>@Model.TotalLugares</strong></div></div>
@@ -139,63 +139,200 @@
 
     @if (Model.Zonas.Count == 0)
     {
-        <div class="alert alert-info mb-0">No hay zonas, estanterías o posiciones configuradas para mostrar.</div>
+    <div class="alert alert-info mb-0">No hay zonas, estanterías o posiciones configuradas para mostrar.</div>
     }
 
     @foreach (var zona in Model.Zonas)
     {
-        <div class="zona-card">
-            <div class="zona-head">
-                <div>
-                    <strong>@zona.Codigo - @zona.Nombre</strong><br />
-                    <small>@zona.TotalLugares lugares · @zona.LugaresOcupados ocupados · @zona.LugaresLibres libres · @zona.PorcentajeOcupacion% ocupado</small>
-                </div>
+    <div class="zona-card">
+        <div class="zona-head">
+            <div>
+                <strong>@zona.Codigo - @zona.Nombre</strong><br />
+                <small>@zona.TotalLugares lugares · @zona.LugaresOcupados ocupados · @zona.LugaresLibres libres · @zona.PorcentajeOcupacion% ocupado</small>
             </div>
+        </div>
 
-            @foreach (var pasillo in zona.Pasillos)
+        @foreach (var pasillo in zona.Pasillos)
             {
-                <div class="pasillo-card">
-                    <div class="d-flex justify-content-between mb-2">
-                        <div>
-                            <h6 class="mb-0">@pasillo.Codigo - @pasillo.Nombre</h6>
-                            <small>@pasillo.Posiciones posiciones · @pasillo.Alturas alturas · altura nivel @pasillo.AlturaNivel · peso máx. @pasillo.PesoMaximo</small>
-                        </div>
-                        <strong>@pasillo.PorcentajeOcupacion%</strong>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="ubicacion-grid">
-                            <thead>
-                                <tr>
-                                    <th>Nivel</th>
-                                    @for (int posicion = 1; posicion <= pasillo.Posiciones; posicion++)
+        <div class="pasillo-card">
+            <div class="d-flex justify-content-between mb-2">
+                <div>
+                    <h6 class="mb-0">@pasillo.Codigo - @pasillo.Nombre</h6>
+                    <small>@pasillo.Posiciones posiciones · @pasillo.Alturas alturas · altura nivel @pasillo.AlturaNivel · peso máx. @pasillo.PesoMaximo</small>
+                </div>
+                <strong>@pasillo.PorcentajeOcupacion%</strong>
+            </div>
+            <div class="table-responsive">
+                <table class="ubicacion-grid">
+                    <thead>
+                        <tr>
+                            <th>Nivel</th>
+                            @for (int posicion = 1; posicion <= pasillo.Posiciones; posicion++)
                                     {
-                                        <th>P@(posicion.ToString("000"))</th>
+                            <th>P@(posicion.ToString("000"))</th>
                                     }
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (int nivel = pasillo.Alturas; nivel >= 1; nivel--)
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int nivel = pasillo.Alturas; nivel >= 1; nivel--)
                                 {
-                                    <tr>
-                                        <th>N@(nivel.ToString("00"))</th>
-                                        @for (int posicion = 1; posicion <= pasillo.Posiciones; posicion++)
+                        <tr>
+                            <th>N@(nivel.ToString("00"))</th>
+                            @for (int posicion = 1; posicion <= pasillo.Posiciones; posicion++)
                                         {
                                             var ubicacion = pasillo.Ubicaciones.FirstOrDefault(x => x.Posicion == posicion && x.Nivel == nivel.ToString());
                                             var claseEstado = ubicacion.EsBloqueada ? "ubicacion-bloqueada" : ubicacion.EsOcupada ? "ubicacion-ocupada" : "ubicacion-libre";
                                             var claseReal = ubicacion.EsUbicacionReal ? "" : "ubicacion-teorica";
-                                            <td class="ubicacion-cell @claseEstado @claseReal" title="@ubicacion.Codigo | @ubicacion.Estado | Alto @ubicacion.Altura | Largo @ubicacion.Longitud | Ancho @ubicacion.Anchura | Capacidad @ubicacion.CapacidadCubica | Peso @ubicacion.PesoMaximo">
-                                                <strong>@ubicacion.PorcentajeOcupacion%</strong>
-                                                <small>@ubicacion.Codigo</small>
-                                                <small>@ubicacion.Estado</small>
-                                            </td>
+                            <td class="ubicacion-cell @claseEstado @claseReal btn-ubicacion-producto"
+                                title="@ubicacion.Codigo | @ubicacion.Estado | Producto @ubicacion.ProductoDescripcion | @ubicacion.CantidadActual/@ubicacion.CantidadMaxima"
+                                data-id="@ubicacion.Id"
+                                data-codigo="@ubicacion.Codigo"
+                                data-estado="@ubicacion.Estado"
+                                data-producto-id="@ubicacion.ProductoID"
+                                data-producto-descripcion="@ubicacion.ProductoDescripcion"
+                                data-cantidad="@ubicacion.CantidadActual"
+                                data-maximo="@ubicacion.CantidadMaxima"
+                                data-real="@ubicacion.EsUbicacionReal.ToString().ToLowerInvariant()">
+                                <strong>@ubicacion.PorcentajeOcupacion%</strong>
+                                <small>@ubicacion.Codigo</small>
+                                <small>@ubicacion.Estado</small>
+                                <small>@ubicacion.ProductoDescripcion</small>
+                                <small>@ubicacion.CantidadActual/@ubicacion.CantidadMaxima</small>
+                            </td>
                                         }
-                                    </tr>
+                        </tr>
                                 }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            }
+                    </tbody>
+                </table>
+            </div>
         </div>
+            }
+    </div>
     }
 </div>
+<div id="modalUbicacionProducto" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Asignar producto a ubicacin</h6>
+                <button type="button" class="close" data-dismiss="modal"><span><i data-feather="x"></i></span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="ubicacionProductoID" />
+                <div class="alert alert-secondary py-2">
+                    <strong id="ubicacionProductoCodigo"></strong><br />
+                    <small id="ubicacionProductoEstado"></small>
+                </div>
+                <div class="form-group">
+                    <label>Producto</label>
+                    <select id="productoID" class="form-control form-control-sm"></select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Cantidad actual</label>
+                        <input id="cantidadActual" type="number" min="0" step="1" class="form-control form-control-sm" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Cantidad mxima soportada</label>
+                        <input id="cantidadMaxima" type="number" min="1" step="1" class="form-control form-control-sm" />
+                    </div>
+                </div>
+                <div id="ubicacionProductoMensaje" class="alert d-none mb-0"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" id="btnGuardarUbicacionProducto" class="btn btn-success">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+    var productosDisponibles = @Html.Raw(productosDisponiblesJson);
+
+    $(document).ready(function () {
+        cargarProductosDisponibles();
+
+        $(document).on('click', '.btn-ubicacion-producto', function () {
+            abrirModalUbicacionProducto($(this));
+        });
+
+        $('#btnGuardarUbicacionProducto').on('click', guardarUbicacionProducto);
+    });
+
+    function cargarProductosDisponibles() {
+        var $producto = $('#productoID');
+        $producto.empty();
+        $.each(productosDisponibles, function (_, item) {
+            $producto.append($('<option/>').val(item.Value).text(item.Text));
+        });
+    }
+
+    function abrirModalUbicacionProducto($celda) {
+        limpiarMensajeUbicacionProducto();
+
+        if ($celda.data('real') !== true && $celda.data('real') !== 'true') {
+            mostrarMensajeUbicacionProducto('warning', 'La posicin todava no existe como ubicacin logstica real. Gener las ubicaciones del pasillo antes de asignar productos.');
+            $('#modalUbicacionProducto').modal('show');
+            $('#btnGuardarUbicacionProducto').prop('disabled', true);
+            return;
+        }
+
+        $('#btnGuardarUbicacionProducto').prop('disabled', false);
+        $('#ubicacionProductoID').val($celda.data('id'));
+        $('#ubicacionProductoCodigo').text($celda.data('codigo'));
+        $('#ubicacionProductoEstado').text('Estado: ' + $celda.data('estado') + ' | Producto actual: ' + $celda.data('producto-descripcion'));
+        $('#productoID').val(($celda.data('producto-id') || 0).toString());
+        $('#cantidadActual').val($celda.data('cantidad') || 0);
+        $('#cantidadMaxima').val($celda.data('maximo') || '');
+        $('#modalUbicacionProducto').modal('show');
+    }
+
+    function guardarUbicacionProducto() {
+        limpiarMensajeUbicacionProducto();
+
+        var cantidad = parseInt($('#cantidadActual').val(), 10);
+        var cantidadMaxima = parseInt($('#cantidadMaxima').val(), 10);
+        var productoID = parseInt($('#productoID').val(), 10);
+
+        if (!productoID || productoID <= 0) { mostrarMensajeUbicacionProducto('danger', 'Seleccion un producto.'); return; }
+        if (isNaN(cantidad) || cantidad < 0) { mostrarMensajeUbicacionProducto('danger', 'La cantidad actual no puede ser negativa.'); return; }
+        if (isNaN(cantidadMaxima) || cantidadMaxima <= 0) { mostrarMensajeUbicacionProducto('danger', 'La cantidad mxima debe ser mayor a cero.'); return; }
+        if (cantidad > cantidadMaxima) { mostrarMensajeUbicacionProducto('danger', 'La cantidad actual no puede superar la cantidad mxima.'); return; }
+
+        $('#btnGuardarUbicacionProducto').prop('disabled', true);
+        $.ajax({
+            url: '@Url.Action("GuardarProductoUbicacion", "Depositos")',
+            type: 'POST',
+            data: {
+                UbicacionID: $('#ubicacionProductoID').val(),
+                ProductoID: productoID,
+                Cantidad: cantidad,
+                CantidadMaxima: cantidadMaxima
+            },
+            success: function (response) {
+                if (response.Result && response.Result.Success) {
+                    location.reload();
+                    return;
+                }
+
+                mostrarMensajeUbicacionProducto('danger', response.Result ? response.Result.Message : 'No se pudo guardar la asignacin.');
+                $('#btnGuardarUbicacionProducto').prop('disabled', false);
+            },
+            error: function () {
+                mostrarMensajeUbicacionProducto('danger', 'No se pudo guardar la asignacin.');
+                $('#btnGuardarUbicacionProducto').prop('disabled', false);
+            }
+        });
+    }
+
+    function mostrarMensajeUbicacionProducto(tipo, mensaje) {
+        $('#ubicacionProductoMensaje').removeClass('d-none alert-success alert-danger alert-warning alert-info').addClass('alert-' + tipo).text(mensaje);
+    }
+
+    function limpiarMensajeUbicacionProducto() {
+        $('#ubicacionProductoMensaje').addClass('d-none').removeClass('alert-success alert-danger alert-warning alert-info').text('');
+    }
+    </script>
+}

@@ -115,6 +115,7 @@ namespace FrontEnd.Controllers
 
             FrontEnd.Models.DepositoOcupacionViewModel model = new FrontEnd.Models.DepositoOcupacionViewModel();
             model.Deposito = deposito;
+            model.ProductosDisponibles = new Negocio.Inventario.Productos(GetToken()).ListarDLL(true);
 
             foreach (Entidades.DepositoZona zona in zonas)
             {
@@ -152,7 +153,7 @@ namespace FrontEnd.Controllers
             model.LugaresLibres = model.Zonas.Sum(x => x.LugaresLibres);
             model.LugaresBloqueados = model.Zonas.Sum(x => x.LugaresBloqueados);
             model.PorcentajeOcupacion = CalcularPorcentaje(model.LugaresOcupados, model.TotalLugares);
-            model.TieneSaldosPorUbicacion = false;
+            model.TieneSaldosPorUbicacion = true;
 
             return View(model);
         }
@@ -171,13 +172,15 @@ namespace FrontEnd.Controllers
             };
 
             List<Entidades.UbicacionLogistica> ubicaciones = new Negocio.UbicacionesLogisticas(GetToken()).ListarPorPasillo(pasillo.depopas_id);
+            Negocio.Inventario.UbicacionesProductos ubicacionesProductosNegocio = new Negocio.Inventario.UbicacionesProductos(GetToken());
 
             for (int nivel = pasillo.depopas_cantidad_alturas; nivel >= 1; nivel--)
             {
                 for (int posicion = 1; posicion <= pasillo.depopas_cantidad_posiciones; posicion++)
                 {
                     Entidades.UbicacionLogistica ubicacion = ubicaciones.FirstOrDefault(x => x.ubilog_posicion == posicion && Convert.ToString(x.ubilog_nivel) == Convert.ToString(nivel));
-                    pasilloVm.Ubicaciones.Add(CrearUbicacionOcupacion(pasillo, ubicacion, posicion, nivel));
+                    Entidades.Inventario.UbicacionProducto productoUbicacion = ubicacion != null && ubicacion.ubilog_id > 0 ? ubicacionesProductosNegocio.ObtenerActivoPorUbicacion(ubicacion.ubilog_id) : null;
+                    pasilloVm.Ubicaciones.Add(CrearUbicacionOcupacion(pasillo, ubicacion, productoUbicacion, posicion, nivel));
                 }
             }
 
@@ -190,7 +193,7 @@ namespace FrontEnd.Controllers
             return pasilloVm;
         }
 
-        private FrontEnd.Models.UbicacionOcupacionViewModel CrearUbicacionOcupacion(Entidades.DepositoPasillo pasillo, Entidades.UbicacionLogistica ubicacion, int posicion, int nivel)
+        private FrontEnd.Models.UbicacionOcupacionViewModel CrearUbicacionOcupacion(Entidades.DepositoPasillo pasillo, Entidades.UbicacionLogistica ubicacion, Entidades.Inventario.UbicacionProducto productoUbicacion, int posicion, int nivel)
         {
             bool tieneUbicacion = ubicacion != null && ubicacion.ubilog_id > 0;
             string estado = tieneUbicacion && ubicacion.TipoEstado != null && !string.IsNullOrWhiteSpace(ubicacion.TipoEstado.teubilog_nombre)
@@ -198,13 +201,17 @@ namespace FrontEnd.Controllers
                 : "Libre";
 
             bool esBloqueada = estado.IndexOf("bloq", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool tieneProducto = productoUbicacion != null && productoUbicacion.ubipro_id > 0 && productoUbicacion.Producto != null && productoUbicacion.Producto.pro_id > 0;
+            decimal cantidadActual = tieneProducto ? productoUbicacion.ubipro_cantidad : 0;
+            int cantidadMaxima = tieneProducto ? productoUbicacion.ubipro_cantidad_maxima : 0;
             bool esOcupada = !esBloqueada && (
+                cantidadActual > 0 ||
                 estado.IndexOf("ocup", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 estado.IndexOf("parcial", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 estado.IndexOf("reserv", StringComparison.OrdinalIgnoreCase) >= 0
             );
 
-            int porcentaje = esBloqueada ? 0 : esOcupada ? 100 : 0;
+            int porcentaje = esBloqueada ? 0 : cantidadMaxima > 0 ? Convert.ToInt32(Math.Min(100, Math.Round((cantidadActual / cantidadMaxima) * 100, 0))) : esOcupada ? 100 : 0;
 
             return new FrontEnd.Models.UbicacionOcupacionViewModel()
             {
@@ -218,6 +225,11 @@ namespace FrontEnd.Controllers
                 CapacidadCubica = tieneUbicacion ? ubicacion.ubilog_capacidad_cubica : pasillo.depopas_altura_nivel * (pasillo.depopas_largo / pasillo.depopas_cantidad_posiciones) * pasillo.depopas_ancho,
                 PesoMaximo = tieneUbicacion ? ubicacion.ubilog_peso_maximo : pasillo.depopas_peso_maximo,
                 Estado = estado,
+                ProductoID = tieneProducto ? productoUbicacion.Producto.pro_id : 0,
+                ProductoCodigo = tieneProducto ? productoUbicacion.Producto.pro_codigo_interno : "",
+                ProductoDescripcion = tieneProducto ? productoUbicacion.Producto.pro_descripcion_corta : "Sin producto asignado",
+                CantidadActual = cantidadActual,
+                CantidadMaxima = cantidadMaxima,
                 PorcentajeOcupacion = porcentaje,
                 EsOcupada = esOcupada,
                 EsBloqueada = esBloqueada,
@@ -240,6 +252,13 @@ namespace FrontEnd.Controllers
                 return 0;
 
             return Math.Round((Convert.ToDecimal(cantidad) / Convert.ToDecimal(total)) * 100, 2);
+        }
+
+        [HttpPost]
+        public JsonResult GuardarProductoUbicacion(FrontEnd.Models.UbicacionProductoRequest obj)
+        {
+            ObjectMessage oM = new Negocio.Inventario.UbicacionesProductos(GetToken()).GuardarAsignacion(obj.UbicacionID, obj.ProductoID, obj.Cantidad, obj.CantidadMaxima);
+            return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult EditorPasillos(string depositoID)
