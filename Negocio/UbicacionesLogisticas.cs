@@ -30,7 +30,7 @@ namespace Negocio
         public List<UbicacionLogistica> ListarPorPasillo(int pasilloID)
         {
             List<ObjectParameter> filtros = new List<ObjectParameter>();
-            filtros.Add(new ObjectParameter() { Name = "ubilog_pasillo_id", Value = pasilloID });
+            filtros.Add(new ObjectParameter() { Name = "ubilog_depopas_id", Value = pasilloID });
             filtros.Add(new ObjectParameter() { Name = "ubilog_activo", Value = 1 });
             return ListarConFiltros(filtros);
         }
@@ -130,9 +130,9 @@ namespace Negocio
 
         protected override string QueryDefault(string sTOP, string sWHERE, string sOrderBy)
         {
-            sQuery = "  SELECT " + sTOP + " *, ubilog_trotlog_id AS ubilog_trolog_id, ubilog_pasillo_id AS ubilog_depopas_id FROM Ubicaciones_Logisticas ";
+            sQuery = "  SELECT " + sTOP + " * FROM Ubicaciones_Logisticas ";
             sQuery += " LEFT JOIN Depositos ON depo_id = ubilog_depo_id ";
-            sQuery += " LEFT JOIN Depositos_Pasillos ON depopas_id = ubilog_pasillo_id ";
+            sQuery += " LEFT JOIN Depositos_Pasillos ON depopas_id = ubilog_depopas_id ";
             sQuery += " LEFT JOIN Tipo_Estado_Ubicacion_Logistica ON teubilog_id = ubilog_teubilog_id ";
 
             if ((sWHERE != ""))
@@ -146,7 +146,7 @@ namespace Negocio
 
         public void DesactivarUbicacionesPasillo(int pasilloID)
         {
-            string query = "UPDATE Ubicaciones_Logisticas SET ubilog_activo = 0, ubilog_fec_mod = @fecha, ubilog_usu_id_mod = @usuario WHERE ubilog_pasillo_id = @pasilloID";
+            string query = "UPDATE Ubicaciones_Logisticas SET ubilog_activo = 0, ubilog_fec_mod = @fecha, ubilog_usu_id_mod = @usuario WHERE ubilog_depopas_id = @pasilloID";
             List<SqlParameter> parametros = new List<SqlParameter>();
             parametros.Add(new SqlParameter("fecha", DateTime.Now));
             parametros.Add(new SqlParameter("usuario", Token.UserID));
@@ -198,7 +198,7 @@ namespace Negocio
             if (pasilloID <= 0 || posicion <= 0 || string.IsNullOrWhiteSpace(nivel))
                 return 0;
 
-            string queryExistente = "SELECT TOP 1 ubilog_id FROM Ubicaciones_Logisticas WHERE ubilog_pasillo_id = @pasilloID AND ubilog_posicion = @posicion AND ubilog_nivel = @nivel ORDER BY ubilog_activo DESC, ubilog_id DESC";
+            string queryExistente = "SELECT TOP 1 ubilog_id FROM Ubicaciones_Logisticas WHERE ubilog_depopas_id = @pasilloID AND ubilog_posicion = @posicion AND ubilog_nivel = @nivel ORDER BY ubilog_activo DESC, ubilog_id DESC";
             List<SqlParameter> parametrosExistente = new List<SqlParameter>();
             parametrosExistente.Add(new SqlParameter("pasilloID", pasilloID));
             parametrosExistente.Add(new SqlParameter("posicion", posicion));
@@ -231,7 +231,7 @@ namespace Negocio
                     ubilog_teubilog_id,
                     ubilog_planta_id,
                     ubilog_depo_id,
-                    ubilog_pasillo_id,
+                    ubilog_depopas_id,
                     ubilog_posicion,
                     ubilog_nivel,
                     ubilog_altura,
