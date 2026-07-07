@@ -113,6 +113,8 @@ namespace Negocio.Inventario
                 else
                     ActualizarAsignacion(ubicacionProducto);
 
+                ActualizarEstadoUbicacion(ubicacionProducto);
+
                 ubicacionProducto.IdEncriptado = App.Security.EncriptarID(Convert.ToString(ubicacionProducto.ubipro_id));
                 oM.Success = true;
                 oM.Message = esNuevo ? "Datos ingresados" : "Datos actualizados";
@@ -125,6 +127,41 @@ namespace Negocio.Inventario
                 oM.Message = ex.Message;
                 return oM;
             }
+        }
+
+        private void ActualizarEstadoUbicacion(UbicacionProducto ubicacionProducto)
+        {
+            string estado = ObtenerEstadoUbicacion(ubicacionProducto);
+            string query = @"
+                UPDATE Ubicaciones_Logisticas
+                SET ubilog_teubilog_id = (
+                        SELECT TOP 1 teubilog_id
+                        FROM Tipo_Estado_Ubicacion_Logistica
+                        WHERE teubilog_nombre = @estado
+                            AND ISNULL(teubilog_activo, 1) = 1
+                    ),
+                    ubilog_activo = 1,
+                    ubilog_fec_mod = @fecha,
+                    ubilog_usu_id_mod = @usuario
+                WHERE ubilog_id = @ubicacionID";
+
+            var parametros = new List<SqlParameter>()
+            {
+                new SqlParameter("estado", estado),
+                new SqlParameter("fecha", DateTime.Now),
+                new SqlParameter("usuario", Token.UserID),
+                new SqlParameter("ubicacionID", ubicacionProducto.UbicacionLogistica.ubilog_id)
+            };
+
+            db.SQLExecuteNonQuery(query, parametros);
+        }
+
+        private string ObtenerEstadoUbicacion(UbicacionProducto ubicacionProducto)
+        {
+            if (ubicacionProducto.ubipro_cantidad <= 0)
+                return "Libre";
+
+            return ubicacionProducto.ubipro_cantidad >= ubicacionProducto.ubipro_cantidad_maxima ? "Ocupada" : "Parcial";
         }
 
         private void ActualizarAsignacion(UbicacionProducto ubicacionProducto)

@@ -201,17 +201,24 @@ namespace FrontEnd.Controllers
                 : "Libre";
 
             bool esBloqueada = estado.IndexOf("bloq", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool esReservada = estado.IndexOf("reserv", StringComparison.OrdinalIgnoreCase) >= 0;
             bool tieneProducto = productoUbicacion != null && productoUbicacion.ubipro_id > 0 && productoUbicacion.Producto != null && productoUbicacion.Producto.pro_id > 0;
             decimal cantidadActual = tieneProducto ? productoUbicacion.ubipro_cantidad : 0;
             int cantidadMaxima = tieneProducto ? productoUbicacion.ubipro_cantidad_maxima : 0;
+            bool tieneStock = cantidadActual > 0;
             bool esOcupada = !esBloqueada && (
-                cantidadActual > 0 ||
+                tieneStock ||
                 estado.IndexOf("ocup", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 estado.IndexOf("parcial", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                estado.IndexOf("reserv", StringComparison.OrdinalIgnoreCase) >= 0
+                esReservada
             );
 
-            int porcentaje = esBloqueada ? 0 : cantidadMaxima > 0 ? Convert.ToInt32(Math.Min(100, Math.Round((cantidadActual / cantidadMaxima) * 100, 0))) : esOcupada ? 100 : 0;
+            int porcentaje = esBloqueada ? 0 : cantidadMaxima > 0 ? Convert.ToInt32(Math.Min(100, Math.Round((cantidadActual / cantidadMaxima) * 100, 0))) : tieneStock ? 100 : 0;
+            if (!esBloqueada && !esReservada)
+            {
+                estado = porcentaje >= 100 ? "Ocupada" : tieneStock ? "Parcial" : "Libre";
+                esOcupada = tieneStock;
+            }
 
             return new FrontEnd.Models.UbicacionOcupacionViewModel()
             {
