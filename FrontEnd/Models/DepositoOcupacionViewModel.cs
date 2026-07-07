@@ -87,6 +87,9 @@ namespace FrontEnd.Models
     public class UbicacionProductoRequest
     {
         public int UbicacionID { get; set; }
+        public int PasilloID { get; set; }
+        public int Posicion { get; set; }
+        public string Nivel { get; set; }
         public int ProductoID { get; set; }
         public decimal Cantidad { get; set; }
         public int CantidadMaxima { get; set; }

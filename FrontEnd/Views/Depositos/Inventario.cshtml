@@ -186,6 +186,9 @@
                             <td class="ubicacion-cell @claseEstado @claseReal btn-ubicacion-producto"
                                 title="@ubicacion.Codigo | @ubicacion.Estado | Producto @ubicacion.ProductoDescripcion | @ubicacion.CantidadActual/@ubicacion.CantidadMaxima"
                                 data-id="@ubicacion.Id"
+                                data-pasillo-id="@pasillo.Id"
+                                data-posicion="@ubicacion.Posicion"
+                                data-nivel="@ubicacion.Nivel"
                                 data-codigo="@ubicacion.Codigo"
                                 data-estado="@ubicacion.Estado"
                                 data-producto-id="@ubicacion.ProductoID"
@@ -271,19 +274,21 @@
 
     function abrirModalUbicacionProducto($celda) {
         limpiarMensajeUbicacionProducto();
-
-        if ($celda.data('real') !== true && $celda.data('real') !== 'true') {
-            mostrarMensajeUbicacionProducto('warning', 'La posicin todava no existe como ubicacin logstica real. Gener las ubicaciones del pasillo antes de asignar productos.');
-            $('#modalUbicacionProducto').modal('show');
-            $('#btnGuardarUbicacionProducto').prop('disabled', true);
-            return;
-        }
-
         $('#btnGuardarUbicacionProducto').prop('disabled', false);
         $('#ubicacionProductoID').val($celda.data('id'));
+        $('#ubicacionProductoID').data('pasillo-id', $celda.data('pasillo-id'));
+        $('#ubicacionProductoID').data('posicion', $celda.data('posicion'));
+        $('#ubicacionProductoID').data('nivel', $celda.data('nivel'));
         $('#ubicacionProductoCodigo').text($celda.data('codigo'));
         $('#ubicacionProductoEstado').text('Estado: ' + $celda.data('estado') + ' | Producto actual: ' + $celda.data('producto-descripcion'));
-        $('#productoID').val(($celda.data('producto-id') || 0).toString());
+
+        var productoActualID = parseInt($celda.data('producto-id'), 10);
+        if (productoActualID > 0) {
+            $('#productoID').val(productoActualID.toString());
+        } else {
+            $('#productoID').prop('selectedIndex', 0);
+        }
+
         $('#cantidadActual').val($celda.data('cantidad') || 0);
         $('#cantidadMaxima').val($celda.data('maximo') || '');
         $('#modalUbicacionProducto').modal('show');
@@ -292,7 +297,7 @@
     function guardarUbicacionProducto() {
         limpiarMensajeUbicacionProducto();
 
-        var cantidad = parseInt($('#cantidadActual').val(), 10);
+        var cantidad = parseFloat(($('#cantidadActual').val() || '').replace(',', '.'));
         var cantidadMaxima = parseInt($('#cantidadMaxima').val(), 10);
         var productoID = parseInt($('#productoID').val(), 10);
 
@@ -307,6 +312,9 @@
             type: 'POST',
             data: {
                 UbicacionID: $('#ubicacionProductoID').val(),
+                PasilloID: $('#ubicacionProductoID').data('pasillo-id'),
+                Posicion: $('#ubicacionProductoID').data('posicion'),
+                Nivel: $('#ubicacionProductoID').data('nivel'),
                 ProductoID: productoID,
                 Cantidad: cantidad,
                 CantidadMaxima: cantidadMaxima

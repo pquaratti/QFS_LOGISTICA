@@ -257,7 +257,19 @@ namespace FrontEnd.Controllers
         [HttpPost]
         public JsonResult GuardarProductoUbicacion(FrontEnd.Models.UbicacionProductoRequest obj)
         {
-            ObjectMessage oM = new Negocio.Inventario.UbicacionesProductos(GetToken()).GuardarAsignacion(obj.UbicacionID, obj.ProductoID, obj.Cantidad, obj.CantidadMaxima);
+            ObjectMessage oM = new ObjectMessage();
+
+            if (obj.UbicacionID <= 0)
+            {
+                oM = new Negocio.UbicacionesLogisticas(GetToken()).GuardarEstadoWms(obj.UbicacionID, "Libre", obj.PasilloID, obj.Posicion, obj.Nivel);
+
+                if (!oM.Success)
+                    return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
+
+                obj.UbicacionID = Convert.ToInt32(oM.ObjectRelation);
+            }
+
+            oM = new Negocio.Inventario.UbicacionesProductos(GetToken()).GuardarAsignacion(obj.UbicacionID, obj.ProductoID, obj.Cantidad, obj.CantidadMaxima);
             return Json(new { Result = oM }, JsonRequestBehavior.AllowGet);
         }
 

@@ -3,6 +3,7 @@ using Entidades.Inventario;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace Negocio.Inventario
@@ -103,7 +104,20 @@ namespace Negocio.Inventario
                 ubicacionProducto.ubipro_cantidad = cantidad;
                 ubicacionProducto.ubipro_cantidad_maxima = cantidadMaxima;
                 ubicacionProducto.ubipro_activo = true;
-                return Save(ubicacionProducto);
+
+                PermiteGuardar(ubicacionProducto);
+
+                bool esNuevo = ubicacionProducto.ubipro_id <= 0;
+                if (esNuevo)
+                    ubicacionProducto.ubipro_id = InsertarAsignacion(ubicacionProducto);
+                else
+                    ActualizarAsignacion(ubicacionProducto);
+
+                ubicacionProducto.IdEncriptado = App.Security.EncriptarID(Convert.ToString(ubicacionProducto.ubipro_id));
+                oM.Success = true;
+                oM.Message = esNuevo ? "Datos ingresados" : "Datos actualizados";
+                oM.ObjectRelation = ubicacionProducto.IdEncriptado;
+                return oM;
             }
             catch (Exception ex)
             {
@@ -111,6 +125,76 @@ namespace Negocio.Inventario
                 oM.Message = ex.Message;
                 return oM;
             }
+        }
+
+        private void ActualizarAsignacion(UbicacionProducto ubicacionProducto)
+        {
+            string query = @"
+                UPDATE Ubicaciones_Productos
+                SET ubipro_pro_id = @productoID,
+                    ubipro_cantidad = @cantidad,
+                    ubipro_cantidad_maxima = @cantidadMaxima,
+                    ubipro_activo = 1,
+                    ubipro_fec_mod = @fecha,
+                    ubipro_usu_id_mod = @usuario
+                WHERE ubipro_id = @ubicacionProductoID";
+
+            db.SQLExecuteNonQuery(query, ParametrosAsignacion(ubicacionProducto, true));
+        }
+
+        private int InsertarAsignacion(UbicacionProducto ubicacionProducto)
+        {
+            string query = @"
+                INSERT INTO Ubicaciones_Productos
+                (
+                    ubipro_ubilog_id,
+                    ubipro_pro_id,
+                    ubipro_cantidad,
+                    ubipro_cantidad_maxima,
+                    ubipro_activo,
+                    ubipro_fec_alta,
+                    ubipro_fec_mod,
+                    ubipro_usu_id_alta,
+                    ubipro_usu_id_mod
+                )
+                VALUES
+                (
+                    @ubicacionID,
+                    @productoID,
+                    @cantidad,
+                    @cantidadMaxima,
+                    1,
+                    @fecha,
+                    @fecha,
+                    @usuario,
+                    @usuario
+                );
+
+                SELECT SCOPE_IDENTITY() AS ubipro_id;";
+
+            DataTable dt = db.SQLSelect(query, ParametrosAsignacion(ubicacionProducto, false));
+            if (dt.Rows.Count == 0)
+                return 0;
+
+            return Convert.ToInt32(dt.Rows[0]["ubipro_id"]);
+        }
+
+        private List<SqlParameter> ParametrosAsignacion(UbicacionProducto ubicacionProducto, bool incluyeID)
+        {
+            var parametros = new List<SqlParameter>()
+            {
+                new SqlParameter("ubicacionID", ubicacionProducto.UbicacionLogistica.ubilog_id),
+                new SqlParameter("productoID", ubicacionProducto.Producto.pro_id),
+                new SqlParameter("cantidad", ubicacionProducto.ubipro_cantidad),
+                new SqlParameter("cantidadMaxima", ubicacionProducto.ubipro_cantidad_maxima),
+                new SqlParameter("fecha", DateTime.Now),
+                new SqlParameter("usuario", Token.UserID)
+            };
+
+            if (incluyeID)
+                parametros.Add(new SqlParameter("ubicacionProductoID", ubicacionProducto.ubipro_id));
+
+            return parametros;
         }
     }
 }
