@@ -8,6 +8,7 @@
     var _pasillosWms = ViewBag.WmsPasillos ?? new object[0];
     var _zonasWms = ViewBag.WmsZonas ?? new object[0];
     var _ubicacionesWms = ViewBag.WmsUbicaciones ?? new object[0];
+    var _productosDisponiblesWms = ViewBag.WmsProductosDisponibles ?? new object[0];
 }
 
 <style>
@@ -448,15 +449,44 @@
             color: #0f172a;
         }
 
-    .wms-actions {
+    .wms-inventory-form {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        gap: 10px;
         margin: 10px 0 12px;
     }
 
-        .wms-actions .btn {
+        .wms-inventory-form label {
+            color: #475569;
+            display: block;
+            font-size: 11px;
+            font-weight: 900;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .wms-inventory-form .form-control {
             width: 100%;
+        }
+
+        .wms-inventory-form .btn {
+            width: 100%;
+        }
+
+    .wms-inventory-message {
+        border-radius: 10px;
+        display: none;
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+        .wms-inventory-message.ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .wms-inventory-message.error {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
     .wms-operacion-card {
@@ -914,8 +944,8 @@
 
             <div id="detalleUbicacion" class="wms-detail"></div>
 
-            <div class="wms-section-title">Acciones rápidas</div>
-            <div id="accionesUbicacion" class="wms-actions"></div>
+            <div class="wms-section-title">Inventario de la posición</div>
+            <div id="inventarioUbicacion" class="wms-inventory-form"></div>
 
             <div class="wms-section-title">Últimos movimientos</div>
             <div id="movimientosUbicacion" class="wms-movements"></div>
@@ -923,6 +953,7 @@
             <div class="wms-section-title">Leyenda</div>
             <div class="wms-legend">
                 <div><span class="wms-dot" style="background:#22c55e"></span>Libre</div>
+                <div><span class="wms-dot" style="background:#166534"></span>Libre con producto</div>
                 <div><span class="wms-dot" style="background:#f59e0b"></span>Parcial</div>
                 <div><span class="wms-dot" style="background:#ef4444"></span>Ocupada</div>
                 <div><span class="wms-dot" style="background:#3b82f6"></span>Reservada</div>
@@ -943,6 +974,7 @@
                 var estadoColor = {
                     Libre: 0x22c55e,
                     Parcial: 0xf59e0b,
+                    LibreAsignada: 0x166534,
                     Ocupada: 0xef4444,
                     Reservada: 0x3b82f6,
                     Bloqueada: 0x64748b
@@ -950,6 +982,7 @@
 
                 var estadoHex = {
                     Libre: '#22c55e',
+                    LibreAsignada: '#166534',
                     Parcial: '#f59e0b',
                     Ocupada: '#ef4444',
                     Reservada: '#3b82f6',
@@ -962,7 +995,9 @@
                 var zonasDeposito = @Html.Raw(Json.Encode(_zonasWms));
                 var pasillosDeposito = @Html.Raw(Json.Encode(_pasillosWms));
                 var ubicacionesDeposito = @Html.Raw(Json.Encode(_ubicacionesWms));
+                var productosDisponibles = @Html.Raw(Json.Encode(_productosDisponiblesWms));
                 var urlGuardarEstado = '@Url.Action("GuardarEstadoUbicacionWms", _ControllerName)';
+                var urlGuardarProducto = '@Url.Action("GuardarProductoUbicacion", _ControllerName)';
                 var filtroZonaActual = "Todas";
                 inicializarFiltroZonas();
                 var layoutPasillos = normalizarPasillosDeposito(pasillosDeposito);
@@ -1227,6 +1262,7 @@
                             for (var nivel = 1; nivel <= pasillo.alturas; nivel++) {
                                 var ubicacionReal = obtenerUbicacionDeposito(pasillo, columna, nivel);
                                 var estado = normalizarEstadoUbicacion(ubicacionReal ? ubicacionReal.estado : 'Libre');
+                                if (estado === 'Libre' && ubicacionReal && Number(ubicacionReal.productoId || 0) > 0) estado = 'LibreAsignada';
                                 var cantidad = 0;
                                 var reservado = estado === 'Reservada' ? 1 : 0;
                                 var disponible = cantidad;
@@ -1240,12 +1276,15 @@
                                     id: id++, ubicacionDbId: ubicacionReal ? Number(ubicacionReal.dbId || 0) : 0, pasilloDbId: Number(pasillo.dbId || 0), codigo: codigo, pasillo: pasillo.codigo, pasilloNombre: pasillo.nombre, rack: 1, columna: columna, nivel: nivel,
                                     x: x, y: .62 + (nivel - 1) * 1.18, z: z,
                                     ancho: esVertical ? .92 : Math.max(.55, paso * .72), alto: .92, profundidad: esVertical ? Math.max(.55, paso * .72) : .92,
-                                    estado: estado, porcentajeOcupacion: porcentajeDesdeEstado(estado),
-                                    producto: 'Sin stock por ubicacion', sku: '-',
-                                    cantidad: cantidad, disponible: disponible, reservado: reservado,
+                                    estado: estado, porcentajeOcupacion: ubicacionReal ? Number(ubicacionReal.porcentajeOcupacion || 0) : porcentajeDesdeEstado(estado),
+                                    productoId: ubicacionReal ? Number(ubicacionReal.productoId || 0) : 0,
+                                    producto: ubicacionReal && ubicacionReal.productoDescripcion ? ubicacionReal.productoDescripcion : 'Sin producto asignado',
+                                    sku: ubicacionReal && ubicacionReal.productoCodigo ? ubicacionReal.productoCodigo : '-',
+                                    cantidadMaximaNumero: ubicacionReal ? Number(ubicacionReal.cantidadMaxima || 0) : 0,
+                                    cantidad: ubicacionReal ? Number(ubicacionReal.cantidadActual || 0) : cantidad, disponible: ubicacionReal ? Number(ubicacionReal.cantidadActual || 0) : disponible, reservado: reservado,
                                     lote: '-', vencimiento: '-',
                                     ultimoMovimiento: '-',
-                                    capacidadMaxima: capacidadMaxima, zona: pasillo.zonaNombre || pasillo.nombre,
+                                    capacidadMaxima: ubicacionReal && Number(ubicacionReal.cantidadMaxima || 0) > 0 ? Number(ubicacionReal.cantidadMaxima || 0) + ' un.' : capacidadMaxima, zona: pasillo.zonaNombre || pasillo.nombre,
                                     movimientos: []
                                 });
                             }
@@ -2133,7 +2172,7 @@
                     tooltip3d.style.top = (event.offsetY + 14) + 'px';
                     tooltip3d.innerHTML =
                         '<strong>' + u.codigo + '</strong>' +
-                        '<span>' + u.estado + ' · ' + u.porcentajeOcupacion + '% ocupado</span><br>' +
+                        '<span>' + estadoEtiqueta(u.estado) + '  ' + u.porcentajeOcupacion + '% ocupado</span><br>' +
                         '<span>' + u.producto + '</span>';
                 }
 
@@ -2188,7 +2227,7 @@
 
                         aimLabelSupervisor.innerHTML =
                             '<strong>' + u.codigo + '</strong>' +
-                            '<span>' + u.estado + ' · ' + u.producto + '</span>';
+                            '<span>' + estadoEtiqueta(u.estado) + '  ' + u.producto + '</span>';
 
                         $(aimLabelSupervisor).addClass('active');
                     } else {
@@ -2213,7 +2252,7 @@
                     $('.wms-bin2d[data-id="' + u.id + '"]').addClass('selected');
 
                     renderDetalle(u);
-                    renderAcciones(u);
+                    renderInventarioUbicacion(u);
                     renderMovimientos(u);
 
                     if (enfocar) {
@@ -2225,7 +2264,7 @@
                     $('#detalleUbicacion').html(
                         '<h5>' + u.codigo + '</h5>' +
                         '<span class="wms-badge" style="background:' + estadoHex[u.estado] + '">' +
-                            u.estado + ' · ' + u.porcentajeOcupacion + '% ocupado' +
+                            estadoEtiqueta(u.estado) + '  ' + u.porcentajeOcupacion + '% ocupado' +
                         '</span>' +
                         fila('Producto', u.producto) +
                         fila('SKU', u.sku) +
@@ -2240,45 +2279,97 @@
                     );
                 }
 
-                function renderAcciones(u) {
-                    var acciones = [];
-
-                    if (u.estado === 'Libre') {
-                        acciones = [
-                            { texto: 'Asignar mercadería', tipo: 'asignar' },
-                            { texto: 'Bloquear ubicación', tipo: 'bloquear' }
-                        ];
-                    } else if (u.estado === 'Bloqueada') {
-                        acciones = [
-                            { texto: 'Desbloquear', tipo: 'desbloquear' },
-                            { texto: 'Ver motivo', tipo: 'motivo' }
-                        ];
-                    } else {
-                        acciones = [
-                            { texto: 'Mover stock', tipo: 'mover' },
-                            { texto: 'Reservar', tipo: 'reservar' },
-                            { texto: 'Enviar a picking', tipo: 'picking' },
-                            { texto: 'Bloquear stock', tipo: 'bloquear' }
-                        ];
-                    }
-
-                    if (pickingActivo && pickingActivo.estado === 'Pendiente' && pickingActivo.ubicacionId === u.id) {
-                        acciones.unshift({ texto: 'Confirmar picking', tipo: 'confirmarPicking', importante: true });
-                    }
-
-                    if (recepcionActiva && recepcionActiva.estado === 'Pendiente de ubicar' && recepcionActiva.ubicacionId === u.id) {
-                        acciones.unshift({ texto: 'Confirmar ubicación', tipo: 'confirmarPutaway', importante: true });
-                    }
-
-                    var html = acciones.map(function (a) {
-                        var clase = a.importante ? 'btn btn-solid' : 'btn btn-soft';
-                        return '<button type="button" class="' + clase + '" data-accion="' + a.tipo + '">' + a.texto + '</button>';
+                function renderInventarioUbicacion(u) {
+                    var opciones = (productosDisponibles || []).map(function (item) {
+                        var selected = String(item.Value) === String(u.productoId || 0) ? ' selected' : '';
+                        return '<option value="' + item.Value + '"' + selected + '>' + item.Text + '</option>';
                     }).join('');
 
-                    $('#accionesUbicacion').html(html);
+                    var maximo = Number(u.cantidadMaximaNumero || 0);
+                    var cantidad = Number(u.cantidad || 0);
+                    var restante = Math.max(0, maximo - cantidad);
+                    var bloqueado = u.estado === 'Bloqueada' ? '<div class="wms-inventory-message error" style="display:block">La ubicacin est bloqueada. Desbloqueala antes de sumar stock.</div>' : '';
 
-                    $('#accionesUbicacion .btn').on('click', function () {
-                        ejecutarAccion($(this).data('accion'));
+                    $('#inventarioUbicacion').html(
+                        bloqueado +
+                        '<div><label>Producto</label><select id="wmsProductoID" class="form-control">' + opciones + '</select></div>' +
+                        '<div><label>Cantidad actual</label><input id="wmsCantidadActual" type="number" min="0" step="1" class="form-control" value="' + cantidad + '" /></div>' +
+                        '<div><label>Cantidad mxima</label><input id="wmsCantidadMaxima" type="number" min="1" step="1" class="form-control" value="' + (maximo || '') + '" /></div>' +
+                        '<div class="wms-row"><b>Disponible para agregar</b><span id="wmsCantidadRestante">' + restante + ' un.</span></div>' +
+                        '<div id="wmsInventarioMensaje" class="wms-inventory-message"></div>' +
+                        '<button type="button" id="btnGuardarInventarioWms" class="btn btn-solid">Guardar cantidades</button>'
+                    );
+
+                    $('#wmsCantidadActual,#wmsCantidadMaxima').on('input', actualizarRestanteInventario);
+                    $('#btnGuardarInventarioWms').on('click', guardarInventarioUbicacion);
+                }
+
+                function actualizarRestanteInventario() {
+                    var cantidad = parseFloat(String($('#wmsCantidadActual').val() || '0').replace(',', '.'));
+                    var maximo = parseInt($('#wmsCantidadMaxima').val(), 10);
+                    if (isNaN(cantidad)) cantidad = 0;
+                    if (isNaN(maximo)) maximo = 0;
+                    $('#wmsCantidadRestante').text(Math.max(0, maximo - cantidad) + ' un.');
+                }
+
+                function mostrarMensajeInventario(tipo, mensaje) {
+                    $('#wmsInventarioMensaje').removeClass('ok error').addClass(tipo).text(mensaje).show();
+                }
+
+                function guardarInventarioUbicacion() {
+                    if (!seleccionActual) return;
+
+                    var u = seleccionActual;
+                    var cantidad = parseFloat(String($('#wmsCantidadActual').val() || '').replace(',', '.'));
+                    var cantidadMaxima = parseInt($('#wmsCantidadMaxima').val(), 10);
+                    var productoID = parseInt($('#wmsProductoID').val(), 10);
+
+                    if (!productoID || productoID <= 0) { mostrarMensajeInventario('error', 'Seleccion un producto.'); return; }
+                    if (isNaN(cantidad) || cantidad < 0) { mostrarMensajeInventario('error', 'La cantidad actual no puede ser negativa.'); return; }
+                    if (isNaN(cantidadMaxima) || cantidadMaxima <= 0) { mostrarMensajeInventario('error', 'La cantidad mxima debe ser mayor a cero.'); return; }
+                    if (cantidad > cantidadMaxima) { mostrarMensajeInventario('error', 'La cantidad actual no puede superar la cantidad mxima.'); return; }
+
+                    $('#btnGuardarInventarioWms').prop('disabled', true);
+                    $.ajax({
+                        url: urlGuardarProducto,
+                        type: 'POST',
+                        data: {
+                            UbicacionID: u.ubicacionDbId || 0,
+                            PasilloID: u.pasilloDbId || 0,
+                            Posicion: u.columna || 0,
+                            Nivel: String(u.nivel || ''),
+                            ProductoID: productoID,
+                            Cantidad: cantidad,
+                            CantidadMaxima: cantidadMaxima
+                        },
+                        success: function (response) {
+                            if (response && response.Result && response.Result.Success) {
+                                if (response.Result.ObjectRelation) u.ubicacionDbId = Number(response.Result.ObjectRelation);
+                                var textoProducto = $('#wmsProductoID option:selected').text();
+                                u.productoId = productoID;
+                                u.producto = textoProducto;
+                                u.sku = textoProducto.split(' - ')[0] || textoProducto;
+                                u.cantidad = cantidad;
+                                u.disponible = cantidad;
+                                u.cantidadMaximaNumero = cantidadMaxima;
+                                u.capacidadMaxima = cantidadMaxima + ' un.';
+                                u.porcentajeOcupacion = cantidadMaxima > 0 ? Math.min(100, Math.round((cantidad / cantidadMaxima) * 100)) : 0;
+                                u.estado = u.porcentajeOcupacion >= 100 ? 'Ocupada' : cantidad > 0 ? 'Parcial' : 'LibreAsignada';
+                                agregarMovimiento(u, 'Ajuste inventario', cantidad + '/' + cantidadMaxima + ' un. asignadas', 'Inventario');
+                                refrescarVisuales();
+                                actualizarKpis();
+                                seleccionar(u, false);
+                                mostrarMensajeInventario('ok', 'Inventario guardado correctamente.');
+                                return;
+                            }
+
+                            mostrarMensajeInventario('error', response && response.Result ? response.Result.Message : 'No se pudo guardar el inventario.');
+                            $('#btnGuardarInventarioWms').prop('disabled', false);
+                        },
+                        error: function () {
+                            mostrarMensajeInventario('error', 'No se pudo guardar el inventario.');
+                            $('#btnGuardarInventarioWms').prop('disabled', false);
+                        }
                     });
                 }
 
@@ -2583,7 +2674,7 @@
                     limpiarPickingVisual();
 
                     var candidatos = ubicaciones.filter(function (u) {
-                        return u.estado === 'Libre' || u.estado === 'Parcial';
+                        return u.estado === 'Libre' || u.estado === 'LibreAsignada' || u.estado === 'Parcial';
                     });
 
                     if (!candidatos.length) {
@@ -2592,7 +2683,7 @@
                     }
 
                     var objetivo = candidatos.find(function (u) {
-                        return u.estado === 'Libre';
+                        return u.estado === 'Libre' || u.estado === 'LibreAsignada';
                     }) || candidatos[0];
 
                     var productosRecepcion = [
@@ -2670,7 +2761,7 @@
                         return;
                     }
 
-                    var estabaLibre = u.estado === 'Libre' || u.cantidad <= 0;
+                    var estabaLibre = u.estado === 'Libre' || u.estado === 'LibreAsignada' || u.cantidad <= 0;
 
                     if (estabaLibre) {
                         u.producto = recepcionActiva.producto;
@@ -2742,7 +2833,7 @@
                         var u = m.userData.ubicacion;
                         var contenido = (u.codigo + ' ' + u.producto + ' ' + u.sku + ' ' + u.lote + ' ' + u.zona).toLowerCase();
 
-                        var cumpleEstado = estado === 'Todos' || u.estado === estado;
+                        var cumpleEstado = estado === 'Todos' || u.estado === estado || (estado === 'Libre' && u.estado === 'LibreAsignada');
                         var cumpleTexto = texto === '' || contenido.indexOf(texto) >= 0;
                         var visible = cumpleEstado && cumpleTexto;
 
@@ -2844,7 +2935,7 @@
 
                     $('#kpiLibres').text(
                         ubicaciones.filter(function (u) {
-                            return u.estado === 'Libre';
+                            return u.estado === 'Libre' || u.estado === 'LibreAsignada';
                         }).length
                     );
 
@@ -3162,7 +3253,7 @@
 
                 function simularIngreso() {
                     var libre = ubicaciones.find(function (u) {
-                        return u.estado === 'Libre';
+                        return u.estado === 'Libre' || u.estado === 'LibreAsignada';
                     });
 
                     if (!libre) {
@@ -3176,6 +3267,10 @@
 
                 function fila(k, v) {
                     return '<div class="wms-row"><b>' + k + '</b><span>' + v + '</span></div>';
+                }
+
+                function estadoEtiqueta(estado) {
+                    return estado === 'LibreAsignada' ? 'Libre con producto' : estado;
                 }
 
                 function pad(n) {

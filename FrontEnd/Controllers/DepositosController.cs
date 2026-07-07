@@ -47,6 +47,8 @@ namespace FrontEnd.Controllers
                 ancho = x.depzon_ancho
             }).ToList();
 
+            ViewBag.WmsProductosDisponibles = new Negocio.Inventario.Productos(GetToken()).ListarDLL(true);
+
             ViewBag.WmsPasillos = pasillos.Select(x => new
             {
                 id = x.IdEncriptado,
@@ -69,25 +71,48 @@ namespace FrontEnd.Controllers
                 zonaNombre = x.Zona != null ? x.Zona.depzon_nombre : ""
             }).ToList();
 
-            List<Entidades.UbicacionLogistica> ubicaciones = new List<Entidades.UbicacionLogistica>();
+            List<object> ubicacionesWms = new List<object>();
+            Negocio.Inventario.UbicacionesProductos ubicacionesProductosNegocio = new Negocio.Inventario.UbicacionesProductos(GetToken());
             foreach (Entidades.DepositoPasillo pasillo in pasillos)
-                ubicaciones.AddRange(new Negocio.UbicacionesLogisticas(GetToken()).ListarPorPasillo(pasillo.depopas_id));
-
-            ViewBag.WmsUbicaciones = ubicaciones.Select(x => new
             {
-                id = x.IdEncriptado,
-                dbId = x.ubilog_id,
-                codigo = x.ubilog_codigo,
-                pasilloDbId = x.Pasillo != null ? x.Pasillo.depopas_id : 0,
-                posicion = x.ubilog_posicion,
-                nivel = x.ubilog_nivel,
-                altura = x.ubilog_altura,
-                longitud = x.ubilog_longitud,
-                anchura = x.ubilog_anchura,
-                capacidadCubica = x.ubilog_capacidad_cubica,
-                pesoMaximo = x.ubilog_peso_maximo,
-                estado = x.TipoEstado != null ? x.TipoEstado.teubilog_nombre : ""
-            }).ToList();
+                List<Entidades.UbicacionLogistica> ubicacionesPasillo = new Negocio.UbicacionesLogisticas(GetToken()).ListarPorPasillo(pasillo.depopas_id);
+                for (int nivel = 1; nivel <= pasillo.depopas_cantidad_alturas; nivel++)
+                {
+                    for (int posicion = 1; posicion <= pasillo.depopas_cantidad_posiciones; posicion++)
+                    {
+                        Entidades.UbicacionLogistica ubicacion = ubicacionesPasillo.FirstOrDefault(x => x.ubilog_posicion == posicion && Convert.ToString(x.ubilog_nivel) == Convert.ToString(nivel));
+                        Entidades.Inventario.UbicacionProducto productoUbicacion = ubicacion != null && ubicacion.ubilog_id > 0 ? ubicacionesProductosNegocio.ObtenerActivoPorUbicacion(ubicacion.ubilog_id) : null;
+                        FrontEnd.Models.UbicacionOcupacionViewModel ocupacion = CrearUbicacionOcupacion(pasillo, ubicacion, productoUbicacion, posicion, nivel);
+
+                        ubicacionesWms.Add(new
+                        {
+                            id = ubicacion != null && ubicacion.ubilog_id > 0 ? ubicacion.IdEncriptado : "",
+                            dbId = ocupacion.Id,
+                            codigo = ocupacion.Codigo,
+                            pasilloDbId = pasillo.depopas_id,
+                            posicion = ocupacion.Posicion,
+                            nivel = ocupacion.Nivel,
+                            altura = ocupacion.Altura,
+                            longitud = ocupacion.Longitud,
+                            anchura = ocupacion.Anchura,
+                            capacidadCubica = ocupacion.CapacidadCubica,
+                            pesoMaximo = ocupacion.PesoMaximo,
+                            estado = ocupacion.Estado,
+                            productoId = ocupacion.ProductoID,
+                            productoCodigo = ocupacion.ProductoCodigo,
+                            productoDescripcion = ocupacion.ProductoDescripcion,
+                            cantidadActual = ocupacion.CantidadActual,
+                            cantidadMaxima = ocupacion.CantidadMaxima,
+                            porcentajeOcupacion = ocupacion.PorcentajeOcupacion,
+                            esOcupada = ocupacion.EsOcupada,
+                            esBloqueada = ocupacion.EsBloqueada,
+                            esUbicacionReal = ocupacion.EsUbicacionReal
+                        });
+                    }
+                }
+            }
+
+            ViewBag.WmsUbicaciones = ubicacionesWms;
 
             return View(deposito);
         }
