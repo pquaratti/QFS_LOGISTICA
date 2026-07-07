@@ -1,7 +1,7 @@
 @model Entidades.Deposito
 
 @{
-    ViewBag.Title = "Demo WMS 3D/2D";
+    ViewBag.Title = "Demo WMS 3D";
     ViewBag.Subtitle = "Mapa interactivo de depósito";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string _ControllerName = "Depositos";
@@ -159,19 +159,11 @@
         background: var(--dark3d);
     }
 
-    #wms3d,
-    #wms2d {
+    #wms3d {
         position: absolute;
         inset: 0;
         width: 100%;
         height: 100%;
-    }
-
-    #wms2d {
-        display: none;
-        background: #f8fafc;
-        overflow: auto;
-        padding: 22px;
     }
 
     .wms-help {
@@ -211,163 +203,6 @@
         .wms-tooltip span {
             color: #cbd5e1;
         }
-
-    .wms-map2d {
-        position: relative;
-        width: 1060px;
-        height: 640px;
-        margin: 0 auto;
-        border: 2px solid #1f2937;
-        border-radius: 14px;
-        background: #e5e7eb;
-        overflow: hidden;
-    }
-
-    .wms-zone2d {
-        position: absolute;
-        border: 3px solid #1f2937;
-        border-radius: 16px;
-        background: repeating-linear-gradient(0deg, #f8fafc 0, #f8fafc 23px, #edf2f7 24px), repeating-linear-gradient(90deg, transparent 0, transparent 23px, rgba(148,163,184,.35) 24px);
-        box-shadow: 0 14px 30px rgba(15, 23, 42, .18);
-        z-index: 0;
-    }
-
-        .wms-zone2d::before,
-        .wms-zone2d::after {
-            content: "";
-            position: absolute;
-            top: 12px;
-            bottom: 12px;
-            width: 8px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, .16);
-        }
-
-        .wms-zone2d::before {
-            left: 10px;
-        }
-
-        .wms-zone2d::after {
-            right: 10px;
-        }
-
-    .wms-zone-title {
-        position: absolute;
-        top: 16px;
-        height: 25px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #334155;
-        background: rgba(255,255,255,.7);
-        border: 1px solid #e2e8f0;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 900;
-        letter-spacing: .04em;
-    }
-
-    .wms-bin2d {
-        position: absolute;
-        border: 1px solid rgba(15,23,42,.28);
-        border-radius: 6px;
-        cursor: pointer;
-        color: #0f172a;
-        font-size: 9px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 900;
-        transition: transform .15s, box-shadow .15s, outline .15s;
-        user-select: none;
-        z-index: 2;
-    }
-
-        .wms-bin2d:hover,
-        .wms-bin2d.selected {
-            transform: scale(1.12);
-            box-shadow: 0 8px 18px rgba(15,23,42,.22);
-            z-index: 6;
-            outline: 3px solid #2563eb;
-        }
-
-        .wms-bin2d.search-match {
-            outline: 3px solid #a855f7;
-            box-shadow: 0 0 18px rgba(168, 85, 247, .65);
-            z-index: 5;
-        }
-
-        .wms-bin2d.picking-target {
-            outline: 3px solid #fb923c;
-            box-shadow: 0 0 22px rgba(251, 146, 60, .75);
-            z-index: 7;
-        }
-
-        .wms-bin2d.putaway-target {
-            outline: 3px solid #06b6d4;
-            box-shadow: 0 0 22px rgba(6, 182, 212, .75);
-            z-index: 7;
-        }
-
-    .wms-rack-label {
-        position: absolute;
-        color: #475569;
-        font-size: 10px;
-        font-weight: 900;
-        letter-spacing: .05em;
-        transform: rotate(-90deg);
-        transform-origin: left top;
-    }
-
-
-    .wms-rack-label-horizontal {
-        transform: none;
-        width: 84px;
-        text-align: center;
-        padding: 3px 8px;
-        border: 1px solid #e2e8f0;
-        border-radius: 999px;
-        background: rgba(255,255,255,.86);
-    }
-
-    .wms-aisle {
-        position: absolute;
-        border: 2px solid rgba(37, 99, 235, .45);
-        border-radius: 8px;
-        background: rgba(147, 197, 253, .16);
-        z-index: 1;
-    }
-
-    .wms-dock {
-        position: absolute;
-        left: 28px;
-        bottom: 24px;
-        right: 28px;
-        height: 76px;
-        border: 2px dashed #64748b;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #475569;
-        font-weight: 900;
-        background: rgba(226,232,240,.72);
-    }
-
-    .wms-gate {
-        position: absolute;
-        bottom: 0;
-        width: 92px;
-        height: 18px;
-        background: #334155;
-        color: white;
-        border-radius: 8px 8px 0 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 10px;
-        font-weight: 800;
-    }
 
     .wms-side {
         padding: 14px;
@@ -821,7 +656,7 @@
 <div class="wms-page">
 
     <div class="content-header">
-        <h4 class="content-title">Demo WMS: depósito 3D + vista aérea 2D</h4>
+        <h4 class="content-title">Demo WMS: depósito 3D</h4>
         <p>Prototipo interactivo para visualizar racks, ubicaciones, stock, ocupación, movimientos y acciones operativas.</p>
     </div>
 
@@ -830,7 +665,6 @@
             <div class="wms-toolbar">
                 <div class="wms-tabs">
                     <button id="btnVista3d" type="button" class="wms-tab active">Vista 3D</button>
-                    <button id="btnVista2d" type="button" class="wms-tab">Vista aérea 2D</button>
                     <button id="btnVistaSupervisor" type="button" class="wms-tab">Visión supervisor</button>
                 </div>
 
@@ -901,18 +735,6 @@
                     </div>
                 </div>
 
-                <div id="wms2d">
-                    <div id="wmsMap2d" class="wms-map2d">
-                        <div class="wms-zone-title" style="left: 70px; width: 200px;">PASILLO 01</div>
-                        <div class="wms-zone-title" style="left: 355px; width: 200px;">PASILLO 02</div>
-                        <div class="wms-zone-title" style="left: 640px; width: 200px;">PASILLO 03</div>
-
-                        <div class="wms-dock">Zona de recepción / despacho</div>
-                        <div class="wms-gate" style="left: 150px;">Doca 01</div>
-                        <div class="wms-gate" style="left: 484px;">Doca 02</div>
-                        <div class="wms-gate" style="left: 820px;">Doca 03</div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -1008,7 +830,6 @@
                 var limitesDeposito3d = calcularLimitesDeposito3d();
 
                 var contenedor = document.getElementById('wms3d');
-                var map2d = document.getElementById('wmsMap2d');
                 var tooltip3d = document.getElementById('tooltip3d');
                 var pointerLockNote = document.getElementById('pointerLockNote');
                 var crosshairSupervisor = document.getElementById('crosshairSupervisor');
@@ -1055,7 +876,6 @@
                 var carteles3d = [];
 
                 iniciar3d();
-                dibujar2d();
                 actualizarKpis();
                 renderOperacionActiva();
                 seleccionar(ubicaciones[Math.min(12, ubicaciones.length - 1)], true);
@@ -1065,9 +885,6 @@
                     cambiarVista('3d');
                 });
 
-                $('#btnVista2d').on('click', function () {
-                    cambiarVista('2d');
-                });
 
                 $('#btnVistaSupervisor').on('click', function () {
                     cambiarVista('supervisor');
@@ -1115,7 +932,6 @@
                     crearRacks3d();
                     crearUbicaciones3d();
                     crearCarteles3d();
-                    dibujar2d();
                     aplicarFiltros();
                     actualizarKpis();
                     if (ubicaciones.length) seleccionar(ubicaciones[0], true);
@@ -2007,132 +1823,6 @@
                     carteles3d.push(sprite);
                 }
 
-                function limpiarMapa2dDinamico() {
-                    $(map2d).find('.wms-zone2d, .wms-aisle, .wms-bin2d, .wms-rack-label').remove();
-                }
-
-                function dibujar2d() {
-                    limpiarMapa2dDinamico();
-
-                    if (layoutPasillos.length) {
-                        $(map2d).find('.wms-zone-title, .wms-dock, .wms-gate').remove();
-                        dibujar2dDesdePasillos();
-                        return;
-                    }
-
-                    for (var pasillo = 1; pasillo <= 3; pasillo++) {
-                        for (var rack = 1; rack <= 2; rack++) {
-                            var label = document.createElement('div');
-                            label.className = 'wms-rack-label';
-                            label.style.left = (pasilloX2d(pasillo) + (rack === 1 ? -60 : 82)) + 'px';
-                            label.style.top = '310px';
-                            label.innerHTML = 'RACK 0' + rack;
-                            map2d.appendChild(label);
-                        }
-                    }
-
-                    ubicaciones.forEach(function (u) {
-                        var div = document.createElement('div');
-
-                        div.className = 'wms-bin2d';
-                        div.dataset.id = u.id;
-                        div.style.background = estadoHex[u.estado];
-
-                        div.style.left = (pasilloX2d(u.pasillo) + (u.rack === 1 ? -25 : 32)) + 'px';
-                        div.style.top = (76 + (u.columna - 1) * 69 + (u.nivel - 1) * 16) + 'px';
-                        div.style.width = '44px';
-                        div.style.height = '15px';
-
-                        div.title = u.codigo;
-                        div.innerHTML = 'C' + pad(u.columna) + ' N' + u.nivel;
-
-                        div.onclick = function () {
-                            seleccionar(u, false);
-                        };
-
-                        map2d.appendChild(div);
-                    });
-                }
-
-                function dibujar2dDesdePasillos() {
-                    var anchoMapa = map2d.clientWidth || 1100;
-                    var altoMapa = map2d.clientHeight || 620;
-                    var elementosEscala = layoutZonas.length ? layoutZonas : layoutPasillos;
-                    var minX = Math.min.apply(null, elementosEscala.map(function (p) { return p.x; }));
-                    var minY = Math.min.apply(null, elementosEscala.map(function (p) { return p.y; }));
-                    var maxX = Math.max.apply(null, elementosEscala.map(function (p) { return p.x + (p.orientacion === 'V' ? p.ancho : p.largo); }));
-                    var maxY = Math.max.apply(null, elementosEscala.map(function (p) { return p.y + (p.orientacion === 'V' ? p.largo : p.ancho); }));
-                    var escala = Math.min((anchoMapa - 180) / Math.max(1, maxX - minX), (altoMapa - 160) / Math.max(1, maxY - minY));
-                    var offsetX = (anchoMapa - (maxX - minX) * escala) / 2;
-                    var offsetY = 70;
-
-                    layoutZonas.forEach(function (z) {
-                        var zone = document.createElement('div');
-                        zone.className = 'wms-zone2d';
-                        zone.style.left = (offsetX + (z.x - minX) * escala) + 'px';
-                        zone.style.top = (offsetY + (z.y - minY) * escala) + 'px';
-                        zone.style.width = (z.largo * escala) + 'px';
-                        zone.style.height = (z.ancho * escala) + 'px';
-                        zone.title = z.codigo + ' - ' + z.nombre;
-                        map2d.insertBefore(zone, map2d.firstChild);
-                    });
-
-                    layoutPasillos.forEach(function (p) {
-                        var esVertical = p.orientacion === 'V';
-                        var left = offsetX + (p.x - minX) * escala;
-                        var top = offsetY + (p.y - minY) * escala;
-                        var width = (esVertical ? p.ancho : p.largo) * escala;
-                        var height = (esVertical ? p.largo : p.ancho) * escala;
-
-                        var label = document.createElement('div');
-                        label.className = 'wms-rack-label wms-rack-label-horizontal';
-                        label.style.left = (left + width / 2 - 42) + 'px';
-                        label.style.top = Math.max(8, top - 28) + 'px';
-                        label.innerHTML = p.codigo;
-                        map2d.appendChild(label);
-
-                        var fondo = document.createElement('div');
-                        fondo.className = 'wms-aisle';
-                        fondo.style.left = left + 'px';
-                        fondo.style.top = top + 'px';
-                        fondo.style.width = width + 'px';
-                        fondo.style.height = height + 'px';
-                        map2d.insertBefore(fondo, map2d.firstChild);
-                    });
-
-                    ubicaciones.forEach(function (u) {
-                        var p = layoutPasillos.find(function (item) { return item.codigo === u.pasillo; });
-                        if (!p) return;
-
-                        var esVertical = p.orientacion === 'V';
-                        var left = offsetX + (p.x - minX) * escala;
-                        var top = offsetY + (p.y - minY) * escala;
-                        var width = (esVertical ? p.ancho : p.largo) * escala;
-                        var height = (esVertical ? p.largo : p.ancho) * escala;
-                        var slot = (esVertical ? height : width) / p.posiciones;
-                        var nivelOffset = (u.nivel - 1) * 16;
-
-                        var div = document.createElement('div');
-                        div.className = 'wms-bin2d';
-                        div.dataset.id = u.id;
-                        div.style.background = estadoHex[u.estado];
-                        div.style.width = esVertical ? '44px' : Math.max(32, slot - 8) + 'px';
-                        div.style.height = '15px';
-                        div.style.left = (esVertical ? left + width / 2 - 22 : left + slot * (u.columna - 1) + 4) + 'px';
-                        div.style.top = (esVertical ? top + slot * (u.columna - 1) + nivelOffset : top + height / 2 - 16 + nivelOffset) + 'px';
-                        div.title = u.codigo;
-                        div.innerHTML = 'P' + pad(u.columna) + ' N' + u.nivel;
-                        div.onclick = function () { seleccionar(u, false); };
-                        map2d.appendChild(div);
-                    });
-                }
-
-                function pasilloX2d(pasillo) {
-                    if (pasillo === 1) return 165;
-                    if (pasillo === 2) return 450;
-                    return 735;
-                }
-
                 function click3d(event) {
                     if (modoSupervisor && document.pointerLockElement !== renderer.domElement) {
                         renderer.domElement.requestPointerLock();
@@ -2248,8 +1938,6 @@
                         }
                     });
 
-                    $('.wms-bin2d').removeClass('selected');
-                    $('.wms-bin2d[data-id="' + u.id + '"]').addClass('selected');
 
                     renderDetalle(u);
                     renderInventarioUbicacion(u);
@@ -2556,7 +2244,6 @@
                         pickingOutline = crearPickingOutline3d(mesh);
                     }
 
-                    $('.wms-bin2d[data-id="' + pickingActivo.ubicacionId + '"]').addClass('picking-target');
                 }
 
                 function limpiarPickingVisual() {
@@ -2569,7 +2256,6 @@
                         pickingOutline = null;
                     }
 
-                    $('.wms-bin2d').removeClass('picking-target');
                 }
 
                 function outlineSafeDispose(obj) {
@@ -2735,7 +2421,6 @@
                         recepcionOutline = crearRecepcionOutline3d(mesh);
                     }
 
-                    $('.wms-bin2d[data-id="' + recepcionActiva.ubicacionId + '"]').addClass('putaway-target');
                 }
 
                 function limpiarRecepcionVisual() {
@@ -2748,7 +2433,6 @@
                         recepcionOutline = null;
                     }
 
-                    $('.wms-bin2d').removeClass('putaway-target');
                 }
 
                 function confirmarPutaway() {
@@ -2838,7 +2522,6 @@
                         var visible = cumpleEstado && cumpleTexto;
 
                         m.visible = visible;
-                        $('.wms-bin2d[data-id="' + u.id + '"]').toggle(visible);
 
                         if (visible && texto !== '') {
                             resultadosBusqueda.push(u);
@@ -2892,7 +2575,6 @@
                     });
 
                     searchOutlines = [];
-                    $('.wms-bin2d').removeClass('search-match');
                 }
 
                 function pintarResultadosBusqueda() {
@@ -2903,7 +2585,6 @@
                             searchOutlines.push(crearSearchOutline3d(mesh));
                         }
 
-                        $('.wms-bin2d[data-id="' + u.id + '"]').addClass('search-match');
                     });
 
                     if (!resultadosBusqueda.length) {
@@ -2955,7 +2636,7 @@
                 }
 
                 function cambiarVista(vista) {
-                    $('#btnVista3d,#btnVista2d,#btnVistaSupervisor').removeClass('active');
+                    $('#btnVista3d,#btnVistaSupervisor').removeClass('active');
 
                     if (document.pointerLockElement === renderer.domElement) {
                         document.exitPointerLock();
@@ -2967,7 +2648,6 @@
                         if (controles) controles.enabled = true;
                         $('#btnVista3d').addClass('active');
                         $('#wms3d').show();
-                        $('#wms2d').hide();
                         $(supervisorHud).removeClass('active');
                         $(pointerLockNote).removeClass('active');
                         $(crosshairSupervisor).removeClass('active');
@@ -2982,7 +2662,6 @@
                         if (controles) controles.enabled = false;
                         $('#btnVistaSupervisor').addClass('active');
                         $('#wms3d').show();
-                        $('#wms2d').hide();
                         $(supervisorHud).addClass('active');
                         $(crosshairSupervisor).addClass('active');
                         ayuda3d.innerHTML = 'Supervisor: apuntá con el punto central. Click selecciona la caja apuntada. WASD para moverte. ESC libera el cursor.';
@@ -2990,17 +2669,6 @@
                         resize3d();
                         return;
                     }
-
-                    modoSupervisor = false;
-                    supervisorMouseActivo = false;
-                    if (controles) controles.enabled = true;
-                    $('#btnVista2d').addClass('active');
-                    $('#wms3d').hide();
-                    $('#wms2d').show();
-                    $(supervisorHud).removeClass('active');
-                    $(pointerLockNote).removeClass('active');
-                    $(crosshairSupervisor).removeClass('active');
-                    $(aimLabelSupervisor).removeClass('active');
                 }
 
                 function entrarModoSupervisor() {
@@ -3235,15 +2903,6 @@
                     meshes.forEach(function (m) {
                         var u = m.userData.ubicacion;
                         m.material.color.setHex(estadoColor[u.estado]);
-                    });
-
-                    $('.wms-bin2d').each(function () {
-                        var id = parseInt(this.dataset.id, 10);
-                        var u = ubicaciones.find(function (x) { return x.id === id; });
-
-                        if (u) {
-                            this.style.background = estadoHex[u.estado];
-                        }
                     });
 
                     aplicarFiltros();
